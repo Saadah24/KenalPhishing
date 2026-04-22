@@ -1,0 +1,109 @@
+﻿@{
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+    ViewBag.Title = "Laporan Kemajuan Anak";
+}
+
+@section Styles {
+    <!-- Pastikan baris ini ada -->
+    <link href="~/Content/ChildReport.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/Dashboard.css" rel="stylesheet" type="text/css" />
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <div>
+            <h2 class="fw-bold">Pantauan Ibu Bapa</h2>
+            <p class="text-muted">Memantau aktiviti siber: <b>@ViewBag.ChildName</b></p>
+        </div>
+        <div class="text-end">
+            <span class="badge-kid fw-bold text-uppercase">Akaun Kanak-Kanak Terpaut</span>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- RINGKASAN PROFIL ANAK -->
+        <div class="col-lg-4">
+            <div class="child-stat-card p-4 shadow-sm text-center">
+                <div class="avatar-lg bg-light-grey mx-auto mb-3 d-flex align-items-center justify-content-center rounded-circle" style="width:100px; height:100px;">
+                    <ion-icon name="person-outline" style="font-size: 3rem;"></ion-icon>
+                </div>
+                <h4 class="fw-bold mb-1">@ViewBag.ChildName</h4>
+                <p class="small text-muted mb-4">@ViewBag.ChildEmail</p>
+                <hr>
+                <div class="d-flex justify-content-around mt-4">
+                    <div>
+                        <h5 class="fw-bold mb-0">3</h5>
+                        <p class="extra-small text-muted">Modul Siap</p>
+                    </div>
+                    <div>
+                        <h5 class="fw-bold mb-0">@ViewBag.ChildLastQuiz%</h5>
+                        <p class="extra-small text-muted">Purata Skor</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- STATISTIK PEMBELAJARAN ANAK -->
+        <div class="col-lg-8">
+            <div class="bg-white p-4 rounded-4 shadow-sm h-100">
+                <h6 class="fw-bold mb-4">Kemajuan Modul Interaktif</h6>
+
+                <div class="mb-4 p-3 border rounded-3">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="small fw-bold">Misi Wira Siber: Melawan Phishing Bot</span>
+                        <span class="small text-success fw-bold">100% Selesai</span>
+                    </div>
+                    <div class="progress" style="height: 10px;">
+                        <div class="progress-bar bg-success" style="width: 100%"></div>
+                    </div>
+                </div>
+
+                <div class="mb-4 p-3 border rounded-3">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="small fw-bold">Stranger Danger: Keselamatan Media Sosial</span>
+                        <span class="small text-info fw-bold">@ViewBag.ChildProgress% Sedang Belajar</span>
+                    </div>
+                    <div class="progress" style="height: 10px;">
+                        <div class="progress-bar bg-info" style="width: @ViewBag.ChildProgress%"></div>
+                    </div>
+                </div>
+
+                <div class="p-3 border rounded-3 bg-light">
+                    <h6 class="small fw-bold mb-3"><ion-icon name="ribbon-outline" class="me-2"></ion-icon>Lencana Terkini Diterima:</h6>
+                    <div class="d-flex gap-2">
+                        <span class="badge bg-dark rounded-pill px-3">Cyber Hero 2025</span>
+                        <span class="badge bg-warning text-dark rounded-pill px-3">Phishing Spotter</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- AKTIVITI TERKINI ANAK (Mock Log) -->
+    <div class="mt-4">
+        <div class="bg-white p-4 rounded-4 shadow-sm">
+            <h6 class="fw-bold mb-4">Log Aktiviti Anak</h6>
+            <table class="table table-sm small">
+                <thead class="table-light">
+                    <tr>
+                        <th>Tarikh</th>
+                        <th>Aktiviti</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>12 Jan 2025</td>
+                        <td>Menamatkan Kuiz "Asas Internet Selamat"</td>
+                        <td><span class="text-success fw-bold">Lulus (85%)</span></td>
+                    </tr>
+                    <tr>
+                        <td>11 Jan 2025</td>
+                        <td>Memulakan Simulasi "Stranger Danger"</td>
+                        <td><span class="text-warning fw-bold">Masih Berjalan</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

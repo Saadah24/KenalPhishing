@@ -1,0 +1,100 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+}
+
+@section Styles {
+    <link href="~/Content/Progress.css" rel="stylesheet" type="text/css" />
+}
+
+<div class="row g-4">
+    <!-- Top Row: Percent and Stats -->
+    <div class="col-lg-4">
+        <div class="progress-card p-4 h-100 text-center shadow-sm">
+            <h6 class="fw-bold mb-4 text-start">Peratus Keseluruhan</h6>
+            <div class="circular-progress">
+                <div class="inner-circle">
+                    <span class="percent">85%</span>
+                    <span class="label">Modul Selesai</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="stats-grid-card p-4 h-100 shadow-sm">
+            <h6 class="fw-bold mb-4">Statistik</h6>
+            <div class="row g-3">
+                <div class="col-6">
+                    <div class="stat-box">
+                        <span class="stat-num">2</span>
+                        <span class="stat-txt">Modul Disiapkan</span>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="stat-box">
+                        <span class="stat-num">8</span>
+                        <span class="stat-txt">Lencana Diperoleh</span>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="stat-box">
+                        <span class="stat-num">7</span>
+                        <span class="stat-txt">Sijil Diterbitkan</span>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="stat-box">
+                        <span class="stat-num">45s</span>
+                        <span class="stat-txt">Purata Masa Tamat</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <!-- Calendar Grid -->
+        <div class="calendar-card p-4 h-100 shadow-sm">
+            <h6 class="fw-bold mb-3">Jadual Latihan</h6>
+            <div class="calendar-header mb-2 d-flex justify-content-between small fw-bold">
+                <span>Is</span><span>Se</span><span>Ra</span><span>Kh</span><span>Ju</span><span>Sa</span><span>Ah</span>
+            </div>
+            <div class="calendar-grid-progress">
+                <!-- Simple loop for days -->
+                @for (int i = 1; i <= 30; i++)
+                {
+                    <div class="day-dot @(i == 12 ? "active" : "")"></div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Row: Charts -->
+    <div class="col-lg-8">
+        <div class="chart-card p-4 shadow-sm">
+            <h6 class="fw-bold mb-4">Skor Kuiz Mingguan</h6>
+            <div class="bar-chart-mock">
+                <div class="bar" style="height: 40%"></div>
+                <div class="bar" style="height: 70%"></div>
+                <div class="bar" style="height: 50%"></div>
+                <div class="bar" style="height: 90%"></div>
+                <div class="bar" style="height: 60%"></div>
+                <div class="bar" style="height: 85%"></div>
+                <div class="bar" style="height: 75%"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="chart-card p-4 shadow-sm">
+            <h6 class="fw-bold mb-4">Tahap Kecekapan Siber</h6>
+            <div class="line-chart-mock">
+                <!-- Using a simple border to mimic a line chart for prototype -->
+                <svg viewBox="0 0 100 40" class="svg-line">
+                    <path d="M0 40 L20 30 L40 35 L60 15 L80 20 L100 5" fill="none" stroke="#000" stroke-width="2" />
+                </svg>
+            </div>
+        </div>
+    </div>
+</div>

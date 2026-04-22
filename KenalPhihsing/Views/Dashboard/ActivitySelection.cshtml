@@ -1,0 +1,49 @@
+﻿@{
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+    ViewBag.Title = "Pilih Aktiviti";
+}
+
+@section Styles {
+    <link href="~/Content/Selection.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/Dashboard.css" rel="stylesheet" type="text/css" />
+}
+
+<div class="container-fluid py-4">
+    <div class="text-center mb-5">
+        <h2 class="fw-bold">Langkah Seterusnya</h2>
+        <p class="text-muted">Sila pilih jenis aktiviti yang anda ingin mulakan untuk menguji kefahaman anda.</p>
+    </div>
+
+    <div class="row g-5 justify-content-center px-lg-5">
+        <!-- KAD SIMULASI -->
+        <div class="col-md-5">
+            <div class="selection-card simulation-card shadow-lg p-5 text-center">
+                <div class="visual-icon mb-4">
+                    <!-- Gunakan ion-icon atau gambar placeholder 3D -->
+                    <ion-icon name="cube-outline"></ion-icon>
+                </div>
+                <h1 class="fw-bold mb-4">Simulasi</h1>
+                <p class="small opacity-75 mb-4">Praktis mengesan phishing dalam persekitaran selamat.</p>
+                <a href="@Url.Action("Simulation", "Dashboard")" class="btn btn-light rounded-pill px-5 fw-bold btn-selection">Masuk</a>
+            </div>
+        </div>
+
+        <!-- KAD KUIZ -->
+        <div class="col-md-5">
+            <div class="selection-card quiz-card shadow-lg p-5 text-center">
+                <div class="visual-icon mb-4">
+                    <ion-icon name="help-circle-outline"></ion-icon>
+                </div>
+                <h1 class="fw-bold mb-4">Kuiz</h1>
+                <p class="small opacity-75 mb-4">Uji pengetahuan anda dengan soalan objektif.</p>
+                <a href="@Url.Action("Quiz", "Dashboard")" class="btn btn-light rounded-pill px-5 fw-bold btn-selection">Mula</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mt-5">
+        <a href="@Url.Action("Study", "Dashboard")" class="text-muted text-decoration-none">
+            <ion-icon name="arrow-back-outline" class="align-middle"></ion-icon> Kembali Baca Modul
+        </a>
+    </div>
+</div>

@@ -1,0 +1,111 @@
+﻿.admin-table-card {
+    background: #fff;
+    border-radius: 20px;
+}
+
+.table thead th {
+    border-bottom: none;
+    padding: 15px 20px;
+}
+
+.table tbody td {
+    vertical-align: middle;
+    padding: 15px 20px;
+}
+
+/* Kategori Badges */
+.bg-elder {
+    background-color: #AED6F1;
+}
+
+.bg-adult {
+    background-color: #f7b731;
+}
+
+.bg-kid {
+    background-color: #A3E4D7;
+}
+
+/* Edit Form */
+.img-preview-placeholder {
+    height: 250px;
+    background-color: #fff;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.bg-light-grey {
+    background-color: #d1d1d1;
+}
+
+/* Dashboard Admin Index Styles */
+
+/* Statistik Cards (Admin) */
+.admin-stat-card {
+    padding: 2rem;
+    border-radius: 20px;
+    color: #fff;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: none;
+}
+
+    .admin-stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+    }
+
+.bg-admin-dark {
+    background-color: #1a1c23;
+}
+
+.bg-admin-blue {
+    background-color: #3498db;
+}
+
+.bg-admin-yellow {
+    background-color: #f7b731;
+    color: #000 !important;
+}
+
+.bg-admin-green {
+    background-color: #2ecc71;
+}
+
+/* Quick Link List */
+.admin-quick-links .list-group-item {
+    padding: 1.2rem 1rem;
+    background-color: transparent;
+    border-bottom: 1px solid #f0f0f0 !important;
+    transition: 0.2s;
+}
+
+    .admin-quick-links .list-group-item:hover {
+        background-color: #f9f9f9;
+        padding-left: 1.5rem;
+    }
+
+/* System Notifications Box */
+.admin-notif-box {
+    border-radius: 15px;
+    padding: 15px 20px;
+    font-size: 0.85rem;
+    border: none;
+}
+
+/* Header Adjustments */
+.dashboard-page-header h2 {
+    color: #1a1c23;
+}
+
+/* Charts Placeholder (untuk kegunaan masa depan) */
+.admin-chart-placeholder {
+    height: 300px;
+    background: #fafafa;
+    border: 1px dashed #ddd;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

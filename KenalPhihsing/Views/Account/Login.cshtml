@@ -1,0 +1,63 @@
+﻿@{
+    ViewBag.Title = "Log Masuk";
+    Layout = "~/Views/Shared/_AuthLayout.cshtml";
+}
+
+@section Styles {
+    <link href="~/Content/Auth.css" rel="stylesheet" type="text/css" />
+}
+
+<div class="auth-wrapper">
+    <div class="auth-card shadow-lg">
+        <div class="text-end">
+            <a href="@Url.Action("Index", "Home")" class="close-btn">
+                <ion-icon name="close-outline"></ion-icon>
+            </a>
+        </div>
+
+        <div class="auth-header text-center">
+            <h2 class="fw-bold">Log Masuk</h2>
+            <p class="small text-muted">Sila masukkan maklumat akaun anda.</p>
+        </div>
+
+        <!-- PAPARAN RALAT (Jika login gagal) -->
+        @if (ViewBag.Error != null)
+        {
+            <div class="alert alert-danger mt-3 py-2 small rounded-3 border-0 bg-danger bg-opacity-10 text-danger d-flex align-items-center">
+                <ion-icon name="alert-circle-outline" class="me-2 fs-5"></ion-icon>
+                <span>@ViewBag.Error</span>
+            </div>
+        }
+
+        <form action="@Url.Action("Login", "Account")" method="post" class="mt-4">
+            <div class="mb-3 auth-group">
+                <label class="form-label">Nama / Emel</label>
+                <div class="input-with-icon">
+                    <ion-icon name="person-outline"></ion-icon>
+                    <input type="text" name="email" class="auth-input" required placeholder="Masukkan emel anda">
+                </div>
+            </div>
+
+            <div class="mb-4 auth-group">
+                <label class="form-label">Kata Laluan</label>
+                <div class="input-with-icon">
+                    <ion-icon name="lock-closed-outline"></ion-icon>
+                    <input type="password" name="password" class="auth-input" required placeholder="••••••••">
+                </div>
+            </div>
+
+            <div class="text-center mt-5">
+                <button type="submit" class="btn btn-auth w-100 mb-3">Log Masuk</button>
+                <p class="mt-2 small">
+                    Belum ada akaun?
+                    <a href="@Url.Action("Register", "Account")" class="auth-link">Daftar Di Sini</a>
+                </p>
+            </div>
+        </form>
+
+        <!-- NOTA UNTUK ADMIN (Optional untuk FYP) -->
+        <div class="text-center mt-4 opacity-50">
+            <p style="font-size: 10px;">Portal ini dilindungi oleh KenalPhishing Security.</p>
+        </div>
+    </div>
+</div>

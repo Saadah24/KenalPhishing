@@ -1,0 +1,32 @@
+﻿@{
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+    ViewBag.Title = "Kuiz Betul";
+}
+
+@section Styles {
+    <link href="~/Content/Quiz.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/Dashboard.css" rel="stylesheet" type="text/css" />
+}
+
+    <div class="result-container py-5 text-center">
+        <div class="result-card p-5 shadow-lg">
+            <div class="mb-4">
+                <ion-icon name="checkmark-circle" class="display-1 text-success"></ion-icon>
+            </div>
+            <h2 class="fw-bold mb-4"><span>TAHNIAH!</span> JAWAPAN ANDA BETUL</h2>
+
+            <div class="row g-4 mb-5 text-start">
+                <div class="col-md-6 mx-auto">
+                    <div class="stat-summary-card p-4 shadow-sm">
+                        <h6 class="fw-bold mb-3 border-bottom pb-2">Analisis Jawapan</h6>
+                        <p class="small">Pilihan <b>C</b> adalah betul kerana scammer menggunakan emosi ketakutan (Urgency) untuk memaksa anda bertindak tanpa berfikir.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-actions d-flex justify-content-center gap-3">
+                <a href="@Url.Action("Modules", "Dashboard")" class="btn btn-dark rounded-pill px-4">Kembali ke Katalog</a>
+                <a href="@Url.Action("Certificates", "Dashboard")" class="btn btn-dark rounded-pill px-4">Lihat Sijil</a>
+            </div>
+        </div>
+    </div>

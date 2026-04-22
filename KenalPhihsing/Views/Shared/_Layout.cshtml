@@ -1,0 +1,82 @@
+﻿<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - KenalPhishing</title>
+
+    <!-- Bootstrap 5 CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom Site CSS -->
+    <link href="~/Content/Site.css" rel="stylesheet" type="text/css" />
+    @RenderSection("Styles", required: false)
+
+    <!-- IonIcons Library -->
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+</head>
+<body class="main-body">
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark nav-custom sticky-top">
+        <div class="container py-2">
+            <a class="navbar-brand brand-bold" href="@Url.Action("Index", "Home")">KenalPhishing</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
+                    <li class="nav-item"><a class="nav-link text-white" href="#">Utama</a></li>
+                    <li class="nav-item"><a class="nav-link text-white" href="#modul">Modul</a></li>
+                </ul>
+                <div class="nav-auth-buttons">
+                    <a href="@Url.Action("Login", "Account")" class="login-link">Log Masuk</a>
+                    <a href="@Url.Action("Register", "Account")" class="btn btn-light register-btn">Daftar Masuk</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        @RenderBody()
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer-section mt-5 py-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <h5 class="fw-bold">KenalPhishing</h5>
+                    <p class="small text-muted-custom">Platform pembelajaran interaktif di Malaysia untuk mendidik rakyat akan bahaya serangan siber.</p>
+                </div>
+                <div class="col-md-2 offset-md-2 mb-4">
+                    <h6 class="fw-bold">Navigasi</h6>
+                    <ul class="list-unstyled footer-links">
+                        <li><a href="#">Utama</a></li>
+                        <li><a href="#modul">Modul</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-2 mb-4">
+                    <h6 class="fw-bold">Sokongan</h6>
+                    <ul class="list-unstyled footer-links">
+                        <li><a href="#">FAQ</a></li>
+                        <li><a href="#">Hubungi Kami</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-2 mb-4">
+                    <h6 class="fw-bold">Ikuti Kami</h6>
+                    <ul class="list-unstyled footer-links">
+                        <li><a href="#">Facebook</a></li>
+                        <li><a href="#">Instagram</a></li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="footer-divider">
+            <div class="footer-bottom">
+                <p>© @DateTime.Now.Year KenalPhishing | Hak Cipta Terpelihara</p>
+                <p>Kecemasan Scam? Hubungi NSRC 997</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

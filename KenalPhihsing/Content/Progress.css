@@ -1,0 +1,308 @@
+﻿/* Progress Cards Base */
+.progress-card, .stats-grid-card, .calendar-card, .chart-card {
+    background-color: #d1d1d1; /* Grey background from your mockup */
+    border-radius: 20px;
+    color: #000;
+}
+
+/* Circular Progress */
+.circular-progress {
+    width: 150px;
+    height: 150px;
+    background: conic-gradient(#000 85%, #fff 0);
+    border-radius: 50%;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.inner-circle {
+    width: 120px;
+    height: 120px;
+    background: #d1d1d1;
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.percent {
+    font-size: 2rem;
+    font-weight: bold;
+    line-height: 1;
+}
+
+.label {
+    font-size: 0.7rem;
+    color: #555;
+}
+
+/* Stat Boxes */
+.stat-box {
+    background: #fff;
+    padding: 15px 5px;
+    border-radius: 12px;
+    text-align: center;
+    height: 100%;
+}
+
+.stat-num {
+    display: block;
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.stat-txt {
+    display: block;
+    font-size: 0.65rem;
+    color: #666;
+}
+
+/* Calendar Progress */
+.calendar-grid-progress {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+}
+
+.day-dot {
+    width: 100%;
+    aspect-ratio: 1;
+    background: #fff;
+    border-radius: 4px;
+}
+
+    .day-dot.active {
+        background: #2ecc71;
+    }
+/* Green for training done */
+
+/* Mock Bar Chart */
+.bar-chart-mock {
+    height: 150px;
+    display: flex;
+    align-items: flex-end;
+    gap: 15px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #000;
+}
+
+.bar {
+    flex: 1;
+    background: #000;
+    border-radius: 4px 4px 0 0;
+}
+
+/* Mock Line Chart */
+.line-chart-mock {
+    height: 150px;
+    background: #fff;
+    border-radius: 12px;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+}
+
+.svg-line {
+    width: 100%;
+    height: 100%;
+}
+
+.dashboard-body {
+    background-color: #f8f9fa;
+    color: #333;
+}
+
+/* Sidebar Styles */
+.sidebar {
+    width: 260px;
+    height: 100vh;
+    background-color: #000;
+    color: #fff;
+    position: sticky;
+    top: 0;
+}
+
+    .sidebar .nav-link {
+        color: #aaa;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 15px;
+        border-radius: 10px;
+    }
+
+        .sidebar .nav-link.active, .sidebar .nav-link:hover {
+            color: #fff;
+            background-color: #333;
+        }
+
+.btn-logout {
+    background-color: #222;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+}
+
+/* Dashboard UI Components */
+.welcome-card {
+    background-color: #fff;
+    border-radius: 20px;
+}
+
+.status-card {
+    background-color: #d1d1d1;
+    border-radius: 15px;
+}
+
+.graph-card, .calendar-card, .activity-card {
+    background-color: #fff;
+    border-radius: 20px;
+}
+
+.dashboard-header .search-box {
+    background: #fff;
+    padding: 8px 15px;
+    border-radius: 50px;
+    border: 1px solid #ddd;
+    display: flex;
+    align-items: center;
+    width: 300px;
+}
+
+.search-box input {
+    border: none;
+    outline: none;
+    margin-left: 10px;
+    width: 100%;
+}
+
+.avatar-sm {
+    width: 35px;
+    height: 35px;
+    background: #ddd;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+/* Placeholders */
+.mock-graph {
+    height: 200px;
+    background: #fdfdfd;
+    border: 1px dashed #ccc;
+    border-radius: 15px;
+}
+
+.extra-small {
+    font-size: 0.75rem;
+}
+
+.dashboard-body {
+    background-color: #f8f9fa;
+    color: #333;
+}
+
+/* Sidebar Styles */
+.sidebar {
+    width: 260px;
+    height: 100vh;
+    background-color: #000;
+    color: #fff;
+    position: sticky;
+    top: 0;
+}
+
+    .sidebar .nav-link {
+        color: #aaa;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 15px;
+        border-radius: 10px;
+    }
+
+        .sidebar .nav-link.active, .sidebar .nav-link:hover {
+            color: #fff;
+            background-color: #333;
+        }
+
+.btn-logout {
+    background-color: #222;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+}
+
+/* Dashboard UI Components */
+.welcome-card {
+    background-color: #fff;
+    border-radius: 20px;
+}
+
+.status-card {
+    background-color: #d1d1d1;
+    border-radius: 15px;
+}
+
+.graph-card, .calendar-card, .activity-card {
+    background-color: #fff;
+    border-radius: 20px;
+}
+
+.dashboard-header .search-box {
+    background: #fff;
+    padding: 8px 15px;
+    border-radius: 50px;
+    border: 1px solid #ddd;
+    display: flex;
+    align-items: center;
+    width: 300px;
+}
+
+.search-box input {
+    border: none;
+    outline: none;
+    margin-left: 10px;
+    width: 100%;
+}
+
+.avatar-sm {
+    width: 35px;
+    height: 35px;
+    background: #ddd;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+/* Placeholders */
+.mock-graph {
+    height: 200px;
+    background: #fdfdfd;
+    border: 1px dashed #ccc;
+    border-radius: 15px;
+}
+
+.extra-small {
+    font-size: 0.75rem;
+}
+
+.user-profile-nav a:hover {
+    opacity: 0.8;
+}
+
+.avatar-sm {
+    width: 35px;
+    height: 35px;
+    background: #eee;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.2s;
+}
+
+    .avatar-sm:hover {
+        background: #ddd;
+    }

@@ -1,0 +1,84 @@
+﻿@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewBag.Title = ViewBag.IsEdit ? "Sunting Modul" : "Tambah Modul";
+}
+
+@section Styles {
+    <link href="~/Content/Admin.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/Dashboard.css" rel="stylesheet" type="text/css" />
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="edit-module-card p-5 shadow-sm bg-white rounded-4">
+                <h3 class="fw-bold mb-4">@(ViewBag.IsEdit ? "Sunting Modul" : "Tambah Modul Baharu")</h3>
+
+                <form>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Tajuk Modul</label>
+                        <input type="text" class="form-control" placeholder="Contoh: Asas Phishing" value="@(ViewBag.IsEdit ? "Asas Phishing" : "")">
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Kategori</label>
+                            <select class="form-select">
+                                <option>Dewasa</option>
+                                <option selected>Warga Emas</option>
+                                <option>Kanak-Kanak</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Durasi (minit)</label>
+                            <input type="number" class="form-control" value="10">
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label small fw-bold">Deskripsi Modul</label>
+                        <textarea class="form-control" rows="4">Belajar cara mengenal pasti emel penipuan dan cara melindungi maklumat peribadi anda.</textarea>
+                    </div>
+
+                    <div class="d-flex gap-2 border-top pt-4">
+                        <button type="button" class="btn btn-dark rounded-pill px-5" onclick="showAdminPopup('Modul Telah Disimpan')">Simpan Modul</button>
+                        <a href="@Url.Action("ManageModules", "Admin")" class="btn btn-outline-dark rounded-pill px-4">Batal</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-lg-4 text-center">
+            <div class="p-4 bg-light rounded-4 border border-dashed">
+                <h6 class="fw-bold mb-3">Ilustrasi Modul</h6>
+                <div class="img-preview-placeholder mb-3">
+                    <ion-icon name="image-outline" class="display-1 text-muted"></ion-icon>
+                </div>
+                <button class="btn btn-sm btn-outline-dark rounded-pill">Ganti Gambar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Pop-up Modal (input_file_15) -->
+<div class="modal fade" id="adminActionModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content text-center p-5 rounded-4 border-0 shadow-lg bg-light-grey">
+            <div class="modal-body">
+                <h4 id="adminActionText" class="fw-bold mb-4"></h4>
+                <button type="button" class="btn btn-dark rounded-pill px-5" data-bs-dismiss="modal">Baik</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <script>
+        function showAdminPopup(text) {
+            var myModal = new bootstrap.Modal(document.getElementById('adminActionModal'));
+            document.getElementById('adminActionText').innerText = text;
+            myModal.show();
+        }
+    </script>
+}

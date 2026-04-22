@@ -1,0 +1,93 @@
+﻿@{
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+    ViewBag.Title = "Buat Laporan Scam";
+}
+
+@section Styles {
+    <link href="~/Content/Report.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/Dashboard.css" rel="stylesheet" type="text/css" />
+}
+
+<div class="container-fluid">
+    <div class="mb-5">
+        <h2 class="fw-bold">Buat Laporan</h2>
+        <p class="text-muted">Trend Scam Terkini: Sila laporkan sebarang cubaan mencurigakan yang anda hadapi.</p>
+    </div>
+
+    <div class="row g-4">
+        <!-- BAHAGIAN KIRI: Borang Laporan -->
+        <div class="col-lg-7">
+            <div class="report-form-card p-4 shadow-sm">
+                <h6 class="fw-bold mb-4">Borang Laporan Scam Phishing</h6>
+                <p class="extra-small text-muted mb-4">Lengkapkan borang ini untuk melaporkan kes scam phishing. Untuk bantuan kecemasan, hubungi nombor di sebelah.</p>
+
+                <form>
+                    <div class="mb-4">
+                        <label class="form-label small fw-bold">Pautan / Nombor Telefon Mencurigakan</label>
+                        <input type="text" class="form-control report-input" placeholder="Contoh: https://bank-palsu.com atau 012-XXXXXXX">
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label small fw-bold">Perihal Kes (Kronologi)</label>
+                        <textarea class="form-control report-input" rows="5" placeholder="Sila terangkan bagaimana anda menerima mesej ini..."></textarea>
+                    </div>
+
+                    <button type="button" class="btn btn-dark rounded-pill px-5 fw-bold" onclick="submitReport()">Hantar Laporan</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- BAHAGIAN KANAN: Nombor Kecemasan & Tip -->
+        <div class="col-lg-5">
+            <div class="emergency-card p-4 mb-4 shadow-sm bg-white rounded-4 text-dark">
+                <h6 class="fw-bold mb-4 border-bottom pb-2">Hubungi Nombor Kecemasan</h6>
+                <div class="d-flex align-items-center mb-3">
+                    <div class="hotline-icon me-3"><ion-icon name="call"></ion-icon></div>
+                    <div>
+                        <p class="mb-0 small fw-bold">Pusat Respons Scam Kebangsaan: 997</p>
+                        <p class="extra-small text-muted">Hubungi segera jika anda telah menjadi mangsa.</p>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center">
+                    <div class="hotline-icon me-3"><ion-icon name="globe-outline"></ion-icon></div>
+                    <div>
+                        <p class="mb-0 small fw-bold">Suruhanjaya Komunikasi dan Multimedia Malaysia: 1-800-188-030</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tips-card p-4 shadow-sm bg-white rounded-4 text-dark border-start border-5 border-warning">
+                <h6 class="fw-bold mb-3"><ion-icon name="bulb-outline" class="me-2"></ion-icon> Tip Keselamatan:</h6>
+                <p class="small mb-0 opacity-75">Sentiasa semak alamat e-mail dan pautan sebelum klik. Jangan kongsikan TAC atau OTP anda kepada sesiapa walaupun mereka menyamar sebagai pegawai bank.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- POPUP: Laporan Telah Dihantar (input_file_11) -->
+<div class="modal fade" id="reportSuccessModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content text-center p-5 rounded-4 border-0 shadow-lg" style="background-color: #d1d1d1;">
+            <div class="modal-body">
+                <div class="mb-4">
+                    <ion-icon name="checkmark-done-circle" class="display-1 text-success"></ion-icon>
+                </div>
+                <h4 class="fw-bold mb-4 text-dark">Laporan Telah di Hantar</h4>
+                <p class="small text-muted mb-4">Terima kasih kerana membantu komuniti kami. Kami akan menyemak laporan anda secepat mungkin.</p>
+                <button type="button" class="btn btn-dark rounded-pill px-5" data-bs-dismiss="modal">Baik</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <script>
+        function submitReport() {
+            // Pastikan id ini sama tepat dengan id pada div modal anda
+            var modalElement = document.getElementById('reportSuccessModal');
+            var myModal = new bootstrap.Modal(modalElement);
+            myModal.show();
+        }
+    </script>
+}

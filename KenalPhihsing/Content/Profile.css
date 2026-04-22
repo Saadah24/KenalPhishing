@@ -1,0 +1,168 @@
+﻿.profile-container {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.profile-card {
+    background-color: #d1d1d1; /* Warna kelabu prototaip */
+    border-radius: 30px;
+    color: #000;
+}
+
+.profile-avatar-large {
+    font-size: 8rem;
+    color: #444;
+    background: #fff;
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+}
+
+/* Grid Maklumat */
+.profile-info-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.info-row {
+    display: flex;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #bbb;
+}
+
+.info-label {
+    width: 200px;
+    font-weight: bold;
+    color: #555;
+}
+
+.info-value {
+    color: #000;
+    font-weight: 500;
+}
+
+.badge-cat-profile {
+    background-color: #000;
+    color: #fff;
+    padding: 3px 15px;
+    border-radius: 50px;
+    font-size: 0.85rem;
+}
+
+/* Popup/Modal Styling */
+.modal-content {
+    background-color: #d1d1d1;
+}
+
+.dashboard-body {
+    background-color: #f8f9fa;
+    color: #333;
+}
+
+/* Sidebar Styles */
+.sidebar {
+    width: 260px;
+    height: 100vh;
+    background-color: #000;
+    color: #fff;
+    position: sticky;
+    top: 0;
+}
+
+    .sidebar .nav-link {
+        color: #aaa;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 15px;
+        border-radius: 10px;
+    }
+
+        .sidebar .nav-link.active, .sidebar .nav-link:hover {
+            color: #fff;
+            background-color: #333;
+        }
+
+.btn-logout {
+    background-color: #222;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+}
+
+/* Dashboard UI Components */
+.welcome-card {
+    background-color: #fff;
+    border-radius: 20px;
+}
+
+.status-card {
+    background-color: #d1d1d1;
+    border-radius: 15px;
+}
+
+.graph-card, .calendar-card, .activity-card {
+    background-color: #fff;
+    border-radius: 20px;
+}
+
+.dashboard-header .search-box {
+    background: #fff;
+    padding: 8px 15px;
+    border-radius: 50px;
+    border: 1px solid #ddd;
+    display: flex;
+    align-items: center;
+    width: 300px;
+}
+
+.search-box input {
+    border: none;
+    outline: none;
+    margin-left: 10px;
+    width: 100%;
+}
+
+.avatar-sm {
+    width: 35px;
+    height: 35px;
+    background: #ddd;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+/* Placeholders */
+.mock-graph {
+    height: 200px;
+    background: #fdfdfd;
+    border: 1px dashed #ccc;
+    border-radius: 15px;
+}
+
+.extra-small {
+    font-size: 0.75rem;
+}
+
+.user-profile-nav a:hover {
+    opacity: 0.8;
+}
+
+.avatar-sm {
+    width: 35px;
+    height: 35px;
+    background: #eee;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.2s;
+}
+
+    .avatar-sm:hover {
+        background: #ddd;
+    }

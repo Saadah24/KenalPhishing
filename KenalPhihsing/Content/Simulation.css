@@ -1,0 +1,101 @@
+﻿/* Content/Simulation.css */
+
+/* Gaya Pelayar Palsu (The Sandbox Frame) */
+.fake-browser {
+    background: #fff;
+    border-radius: 15px;
+    overflow: hidden;
+    border: 2px solid #ddd;
+    min-height: 500px;
+}
+
+.browser-top {
+    background: #e0e0e0;
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.url-bar {
+    background: #fff;
+    border-radius: 20px;
+    padding: 5px 20px;
+    flex-grow: 1;
+    border: 1px solid #ccc;
+    font-family: monospace;
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+}
+
+/* Logik Peralihan (Stage Switching) */
+.hidden-stage {
+    display: none !important;
+}
+
+/* Laman Web Login Palsu */
+.fake-login-card {
+    max-width: 380px;
+    margin: 50px auto;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    background: #fff;
+    border: 1px solid #ddd;
+}
+
+.btn-fake-login {
+    width: 100%;
+    border-radius: 8px;
+    padding: 12px;
+    border: none;
+    font-weight: bold;
+    margin-top: 15px;
+    transition: 0.3s;
+}
+
+/* Tema Warna Butang Ikut Kategori */
+.adult-theme-btn {
+    background: #ffcc00;
+    color: #000;
+}
+
+    .adult-theme-btn:hover {
+        background: #e6b800;
+    }
+
+.child-theme-btn {
+    background: #00b0ff;
+    color: #fff;
+}
+
+    .child-theme-btn:hover {
+        background: #0091ea;
+    }
+
+.elder-theme-btn {
+    background: #2c3e50;
+    color: #fff;
+}
+
+    .elder-theme-btn:hover {
+        background: #1a252f;
+    }
+
+/* Komponen Mesej/Senario */
+.email-mockup-inner {
+    border: 1px solid #eee;
+    padding: 20px;
+    background: #fdfdfd;
+    border-radius: 8px;
+}
+
+.sms-bubble {
+    background: #e5e5ea;
+    padding: 20px;
+    border-radius: 15px;
+    max-width: 300px;
+    margin: 0 auto;
+    color: #000;
+}

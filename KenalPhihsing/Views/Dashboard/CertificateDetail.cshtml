@@ -1,0 +1,77 @@
+﻿@{
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+    ViewBag.Title = "Sijil Pencapaian";
+}
+
+@section Styles {
+    <link href="~/Content/Certificates.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/Dashboard.css" rel="stylesheet" type="text/css" />
+}
+
+<div class="cert-detail-container">
+    <div class="mb-4">
+        <h2 class="fw-bold">Sijil Pencapaian</h2>
+        <p class="text-muted small">Tahniah! Anda telah menamatkan modul "@ViewBag.Module".</p>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <!-- DOKUMEN SIJIL (The Frame) -->
+            <div class="certificate-frame p-5 shadow-lg text-center bg-white text-dark border border-5 border-warning">
+                <div class="cert-border-inner p-4 border border-1 border-dark h-100">
+                    <p class="cert-top-text text-uppercase mb-4">Sijil Pencapaian</p>
+                    <p class="mb-1">Diberikan kepada:</p>
+                    <h1 class="display-4 fw-bold mb-4 text-decoration-underline">@ViewBag.StudentName</h1>
+                    <p class="mb-1">Kerana telah Berjaya Menamatkan Modul:</p>
+                    <h3 class="fw-bold text-primary mb-5">@ViewBag.Module</h3>
+
+                    <div class="row mt-5 pt-4">
+                        <div class="col-4 border-top border-dark pt-2 small">Tarikh Tamat: @ViewBag.Date</div>
+                        <div class="col-4 text-center">
+                            <div class="cert-seal mx-auto">
+                                <ion-icon name="shield-checkmark" class="fs-1 text-warning"></ion-icon>
+                                <p class="extra-small mt-1 fw-bold">Verified</p>
+                            </div>
+                        </div>
+                        <div class="col-4 border-top border-dark pt-2 small">Skor Modul: @ViewBag.Score</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Butang Aksi Bawah Sijil -->
+            <div class="d-flex justify-content-center gap-3 mt-4">
+                <button class="btn btn-dark rounded-pill px-4" onclick="showPopup('Muat Turun Selesai')">Muat Turun Sijil</button>
+                <button class="btn btn-dark rounded-pill px-4" onclick="showPopup('Selesai Di Kongsi')">Kongsi di LinkedIn</button>
+                <button class="btn btn-dark rounded-pill px-4" onclick="showPopup('Selesai Cetak Sijil')">Cetak Sijil</button>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="next-steps-card p-4 shadow-sm bg-white rounded-4 text-dark h-100">
+                <h6 class="fw-bold mb-4">Lanjutkan Pembelajaran:</h6>
+                <div class="p-3 border rounded-3 mb-3">
+                    <p class="small fw-bold mb-1">Taktik Psikologi</p>
+                    <div class="progress" style="height: 5px;"><div class="progress-bar bg-warning" style="width: 10%"></div></div>
+                    <a href="#" class="btn btn-dark btn-sm w-100 mt-3 rounded-pill">Sambung Modul</a>
+                </div>
+                <div class="p-3 border rounded-3 text-center bg-light">
+                    <ion-icon name="trophy" class="fs-1 text-warning mb-2"></ion-icon>
+                    <p class="small fw-bold">Anda Telah Meraih:</p>
+                    <span class="badge bg-dark rounded-pill px-3">Phishing Mastery</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Pop-up (Kemas kini Selesai - rujuk input_file_11) -->
+<div class="modal fade" id="certActionModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content text-center p-5 rounded-4 border-0 shadow-lg" style="background-color: #d1d1d1;">
+            <div class="modal-body">
+                <h4 id="actionText" class="fw-bold mb-4 text-dark"></h4>
+                <button type="button" class="btn btn-dark rounded-pill px-5" data-bs-dismiss="modal">Baik</button>
+            </div>
+        </div>
+    </div>
+</div>

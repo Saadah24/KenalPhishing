@@ -1,0 +1,116 @@
+﻿.dashboard-body {
+    background-color: #f8f9fa;
+    color: #333;
+}
+
+/* Sidebar Styles */
+.sidebar {
+    width: 260px;
+    height: 100vh;
+    background-color: #000;
+    color: #fff;
+    position: sticky;
+    top: 0;
+}
+
+    .sidebar .nav-link {
+        color: #aaa;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 15px;
+        border-radius: 10px;
+    }
+
+        .sidebar .nav-link.active, .sidebar .nav-link:hover {
+            color: #fff;
+            background-color: #333;
+        }
+
+.btn-logout {
+    background-color: #222;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+}
+
+/* Dashboard UI Components */
+.welcome-card {
+    background-color: #fff;
+    border-radius: 20px;
+}
+
+.status-card {
+    background-color: #d1d1d1;
+    border-radius: 15px;
+}
+
+.graph-card, .calendar-card, .activity-card {
+    background-color: #fff;
+    border-radius: 20px;
+}
+
+.dashboard-header .search-box {
+    background: #fff;
+    padding: 8px 15px;
+    border-radius: 50px;
+    border: 1px solid #ddd;
+    display: flex;
+    align-items: center;
+    width: 300px;
+}
+
+.search-box input {
+    border: none;
+    outline: none;
+    margin-left: 10px;
+    width: 100%;
+}
+
+.avatar-sm {
+    width: 35px;
+    height: 35px;
+    background: #ddd;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+/* Placeholders */
+.mock-graph {
+    height: 200px;
+    background: #fdfdfd;
+    border: 1px dashed #ccc;
+    border-radius: 15px;
+}
+
+.extra-small {
+    font-size: 0.75rem;
+}
+
+.user-profile-nav a:hover {
+    opacity: 0.8;
+}
+
+.avatar-sm {
+    width: 35px;
+    height: 35px;
+    background: #eee;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.2s;
+}
+
+    .avatar-sm:hover {
+        background: #ddd;
+    }
+
+/* Sidebar Active State untuk Lapor Scam */
+.sidebar .nav-link.active .text-danger {
+    color: #fff !important; /* Tukar teks jadi putih bila active supaya nampak jelas atas background hitam */
+}
+
+.sidebar .nav-link:hover .text-danger {
+    color: #ff4d4d !important;
+}

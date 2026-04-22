@@ -1,0 +1,65 @@
+﻿@{
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+    ViewBag.Title = "Profil Pengguna";
+}
+
+@section Styles {
+    <link href="~/Content/Profile.css" rel="stylesheet" type="text/css" />
+}
+
+<div class="profile-container">
+    <div class="profile-header mb-4">
+        <h2 class="fw-bold">Profil Pengguna</h2>
+    </div>
+
+    <div class="profile-card shadow-sm">
+        <div class="profile-body p-5">
+            <!-- Bahagian Gambar & Nama -->
+            <div class="row align-items-center mb-5">
+                <div class="col-md-3 text-center">
+                    <div class="profile-avatar-large shadow-sm">
+                        <ion-icon name="person-circle-outline"></ion-icon>
+                    </div>
+                </div>
+                <div class="col-md-9">
+                    <h3 class="fw-bold mb-0">@ViewBag.FullName</h3>
+                    <p class="text-muted">Pelajar Aktif - @ViewBag.Category</p>
+                </div>
+            </div>
+
+            <!-- Maklumat Peribadi (Grid) -->
+            <div class="profile-info-grid">
+                <div class="info-row">
+                    <span class="info-label">Nama Penuh:</span>
+                    <span class="info-value">@ViewBag.FullName</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Alamat Emel:</span>
+                    <span class="info-value">@ViewBag.Email</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">No. Telefon:</span>
+                    <span class="info-value">@ViewBag.Phone</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Kategori Pelajar:</span>
+                    <span class="info-value badge-cat-profile">@ViewBag.Category</span>
+                </div>
+            </div>
+
+            <!-- Butang Tindakan -->
+            <div class="profile-actions mt-5 pt-4 border-top">
+                <button class="btn btn-dark rounded-pill px-4 me-2" data-bs-toggle="modal" data-bs-target="#editProfileModal">
+                    <ion-icon name="create-outline" class="me-2"></ion-icon>Kemas Kini Profil
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Pop-up (Kemas Kini Selesai - rujuk input_file_5) -->
+<div class="modal fade" id="successModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content text-center p-5 rounded-4 border-0 shadow">
+            <div class="modal-body">
+                <div clas

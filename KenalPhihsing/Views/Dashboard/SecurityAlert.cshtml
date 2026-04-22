@@ -1,0 +1,60 @@
+﻿@{
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+    ViewBag.Title = "Amaran Keselamatan";
+}
+
+@section Styles {
+    <link href="~/Content/Dashboard.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/SecurityAlert.css" rel="stylesheet" type="text/css" />
+    
+}
+
+<div class="container-fluid py-4">
+    <div class="mb-4">
+        <a href="@Url.Action("Activity", "Dashboard")" class="text-muted text-decoration-none small">
+            <ion-icon name="arrow-back-outline"></ion-icon> Kembali ke Aktiviti
+        </a>
+    </div>
+
+    <div class="alert-detail-card p-5 shadow-sm">
+        <div class="d-flex justify-content-between align-items-start mb-4">
+            <div>
+                <span class="severity-badge text-uppercase">Tahap Risiko: @ViewBag.Severity</span>
+                <h2 class="fw-bold mt-3">@ViewBag.AlertTitle</h2>
+                <p class="text-muted small">Diterbitkan pada: @ViewBag.AlertDate oleh Pasukan Keselamatan KenalPhishing</p>
+            </div>
+            <ion-icon name="warning" class="text-danger" style="font-size: 4rem;"></ion-icon>
+        </div>
+
+        <hr>
+
+        <div class="alert-body mt-4 text-dark" style="line-height: 1.8;">
+            <h5 class="fw-bold mb-3">Ringkasan Ancaman</h5>
+            <p>Sejak kebelakangan ini, ramai rakyat Malaysia menerima SMS yang mendakwa akaun bank mereka telah disekat. Mesej ini mengandungi pautan (link) yang akan membawa mangsa ke laman web perbankan palsu yang nampak sangat <b>identikal</b> dengan yang asal.</p>
+
+            <!-- Visual Contoh Scam -->
+            <div class="scam-example-box my-5 text-center">
+                <h6 class="fw-bold mb-3 text-muted">Contoh Mesej Phishing:</h6>
+                <div class="bg-white p-3 shadow-sm rounded-4 d-inline-block text-start border" style="max-width: 300px;">
+                    <p class="mb-0 small"><b>RM0.00:</b> Maybank: Akaun anda telah disekat. Sila sahkan identiti anda di <span class="text-primary">https://maybank2u-verify.net</span> dalam masa 2 jam.</p>
+                </div>
+                <p class="mt-3 small text-danger fw-bold">DILARANG KLIK PAUTAN DI ATAS!</p>
+            </div>
+
+            <h5 class="fw-bold mb-3">Apa Yang Perlu Anda Lakukan?</h5>
+            <ul class="mb-5">
+                <li><b>Jangan Panik:</b> Bank tidak akan menghantar amaran penutupan akaun melalui SMS dengan pautan pendek.</li>
+                <li><b>Semak URL:</b> Laman web rasmi bank selalunya berakhir dengan <b>.com.my</b>, bukan .net atau .top.</li>
+                <li><b>Lapor Segera:</b> Jika anda menerima mesej ini, sila buat laporan di bahagian <a href="@Url.Action("ReportScam", "Dashboard")">Lapor Scam</a> dalam sistem ini.</li>
+            </ul>
+        </div>
+
+        <div class="alert-footer p-4 bg-light rounded-4 d-flex justify-content-between align-items-center">
+            <span class="small fw-bold">Adakah maklumat ini berguna?</span>
+            <div>
+                <button class="btn btn-outline-dark btn-sm rounded-pill px-4 me-2">Tidak</button>
+                <button class="btn btn-dark btn-sm rounded-pill px-4">Ya, Terima Kasih</button>
+            </div>
+        </div>
+    </div>
+</div>

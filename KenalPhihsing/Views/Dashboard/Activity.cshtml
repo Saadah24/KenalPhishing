@@ -1,0 +1,117 @@
+﻿@{
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+    ViewBag.Title = "Aktiviti Terkini";
+}
+
+@section Styles {
+    <link href="~/Content/Activity.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/Dashboard.css" rel="stylesheet" type="text/css" />
+}
+
+<div class="container-fluid">
+    <div class="row g-4">
+        <!-- BAHAGIAN KIRI: Senarai Aktiviti -->
+        <div class="col-lg-8">
+            <div class="mb-4">
+                <h2 class="fw-bold">Aktiviti Terkini</h2>
+                <p class="text-muted">Senarai penuh aktiviti dan pencapaian anda sepanjang minggu ini.</p>
+            </div>
+
+            <div class="activity-timeline">
+                <!-- Aktiviti 1: Sijil -->
+                <div class="activity-card-wide p-4 mb-3 d-flex align-items-center gap-4 shadow-sm">
+                    <div class="activity-icon-box bg-success-light">
+                        <ion-icon name="document-text-outline" class="text-success"></ion-icon>
+                    </div>
+                    <div class="flex-grow-1">
+                        <div class="d-flex justify-content-between">
+                            <h6 class="fw-bold mb-1">Sijil Diperoleh</h6>
+                            <span class="extra-small text-muted">11 Januari 2025</span>
+                        </div>
+                        <p class="small mb-0">Anda telah menamatkan modul "Asas Phishing".</p>
+                        <a href="@Url.Action("Certificates", "Dashboard")" class="btn btn-dark btn-sm rounded-pill mt-2 px-3">Lihat Sijil</a>
+                    </div>
+                </div>
+
+                <!-- Aktiviti 2: Amaran Keselamatan -->
+                <div class="activity-card-wide p-4 mb-3 d-flex align-items-center gap-4 shadow-sm">
+                    <div class="activity-icon-box bg-danger-light">
+                        <ion-icon name="warning-outline" class="text-danger"></ion-icon>
+                    </div>
+                    <div class="flex-grow-1">
+                        <div class="d-flex justify-content-between">
+                            <h6 class="fw-bold mb-1">Amaran Keselamatan</h6>
+                            <span class="extra-small text-muted">9 Januari 2025</span>
+                        </div>
+                        <p class="small mb-0">Taktik Scam terbaru dikesan melibatkan SMS bank palsu.</p>
+                        <a href="@Url.Action("SecurityAlert", "Dashboard")" class="btn btn-dark btn-sm rounded-pill mt-2 px-3 text-decoration-none">
+                            Baca Amaran
+                        </a>
+
+                    </div>
+                </div>
+
+                <!-- Aktiviti 3: Simulasi -->
+                <div class="activity-card-wide p-4 mb-3 d-flex align-items-center gap-4 shadow-sm">
+                    <div class="activity-icon-box bg-primary-light">
+                        <ion-icon name="game-controller-outline" class="text-primary"></ion-icon>
+                    </div>
+                    <div class="flex-grow-1">
+                        <div class="d-flex justify-content-between">
+                            <h6 class="fw-bold mb-1">Simulasi Mingguan</h6>
+                            <span class="extra-small text-muted">8 Januari 2025</span>
+                        </div>
+                        <p class="small mb-0">Simulasi phishing emel mingguan untuk latihan.</p>
+                        <a href="@Url.Action("Simulation", "Dashboard")" class="btn btn-dark btn-sm rounded-pill mt-2 px-3">Mulakan Simulasi</a>
+                    </div>
+                </div>
+
+                <!-- Aktiviti 4: Modul Berjalan -->
+                <div class="activity-card-wide p-4 mb-3 d-flex align-items-center gap-4 shadow-sm">
+                    <div class="activity-icon-box bg-warning-light">
+                        <ion-icon name="book-outline" class="text-warning"></ion-icon>
+                    </div>
+                    <div class="flex-grow-1">
+                        <div class="d-flex justify-content-between">
+                            <h6 class="fw-bold mb-1">Modul Sedang Berjalan</h6>
+                            <span class="extra-small text-muted">7 Januari 2025</span>
+                        </div>
+                        <p class="small mb-0">Anda telah menyiapkan 50% modul "Taktik Psikologi".</p>
+                        <button class="btn btn-dark btn-sm rounded-pill mt-2 px-3">Sambung Modul</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pagination (Mock) -->
+            <div class="text-center mt-4">
+                <nav>
+                    <ul class="pagination pagination-sm justify-content-center">
+                        <li class="page-item active"><a class="page-link bg-dark border-dark" href="#">1</a></li>
+                        <li class="page-item"><a class="page-link text-dark" href="#">2</a></li>
+                        <li class="page-item"><a class="page-link text-dark" href="#">Seterusnya</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+
+        <!-- BAHAGIAN KANAN: Ringkasan Widget -->
+        <div class="col-lg-4">
+            <div class="calendar-sidebar-card p-4 mb-4 shadow-sm text-center bg-white rounded-4">
+                <h6 class="fw-bold mb-3">Jadual Latihan</h6>
+                <div class="mini-calendar-placeholder mt-3"></div>
+            </div>
+
+            <div class="summary-stats-box p-4 shadow-sm bg-white rounded-4">
+                <h6 class="fw-bold mb-4">Ringkasan Pencapaian</h6>
+                <div class="stat-item p-3 mb-3 border rounded-3 d-flex justify-content-between align-items-center">
+                    <span class="small fw-bold">3 Sijil Diperoleh</span>
+                    <ion-icon name="ribbon" class="text-warning fs-4"></ion-icon>
+                </div>
+                <div class="stat-item p-3 border rounded-3 d-flex justify-content-between align-items-center">
+                    <span class="small fw-bold">2 Modul Selesai</span>
+                    <ion-icon name="checkmark-circle" class="text-success fs-4"></ion-icon>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

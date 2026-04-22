@@ -1,0 +1,100 @@
+﻿/* Container */
+.quiz-container, .result-container {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+/* Quiz Card */
+.quiz-card, .result-card {
+    background-color: #d1d1d1;
+    border-radius: 30px;
+    color: #000;
+}
+
+/* Options Styling */
+.options-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.option-item {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+
+    .option-item input {
+        display: none;
+    }
+/* Sorok radio buton asal */
+
+.option-label {
+    background-color: #fff;
+    width: 100%;
+    padding: 15px 25px;
+    border-radius: 12px;
+    border: 2px solid transparent;
+    transition: 0.2s;
+    font-size: 0.95rem;
+}
+
+.option-item:hover .option-label {
+    background-color: #f0f0f0;
+}
+
+.option-item input:checked + .option-label {
+    border-color: #000;
+    background-color: #000;
+    color: #fff;
+}
+
+/* Result Page Widgets */
+.stat-summary-card, .tips-summary-card {
+    background-color: #fff;
+    border-radius: 20px;
+}
+
+.result-card h2 span {
+    color: #2ecc71;
+}
+
+.extra-small {
+    font-size: 0.75rem;
+}
+
+
+.bg-light-grey {
+    background-color: #d1d1d1;
+}
+
+.option-container {
+    display: block;
+    position: relative;
+    cursor: pointer;
+    background: white;
+    padding: 15px 20px;
+    border-radius: 12px;
+    border: 2px solid transparent;
+    transition: 0.3s;
+}
+
+    .option-container input {
+        margin-right: 15px;
+    }
+
+    .option-container:hover {
+        background: #f0f0f0;
+    }
+
+    /* Style when selected */
+    .option-container:has(input:checked) {
+        border-color: #000;
+        background: #eef2f3;
+        font-weight: bold;
+    }
+
+.result-card {
+    max-width: 700px;
+    margin: 0 auto;
+}

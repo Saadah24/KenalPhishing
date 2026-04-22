@@ -1,0 +1,45 @@
+﻿b.selection-card {
+    border-radius: 40px;
+    color: #fff;
+    min-height: 450px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border: none;
+}
+
+/* Hover effect: kad akan membesar sikit */
+.selection-card:hover {
+    transform: translateY(-15px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+}
+
+/* Warna Gradient untuk Simulasi (Pink-ish/Orange) */
+.simulation-card {
+    background: linear-gradient(135deg, #FF9A9E 0%, #FAD0C4 99%, #FAD0C4 100%);
+}
+
+/* Warna Gradient untuk Kuiz (Blue-ish) */
+.quiz-card {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+.visual-icon {
+    font-size: 8rem;
+    filter: drop-shadow(0 10px 10px rgba(0,0,0,0.1));
+}
+
+.btn-selection {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    min-width: 180px;
+    font-size: 1.1rem;
+    color: #333 !important;
+}
+
+    .btn-selection:hover {
+        background-color: #000;
+        color: #fff !important;
+    }

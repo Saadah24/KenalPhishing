@@ -1,0 +1,188 @@
+﻿.settings-container {
+    max-width: 1000px;
+}
+
+.settings-card {
+    background-color: #ffffff; /* Kotak putih bersih */
+    border-radius: 20px;
+    border: 1px solid #eee;
+}
+
+.settings-input {
+    background-color: #f8f9fa;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 10px 15px;
+}
+
+    .settings-input:focus {
+        background-color: #fff;
+        border-color: #f7b731;
+        box-shadow: none;
+    }
+
+.form-switch .form-check-input {
+    width: 3em;
+    height: 1.5em;
+    cursor: pointer;
+}
+
+    .form-switch .form-check-input:checked {
+        background-color: #f7b731;
+        border-color: #f7b731;
+    }
+
+.extra-small {
+    font-size: 0.75rem;
+}
+
+/* Container untuk input dan ikon mata */
+.password-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+    /* Pastikan input tidak bertindih dengan butang mata */
+    .password-wrapper .settings-input {
+        padding-right: 45px;
+        width: 100%;
+    }
+
+/* Butang mata di dalam input */
+.toggle-password {
+    position: absolute;
+    right: 15px;
+    background: none;
+    border: none;
+    color: #888;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+    .toggle-password:hover {
+        color: #f7b731; /* Tukar warna kuning bila hover */
+    }
+
+    .toggle-password:focus {
+        outline: none;
+    }
+
+/* Modal Pop-up Custom */
+.modal-custom {
+    background-color: #d1d1d1; /* Ikuti prototaip kelabu anda */
+    border-radius: 30px;
+}
+
+.dashboard-body {
+    background-color: #f8f9fa;
+    color: #333;
+}
+
+/* Sidebar Styles */
+.sidebar {
+    width: 260px;
+    height: 100vh;
+    background-color: #000;
+    color: #fff;
+    position: sticky;
+    top: 0;
+}
+
+    .sidebar .nav-link {
+        color: #aaa;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 15px;
+        border-radius: 10px;
+    }
+
+        .sidebar .nav-link.active, .sidebar .nav-link:hover {
+            color: #fff;
+            background-color: #333;
+        }
+
+.btn-logout {
+    background-color: #222;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+}
+
+/* Dashboard UI Components */
+.welcome-card {
+    background-color: #fff;
+    border-radius: 20px;
+}
+
+.status-card {
+    background-color: #d1d1d1;
+    border-radius: 15px;
+}
+
+.graph-card, .calendar-card, .activity-card {
+    background-color: #fff;
+    border-radius: 20px;
+}
+
+.dashboard-header .search-box {
+    background: #fff;
+    padding: 8px 15px;
+    border-radius: 50px;
+    border: 1px solid #ddd;
+    display: flex;
+    align-items: center;
+    width: 300px;
+}
+
+.search-box input {
+    border: none;
+    outline: none;
+    margin-left: 10px;
+    width: 100%;
+}
+
+.avatar-sm {
+    width: 35px;
+    height: 35px;
+    background: #ddd;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+/* Placeholders */
+.mock-graph {
+    height: 200px;
+    background: #fdfdfd;
+    border: 1px dashed #ccc;
+    border-radius: 15px;
+}
+
+.extra-small {
+    font-size: 0.75rem;
+}
+
+.user-profile-nav a:hover {
+    opacity: 0.8;
+}
+
+.avatar-sm {
+    width: 35px;
+    height: 35px;
+    background: #eee;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.2s;
+}
+
+    .avatar-sm:hover {
+        background: #ddd;
+    }

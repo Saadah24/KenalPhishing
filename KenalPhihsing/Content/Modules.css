@@ -1,0 +1,190 @@
+﻿/* Sidebar Indicator Themes */
+.elder-theme {
+    background-color: #AED6F1;
+    color: #1B4F72;
+}
+
+.adult-theme {
+    background-color: #f7b731;
+    color: #000;
+}
+
+.kid-theme {
+    background-color: #A3E4D7;
+    color: #0E6251;
+}
+
+.cat-icon-box {
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+}
+
+/* Module Items */
+.module-item-v2 {
+    background-color: #fff;
+    border-radius: 20px;
+    border: 1px solid #eee;
+    transition: 0.3s;
+}
+
+    .module-item-v2:hover {
+        transform: translateX(10px);
+        background-color: #fafafa;
+    }
+
+.mod-thumb {
+    width: 150px;
+    height: 100px;
+    border-radius: 12px;
+    flex-shrink: 0;
+}
+
+.bg-blue {
+    background: linear-gradient(45deg, #3498db, #85c1e9);
+}
+
+.bg-gold {
+    background: linear-gradient(45deg, #f1c40f, #f7dc6f);
+}
+
+.bg-green {
+    background: linear-gradient(45deg, #2ecc71, #82e0aa);
+}
+
+/* Sidebar Widgets */
+.stats-sidebar-card, .calendar-sidebar-card, .category-status-card {
+    background-color: #fff;
+    border-radius: 20px;
+}
+
+.user-avatar-placeholder {
+    width: 45px;
+    height: 45px;
+    background: #ddd;
+    border-radius: 50%;
+}
+
+.extra-small {
+    font-size: 0.75rem;
+}
+
+.mini-calendar-placeholder {
+    height: 150px;
+    background: #fdfdfd;
+    border: 1px dashed #ccc;
+    border-radius: 10px;
+}
+
+
+.dashboard-body {
+    background-color: #f8f9fa;
+    color: #333;
+}
+
+/* Sidebar Styles */
+.sidebar {
+    width: 260px;
+    height: 100vh;
+    background-color: #000;
+    color: #fff;
+    position: sticky;
+    top: 0;
+}
+
+    .sidebar .nav-link {
+        color: #aaa;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 15px;
+        border-radius: 10px;
+    }
+
+        .sidebar .nav-link.active, .sidebar .nav-link:hover {
+            color: #fff;
+            background-color: #333;
+        }
+
+.btn-logout {
+    background-color: #222;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+}
+
+/* Dashboard UI Components */
+.welcome-card {
+    background-color: #fff;
+    border-radius: 20px;
+}
+
+.status-card {
+    background-color: #d1d1d1;
+    border-radius: 15px;
+}
+
+.graph-card, .calendar-card, .activity-card {
+    background-color: #fff;
+    border-radius: 20px;
+}
+
+.dashboard-header .search-box {
+    background: #fff;
+    padding: 8px 15px;
+    border-radius: 50px;
+    border: 1px solid #ddd;
+    display: flex;
+    align-items: center;
+    width: 300px;
+}
+
+.search-box input {
+    border: none;
+    outline: none;
+    margin-left: 10px;
+    width: 100%;
+}
+
+.avatar-sm {
+    width: 35px;
+    height: 35px;
+    background: #ddd;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+/* Placeholders */
+.mock-graph {
+    height: 200px;
+    background: #fdfdfd;
+    border: 1px dashed #ccc;
+    border-radius: 15px;
+}
+
+.extra-small {
+    font-size: 0.75rem;
+}
+
+.user-profile-nav a:hover {
+    opacity: 0.8;
+}
+
+.avatar-sm {
+    width: 35px;
+    height: 35px;
+    background: #eee;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.2s;
+}
+
+    .avatar-sm:hover {
+        background: #ddd;
+    }
