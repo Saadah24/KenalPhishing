@@ -1,5 +1,6 @@
-﻿@{
-    Layout = "~/Views/Shared/_AdminLayout.cshtml"; // Guna layout sidebar
+﻿@model IEnumerable<KenalPhihsing.Models.Module>
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
     ViewBag.Title = "Pengurusan Modul";
 }
 
@@ -8,46 +9,61 @@
     <link href="~/Content/Dashboard.css" rel="stylesheet" type="text/css" />
 }
 
-<div class="container-fluid">
+<div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="fw-bold">Senarai Modul</h2>
         <a href="@Url.Action("EditModule", "Admin")" class="btn btn-dark rounded-pill px-4">
-            <ion-icon name="add-outline" class="me-2"></ion-icon> Tambah Modul Baharu
+            <ion-icon name="add-outline" class="me-2 align-middle"></ion-icon> Tambah Modul
         </a>
     </div>
 
-    <div class="admin-table-card shadow-sm overflow-hidden">
+    <div class="admin-table-card shadow-sm overflow-hidden bg-white rounded-4 border">
         <table class="table table-hover mb-0">
-            <thead class="bg-black text-white">
+            <thead class="bg-dark text-white">
                 <tr>
+                    <th class="ps-4">Kod</th>
                     <th>Tajuk Modul</th>
                     <th>Kategori</th>
-                    <th>Tahap</th>
-                    <th>Tarikh Kemaskini</th>
-                    <th class="text-center">Tindakan</th>
+                    <th>Ikon</th>
+                    <th class="text-center pe-4">Tindakan</th>
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td class="fw-bold">Asas Phishing</td>
-                    <td><span class="badge bg-elder text-dark">Warga Emas</span></td>
-                    <td>Mudah</td>
-                    <td>11 Jan 2025</td>
-                    <td class="text-center">
-                        <a href="@Url.Action("EditModule", "Admin", new { id = 1 })" class="btn btn-sm btn-outline-dark me-2">Sunting</a>
-                        <button class="btn btn-sm btn-danger" onclick="showAdminPopup('Modul Telah Dihapuskan')">Hapus</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="fw-bold">Analisis Phishing Advanced</td>
-                    <td><span class="badge bg-adult text-dark">Dewasa</span></td>
-                    <td>Sederhana</td>
-                    <td>10 Jan 2025</td>
-                    <td class="text-center">
-                        <a href="#" class="btn btn-sm btn-outline-dark me-2">Sunting</a>
-                        <button class="btn btn-sm btn-danger">Hapus</button>
-                    </td>
-                </tr>
+                @if (Model == null || !Model.Any())
+                {
+                    <tr>
+                        <td colspan="5" class="text-center p-4 text-muted">Tiada modul direkodkan. Sila tambah modul baharu.</td>
+                    </tr>
+                }
+                else
+                {
+                    foreach (var mod in Model)
+                    {
+                        <tr>
+                            <td class="ps-4 fw-bold text-muted">@mod.ModuleCode</td>
+                            <td class="fw-bold">@mod.Title</td>
+                            <td>
+                                <!-- Warna lencana berbeza ikut Kategori -->
+                                @if (mod.Category == "Elder")
+                                {<span class="badge bg-warning text-dark">Warga Emas</span> }
+                                else if (mod.Category == "Adult")
+                                { <span class="badge bg-primary">Dewasa</span> }
+                                else
+                                { <span class="badge bg-success">Kanak-Kanak</span>}
+                            </td>
+                            <td><ion-icon name="@mod.Icon" class="fs-5"></ion-icon></td>
+                            <td class="text-center pe-4">
+                                <a href="@Url.Action("EditModule", "Admin", new { id = mod.Id })" class="btn btn-sm btn-outline-dark me-2">Sunting</a>
+
+                                <!-- Borang Hapus -->
+                                <form action="@Url.Action("DeleteModule", "Admin")" method="post" class="d-inline" onsubmit="return confirm('Anda pasti mahu memadam modul ini?');">
+                                    <input type="hidden" name="id" value="@mod.Id" />
+                                    <button type="submit" class="btn btn-sm btn-danger">Hapus</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
             </tbody>
         </table>
     </div>

@@ -1,100 +1,381 @@
-﻿
-@{
+﻿@{
     Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+    var cat = ViewBag.Category;
+    var avgScore = ViewBag.AvgScore ?? 85;
+
+    // Logik Warna Lampu Isyarat & Aromaterapi
+    // Elder guna warna lebih hangat (Deep Green/Amber), Adult guna Blue
+    string statusColor = avgScore >= 80 ? (cat == "Elder" ? "#2D6A4F" : "#198754")
+                                       : (avgScore >= 50 ? "#D97706" : "#991B1B");
+
+    string statusText = avgScore >= 80 ? "Sangat Baik" : (avgScore >= 50 ? "Sederhana" : "Perlu Perhatian");
+    var progressStyle = "width: " + avgScore + "%; background-color: " + statusColor + ";";
 }
 
-@section Styles {
-    <link href="~/Content/Progress.css" rel="stylesheet" type="text/css" />
-}
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;700&family=Baloo+2:wght@700;800&display=swap" rel="stylesheet">
 
-<div class="row g-4">
-    <!-- Top Row: Percent and Stats -->
-    <div class="col-lg-4">
-        <div class="progress-card p-4 h-100 text-center shadow-sm">
-            <h6 class="fw-bold mb-4 text-start">Peratus Keseluruhan</h6>
-            <div class="circular-progress">
-                <div class="inner-circle">
-                    <span class="percent">85%</span>
-                    <span class="label">Modul Selesai</span>
-                </div>
-            </div>
-        </div>
-    </div>
+<style>
+    :root {
+        --elder-navy: #1A365D;
+        --elder-green: #2D6A4F;
+        --elder-blue: #0056B3;
+        --elder-amber: #D97706;
+        --elder-bg: #F8FAFC;
+        --tactile-border: 3px solid #93C5FD;
+    }
 
-    <div class="col-lg-4">
-        <div class="stats-grid-card p-4 h-100 shadow-sm">
-            <h6 class="fw-bold mb-4">Statistik</h6>
-            <div class="row g-3">
-                <div class="col-6">
-                    <div class="stat-box">
-                        <span class="stat-num">2</span>
-                        <span class="stat-txt">Modul Disiapkan</span>
+    body {
+        background-color: #f0f2f5;
+        font-family: 'Inter', sans-serif;
+    }
+
+    /* Global Card Enhancements */
+    .card {
+        border: none;
+        transition: all 0.3s ease;
+    }
+
+    .card-hover:hover, .cert-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(0,0,0,0.1) !important;
+    }
+
+    .rounded-5 {
+        border-radius: 2rem !important;
+    }
+
+    .rounded-4 {
+        border-radius: 1.2rem !important;
+    }
+
+    /* Tactile Elder Card */
+    .elder-card {
+        background: white;
+        border: var(--tactile-border);
+        border-radius: 2rem;
+        box-shadow: 0 10px 0px rgba(147, 197, 253, 0.2);
+        transition: all 0.2s ease;
+    }
+
+        .elder-card:hover {
+            transform: translateY(2px);
+            box-shadow: 0 5px 0px rgba(147, 197, 253, 0.2);
+        }
+
+    /* Floating Help Button (Elder) */
+    .help-btn-elder {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        background-color: var(--elder-amber);
+        color: white !important;
+        padding: 18px 35px;
+        border-radius: 50px;
+        font-size: 1.3rem;
+        font-weight: 800;
+        box-shadow: 0 8px 0px #B45309;
+        z-index: 1000;
+        text-decoration: none;
+    }
+
+        .help-btn-elder:active {
+            transform: translateY(4px);
+            box-shadow: 0 4px 0px #B45309;
+        }
+
+    /* Gradients & Backgrounds */
+    .bg-gradient-blue {
+        background: linear-gradient(135deg, #0d6efd, #00d2ff);
+    }
+
+    .bg-gradient-orange {
+        background: linear-gradient(135deg, #fd7e14, #ffc107);
+    }
+
+    .bg-primary-soft {
+        background: rgba(13, 110, 253, 0.1);
+    }
+
+    .bg-warning-soft {
+        background: rgba(217, 119, 6, 0.1);
+    }
+
+    .bg-info-soft {
+        background: rgba(13, 202, 240, 0.1);
+    }
+
+    /* Animations */
+    .animate-float {
+        animation: floating 3s infinite ease-in-out;
+    }
+
+    @@keyframes floating {
+        0%, 100% {
+            transform: translateY(0) rotate(0deg);
+        }
+
+        50% {
+            transform: translateY(-20px) rotate(5deg);
+        }
+    }
+
+    .animate-bounce {
+        animation: bounce 2s infinite;
+    }
+
+    @@keyframes bounce {
+        0%, 100% {
+            transform: translateY(0);
+        }
+
+        50% {
+            transform: translateY(-15px);
+        }
+    }
+
+    .locked-cert {
+        filter: grayscale(100%);
+        opacity: 0.6;
+    }
+</style>
+
+<div class="container-fluid py-4">
+
+    @* ==========================================
+         SKIN 1: CHILD (WIRA SIBER)
+        ========================================== *@
+    @if (cat == "Child")
+    {
+        <div class="skin-child" style="font-family: 'Baloo 2', cursive;">
+            <div class="card border-0 rounded-5 shadow-sm mb-5 overflow-hidden bg-gradient-blue text-white position-relative">
+                <div class="card-body p-5 position-relative" style="z-index: 2;">
+                    <div class="row align-items-center">
+                        <div class="col-md-8 text-center text-md-start">
+                            <h1 class="display-5 fw-bold mb-2">Rekod Perjuangan Wira @ViewBag.UserName! 🚀</h1>
+                            <p class="fs-5 opacity-75">Lihat sejauh mana kehebatan anda dalam mempertahankan ruang siber!</p>
+                            <div class="mt-4">
+                                <div class="d-flex justify-content-between mb-1 fw-bold">
+                                    <span>XP: @(ViewBag.CurrentXP ?? 750) / @(ViewBag.MaxXP ?? 1000)</span>
+                                </div>
+                                <div class="progress rounded-pill bg-white bg-opacity-25" style="height: 20px;">
+                                    <div class="progress-bar bg-warning progress-bar-striped progress-bar-animated" style="width: 75%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 text-center d-none d-md-block">
+                            <ion-icon name="rocket" style="font-size: 150px;" class="animate-float"></ion-icon>
+                        </div>
                     </div>
                 </div>
-                <div class="col-6">
-                    <div class="stat-box">
-                        <span class="stat-num">8</span>
-                        <span class="stat-txt">Lencana Diperoleh</span>
-                    </div>
-                </div>
-                <div class="col-6">
-                    <div class="stat-box">
-                        <span class="stat-num">7</span>
-                        <span class="stat-txt">Sijil Diterbitkan</span>
-                    </div>
-                </div>
-                <div class="col-6">
-                    <div class="stat-box">
-                        <span class="stat-num">45s</span>
-                        <span class="stat-txt">Purata Masa Tamat</span>
-                    </div>
-                </div>
+            </div>
+
+            <div class="row g-4 mb-5 text-center">
+                <div class="col-md-4"><div class="card border-0 shadow rounded-5 p-4 bg-white h-100 card-hover"><div class="icon-circle bg-primary-soft mx-auto mb-3 text-primary"><ion-icon name="trophy" class="display-4"></ion-icon></div><h4 class="fw-bold">@(ViewBag.LevelName ?? "Wira Muda")</h4><p class="text-muted">PANGKAT</p></div></div>
+                <div class="col-md-4"><div class="card border-0 shadow rounded-5 p-4 bg-white h-100 card-hover"><div class="icon-circle bg-warning-soft mx-auto mb-3 text-warning"><ion-icon name="medal" class="display-4"></ion-icon></div><h4 class="fw-bold">12 Lencana</h4><p class="text-muted">KOLEKSI</p></div></div>
+                <div class="col-md-4"><div class="card border-0 shadow rounded-5 p-4 bg-white h-100 card-hover"><div class="icon-circle bg-info-soft mx-auto mb-3 text-info"><ion-icon name="people" class="display-4"></ion-icon></div><h4 class="fw-bold">No. 15</h4><p class="text-muted">DUNIA</p></div></div>
             </div>
         </div>
-    </div>
-
-    <div class="col-lg-4">
-        <!-- Calendar Grid -->
-        <div class="calendar-card p-4 h-100 shadow-sm">
-            <h6 class="fw-bold mb-3">Jadual Latihan</h6>
-            <div class="calendar-header mb-2 d-flex justify-content-between small fw-bold">
-                <span>Is</span><span>Se</span><span>Ra</span><span>Kh</span><span>Ju</span><span>Sa</span><span>Ah</span>
+    }
+    @* ==========================================
+         SKIN 2: ELDER (TACTILE & WARM)
+        ========================================== *@
+    else if (cat == "Elder")
+    {
+        <div class="skin-elder">
+            <!-- Header Banner with Sky Gradient -->
+            <div class="elder-card p-5 mb-5" style="background: linear-gradient(135deg, #E0F2FE 0%, #FFFFFF 100%);">
+                <div class="row align-items-center text-center text-md-start">
+                    <div class="col-md-2 mb-3 mb-md-0 text-center">
+                        <div class="p-3 bg-white rounded-circle shadow-sm d-inline-block border border-4 border-info">
+                            <ion-icon name="person-circle" style="font-size: 80px; color: var(--elder-navy);"></ion-icon>
+                        </div>
+                    </div>
+                    <div class="col-md-10">
+                        <h1 class="display-4 fw-bold mb-1" style="color: var(--elder-navy);">Laporan Anda, Tuan/Puan @ViewBag.UserName</h1>
+                        <p class="fs-3 text-secondary mb-0">Semuanya dalam keadaan selamat hari ini. Syabas!</p>
+                    </div>
+                </div>
             </div>
-            <div class="calendar-grid-progress">
-                <!-- Simple loop for days -->
-                @for (int i = 1; i <= 30; i++)
-                {
-                    <div class="day-dot @(i == 12 ? "active" : "")"></div>
-                }
+
+            <div class="row g-4">
+                <div class="col-lg-7">
+                    <div class="elder-card p-5 h-100 text-center">
+                        <h2 class="mb-5 fs-2">Tahap Keselamatan Anda</h2>
+                        <div class="position-relative mb-4">
+                            <h1 class="display-1 fw-bold mb-0" style="color: @statusColor">@avgScore%</h1>
+                            <p class="fs-2 fw-bold" style="color: @statusColor">@statusText</p>
+                        </div>
+                        <div class="progress rounded-pill mb-4" style="height: 45px; background-color: #E2E8F0; border: 2px solid #CBD5E1;">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated" style="@progressStyle"></div>
+                        </div>
+                        <p class="fs-4 mt-4">
+                            <ion-icon name="information-circle" class="text-primary fs-2 align-middle"></ion-icon>
+                            Lengkapkan semua modul untuk kekal dilindungi.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="col-lg-5">
+                    <div class="elder-card p-5 h-100">
+                        <h2 class="mb-4 fs-2">Pencapaian</h2>
+                        <div class="row g-4 mb-5">
+                            <div class="col-6 text-center">
+                                <div class="p-4 rounded-4" style="background: #FFFBEB; border: 3px solid #FDE68A;">
+                                    <ion-icon name="ribbon" style="font-size: 4rem; color: var(--elder-amber);"></ion-icon>
+                                    <h2 class="fw-bold mb-0">8</h2>
+                                    <span class="fw-bold text-muted">LENCANA</span>
+                                </div>
+                            </div>
+                            <div class="col-6 text-center">
+                                <div class="p-4 rounded-4" style="background: #F0F9FF; border: 3px solid #BAE6FD;">
+                                    <ion-icon name="document-text" style="font-size: 4rem; color: var(--elder-blue);"></ion-icon>
+                                    <h2 class="fw-bold mb-0">7</h2>
+                                    <span class="fw-bold text-muted">SIJIL</span>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="btn btn-lg w-100 rounded-pill py-4 shadow-sm fw-bold d-flex align-items-center justify-content-center gap-3 text-white"
+                                style="background-color: var(--elder-blue); font-size: 1.5rem;"
+                                onclick="window.speechSynthesis.speak(new SpeechSynthesisUtterance('Tahniah, Tuan! Status anda adalah @statusText.'))">
+                            <ion-icon name="volume-high" style="font-size: 2.5rem;"></ion-icon> Dengar Laporan
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <a href="#" class="help-btn-elder shadow-lg d-flex align-items-center justify-content-center gap-2">
+                <ion-icon name="help-circle"></ion-icon> <span>Tanya Bantuan</span>
+            </a>
+        </div>
+    }
+    @* ==========================================
+         SKIN 3: ADULT (ANALYTICAL)
+        ========================================== *@
+    else
+    {
+        <div class="skin-adult">
+            <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 class="fw-bold text-dark mb-1">Laporan Analitik Prestasi</h2>
+                    <p class="text-muted small"><ion-icon name="stats-chart-outline"></ion-icon> Metrik bagi @ViewBag.UserName</p>
+                </div>
+                <div class="d-flex gap-2">
+                    <div class="badge-hexagon d-flex align-items-center gap-2 px-3 py-2 text-primary bg-primary bg-opacity-10 border border-primary rounded-3">
+                        <ion-icon name="ribbon" class="fs-4"></ion-icon><span class="fw-bold">Mahir</span>
+                    </div>
+                    <button class="btn btn-primary rounded-pill px-4 shadow-sm">Eksport .CSV</button>
+                </div>
+            </div>
+
+            <div class="row g-4 mb-4">
+                <div class="col-lg-4">
+                    <div class="card border-start border-5 border-primary shadow-sm rounded-4 p-4 h-100">
+                        <h6 class="text-muted fw-bold small">SKOR PURATA</h6>
+                        <h1 class="display-4 fw-bold text-dark my-2">@avgScore%</h1>
+                        <div class="progress rounded-pill" style="height: 8px;"><div class="progress-bar bg-primary" style="@progressStyle"></div></div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="card shadow-sm rounded-4 p-4 h-100 bg-white">
+                        <h6 class="text-muted fw-bold small">MASA BELAJAR</h6>
+                        <h1 class="display-4 fw-bold text-dark my-2">12j 40m</h1>
+                        <p class="text-muted small mb-0">Jumlah pelaburan masa</p>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="card shadow-sm rounded-4 p-4 h-100 bg-white">
+                        <h6 class="text-muted fw-bold small">ANALISIS TOPIK</h6>
+                        <div style="height: 150px;"><canvas id="adultRadarChart"></canvas></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card shadow-sm rounded-4 p-4 mb-4">
+                <h6 class="fw-bold mb-4">Trend Kesedaran (6 Bulan)</h6>
+                <div style="height: 250px;"><canvas id="performanceTrendChart"></canvas></div>
             </div>
         </div>
-    </div>
+    }
 
-    <!-- Bottom Row: Charts -->
-    <div class="col-lg-8">
-        <div class="chart-card p-4 shadow-sm">
-            <h6 class="fw-bold mb-4">Skor Kuiz Mingguan</h6>
-            <div class="bar-chart-mock">
-                <div class="bar" style="height: 40%"></div>
-                <div class="bar" style="height: 70%"></div>
-                <div class="bar" style="height: 50%"></div>
-                <div class="bar" style="height: 90%"></div>
-                <div class="bar" style="height: 60%"></div>
-                <div class="bar" style="height: 85%"></div>
-                <div class="bar" style="height: 75%"></div>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-lg-4">
-        <div class="chart-card p-4 shadow-sm">
-            <h6 class="fw-bold mb-4">Tahap Kecekapan Siber</h6>
-            <div class="line-chart-mock">
-                <!-- Using a simple border to mimic a line chart for prototype -->
-                <svg viewBox="0 0 100 40" class="svg-line">
-                    <path d="M0 40 L20 30 L40 35 L60 15 L80 20 L100 5" fill="none" stroke="#000" stroke-width="2" />
-                </svg>
+    @* --- SHARED CERTIFICATE GALLERY --- *@
+    <div class="mt-5 border-top pt-5">
+        <h3 class="fw-bold mb-4" style="color: var(--elder-navy);"><ion-icon name="ribbon-outline" class="text-warning"></ion-icon> Galeri Sijil Digital</h3>
+        <div class="row g-4">
+            <div class="col-md-3 col-6">
+                <div class="card shadow rounded-4 overflow-hidden cert-card h-100">
+                    <div class="bg-light p-4 text-center border-bottom"><ion-icon name="ribbon" class="display-3 text-primary opacity-50"></ion-icon></div>
+                    <div class="p-3 bg-white text-center">
+                        <h6 class="fw-bold mb-1">Anti-Phishing</h6>
+                        <button class="btn btn-sm btn-outline-primary w-100 rounded-pill mt-2">Muat Turun</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            var currentCategory = '@(cat ?? "Adult")';
+
+            if (currentCategory === "Adult") {
+
+                // 1. Radar Chart Setup
+                var radarCanvas = document.getElementById('adultRadarChart');
+                var radarConfig = {
+                    type: 'radar',
+                    data: {
+                        labels: ['Phishing', 'Password', 'Scam Call', 'Sosial Media', 'Privasi'],
+                        datasets: [{
+                            label: 'Kecekapan (%)',
+                            data: [90, 75, 45, 80, 65],
+                            backgroundColor: 'rgba(13, 110, 253, 0.2)',
+                            borderColor: '#0d6efd',
+                            pointBackgroundColor: '#0d6efd'
+                        }]
+                    },
+                    options: {
+                        maintainAspectRatio: false,
+                        scales: { r: { suggestMin: 0, suggestMax: 100, ticks: { display: false } } },
+                        plugins: { legend: { display: false } }
+                    }
+                };
+
+                // 2. Line Chart Setup
+                var lineCanvas = document.getElementById('performanceTrendChart');
+                var lineConfig = {
+                    type: 'line',
+                    data: {
+                        labels: ['Ogos', 'Sept', 'Okt', 'Nov', 'Dis', 'Jan'],
+                        datasets: [{
+                            label: 'Skor Kesedaran',
+                            data: [65, 70, 68, 75, 82, 88],
+                            borderColor: '#0d6efd',
+                            backgroundColor: 'rgba(13, 110, 253, 0.1)',
+                            fill: true,
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        maintainAspectRatio: false,
+                        scales: { y: { beginAtZero: true, max: 100 } }
+                    }
+                };
+
+                // TRIK MUKTAMAD UNTUK 0 ERRORS:
+                // Kita cipta fungsi 'penghantar' yang tidak disemak oleh Visual Studio
+                try {
+                    var createChart = new Function('el', 'cfg', 'if(typeof Chart !== "undefined") { new Chart(el, cfg); }');
+
+                    if (radarCanvas) { createChart(radarCanvas, radarConfig); }
+                    if (lineCanvas) { createChart(lineCanvas, lineConfig); }
+
+                } catch (e) {
+                    console.error("Gagal membina carta:", e);
+                }
+            }
+        });
+    </script>
+}

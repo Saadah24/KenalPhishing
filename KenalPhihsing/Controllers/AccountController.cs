@@ -1,4 +1,6 @@
-﻿using System;
+﻿using KenalPhihsing.Data;
+using KenalPhihsing.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -8,60 +10,105 @@ namespace KenalPhihsing.Controllers
 {
     public class AccountController : Controller
     {
-        public ActionResult Login()
-        {
-            return View();
-        }
+        private ApplicationDbContext db = new ApplicationDbContext();
 
-        
-        public ActionResult Register()
-        {
-            return View();
-        }
+        public ActionResult Login() { return View(); }
+        public ActionResult Register() { return View(); }
 
-
-
+        // ==========================================
+        // FUNGSI REGISTER (REAL DATABASE)
+        // ==========================================
         [HttpPost]
-        public ActionResult Register(string fullname, string email, string password, string userCategory, bool isParent = false, string childEmail = "")
+        public ActionResult Register(User model)
         {
-            // 1. Simpan ke database (Sila pautkan emel anak dengan ID user ini jika isParent true)
+            // If Model Binding fails for some reason, we can manually check the checkbox
+            if (Request.Form["IsParent"] == "true")
+            {
+                model.IsParent = true;
+            }
 
-            // 2. Simpan dalam Session untuk kegunaan Dashboard
-            Session["UserID"] = "123";
-            Session["UserName"] = fullname;
-            Session["UserCategory"] = userCategory;
-            Session["IsParent"] = isParent;
-            Session["LinkedChildEmail"] = childEmail;
+            if (ModelState.IsValid)
+            {
+                // 1. Check email
+                var exist = db.Users.Any(u => u.Email == model.Email);
+                if (exist)
+                {
+                    ViewBag.Error = "Emel ini sudah berdaftar.";
+                    return View(model);
+                }
 
-            return RedirectToAction("Index", "Dashboard");
+                // 2. Parent Verification Logic
+                if (model.Category == "Adult" && model.IsParent)
+                {
+                    if (string.IsNullOrEmpty(model.ChildEmail))
+                    {
+                        ViewBag.Error = "Sila masukkan emel anak.";
+                        return View(model);
+                    }
+
+                    // Check if child exists in DB
+                    var child = db.Users.FirstOrDefault(u => u.Email == model.ChildEmail && u.Category == "Child");
+                    if (child == null)
+                    {
+                        ViewBag.Error = "Emel anak tidak dijumpai. Anak mesti daftar dahulu sebagai 'Golongan Muda'.";
+                        return View(model);
+                    }
+                }
+
+                // 3. Save
+                model.Role = "Member";
+                db.Users.Add(model);
+                db.SaveChanges();
+
+                // 4. Session
+                Session["UserID"] = model.Id.ToString();
+                Session["UserName"] = model.FullName;
+                Session["UserEmail"] = model.Email;
+                Session["UserCategory"] = model.Category;
+                Session["IsParent"] = model.IsParent;
+                Session["ChildEmail"] = model.ChildEmail;
+
+                return RedirectToAction("Index", "Dashboard");
+            }
+            return View(model);
         }
 
-
+        // ==========================================
+        // FUNGSI LOGIN (REAL DATABASE)
+        // ==========================================
         [HttpPost]
         public ActionResult Login(string email, string password)
         {
-            // === KREDENTIAL ADMIN SPESIFIK ===
-            if (email == "admin@kenalphishing.com" && password == "Admin123")
+            // 1. Cari user dalam database yang sepadan emel & password
+            var user = db.Users.FirstOrDefault(u => u.Email == email && u.Password == password);
+
+            if (user != null)
             {
-                Session["UserID"] = "ADMIN001";
-                Session["UserName"] = "Super Admin";
-                Session["UserRole"] = "Admin";
-                return RedirectToAction("Index", "Admin");
+                // 2. Simpan data dalam Session
+                Session["UserID"] = user.Id.ToString();
+                Session["UserName"] = user.FullName;
+                Session["UserEmail"] = user.Email;
+                Session["UserCategory"] = user.Category;
+                Session["UserRole"] = user.Role;
+
+                // --- TAMBAH DUA BARIS INI (WAJIB) ---
+                Session["IsParent"] = user.IsParent;
+                Session["ChildEmail"] = user.ChildEmail;
+                // ------------------------------------
+
+                // 3. Redirect ikut Role
+                if (user.Role == "Admin")
+                {
+                    return RedirectToAction("Index", "Admin");
+                }
+                else
+                {
+                    return RedirectToAction("Index", "Dashboard");
+                }
             }
 
-            // === KREDENTIAL USER BIASA (MOCKUP) ===
-            // Sila gantikan dengan logic database kelak
-            if (email == "user@email.com" && password == "user123")
-            {
-                Session["UserID"] = "USER123";
-                Session["UserName"] = "Rabiatul";
-                Session["UserCategory"] = "Adult"; // Ambil dari database
-                Session["UserRole"] = "Member";
-                return RedirectToAction("Index", "Dashboard");
-            }
-
-            // JIKA SALAH
-            ViewBag.Error = "Emel atau Kata Laluan yang anda masukkan adalah salah.";
+            // Jika gagal
+            ViewBag.Error = "Emel atau Kata Laluan salah.";
             return View();
         }
     }

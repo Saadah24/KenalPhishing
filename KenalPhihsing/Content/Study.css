@@ -146,3 +146,83 @@
     .avatar-sm:hover {
         background: #ddd;
     }
+
+.option-btn {
+    transition: all 0.3s ease;
+    border-width: 2px;
+}
+
+    .option-btn:hover {
+        transform: translateY(-2px);
+        background-color: #f0f7ff;
+    }
+
+    .option-btn.disabled {
+        pointer-events: none;
+        opacity: 0.8;
+    }
+
+.fake-browser {
+    border-radius: 15px;
+    overflow: hidden;
+    background: #fff;
+    border: 1px solid #ddd;
+}
+
+.browser-top {
+    background: #f1f1f1;
+    padding: 10px 15px;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #ddd;
+}
+
+.url-bar {
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    flex-grow: 1;
+    margin-left: 15px;
+    padding: 2px 15px;
+    font-size: 0.8rem;
+    color: #666;
+    display: flex;
+    align-items: center;
+}
+
+.hidden-stage {
+    display: none;
+}
+
+.fake-login-card {
+    max-width: 350px;
+    margin: 40px auto;
+    padding: 30px;
+    border-radius: 10px;
+    background: #fff;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.btn-fake-login {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+.adult-theme-btn {
+    background: #ffcc00;
+    color: #000;
+}
+
+.elder-theme-btn {
+    background: #004a99;
+    color: #fff;
+}
+
+.child-theme-btn {
+    background: #ff4747;
+    color: #fff;
+}

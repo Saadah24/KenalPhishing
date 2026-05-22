@@ -1,113 +1,64 @@
-﻿@section Styles {
+﻿@model IEnumerable<KenalPhihsing.Models.Module>
+@section Styles {
     <link href="~/Content/Modules.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/Dashboard.css" rel="stylesheet" type="text/css" />
 }
 
 @{
     ViewBag.Title = "Modul Belajar";
     Layout = "~/Views/Shared/_DashboardLayout.cshtml";
-
-    // ADD THIS LINE BELOW TO FIX THE ERROR
-    string category = ViewBag.UserCategory ?? "Adult";
+    string category = ViewBag.UserCategory ?? Session["UserCategory"]?.ToString() ?? "Adult";
 }
 
-<div class="container-fluid">
-    <!-- Header Page -->
+<div class="container-fluid py-4">
     <div class="dashboard-page-header mb-5">
         <h2 class="fw-bold">Katalog Modul Pembelajaran</h2>
-        <p class="text-muted">Pilih modul untuk mengasah kemahiran mengesan ancaman siber.</p>
+        <p class="text-muted">Pilih modul untuk kategori <b>@category</b>.</p>
     </div>
 
     <div class="row g-4">
-        <!-- Main Column (Modules) -->
         <div class="col-lg-8">
-
-            <!-- Category Indicator (Visual Card) -->
-            <div class="category-status-card mb-4 p-4 shadow-sm">
-                <div class="d-flex align-items-center justify-content-between">
-                    <div class="d-flex align-items-center gap-3">
-                        <div class="cat-icon-box @category.ToLower()-theme">
-                            @if (category == "Elder")
-                            {<ion-icon name="people-outline"></ion-icon> }
-                            else if (category == "Adult")
-                            { <ion-icon name="briefcase-outline"></ion-icon> }
-                            else
-                            { <ion-icon name="happy-outline"></ion-icon>}
-                        </div>
-                        <div>
-                            <h5 class="fw-bold mb-0">Kategori: @category</h5>
-                            <p class="small text-muted mb-0">Kandungan telah disesuaikan untuk anda.</p>
-                        </div>
-                    </div>
-                    <span class="badge bg-success rounded-pill px-3">Modul Aktif</span>
-                </div>
-            </div>
-
-            <!-- List Modul Mengikut Kategori -->
-            <h6 class="fw-bold mb-3">Modul Tersedia</h6>
-
             <div class="module-list">
-                @if (category == "Elder")
+                @if (Model == null || !Model.Any())
                 {
-                    <!-- Modul Warga Emas (Teks Besar & Mudah) -->
-                    <div class="module-item-v2 p-4 mb-3 d-flex align-items-center gap-4">
-                        <div class="mod-thumb bg-blue"></div>
-                        <div class="flex-grow-1">
-                            <h4 class="fw-bold">Kenali Scam Panggilan Telefon</h4>
-                            <p class="text-muted">Belajar cara mudah mengesan suara penipu.</p>
-                            <a href="#" class="btn btn-dark rounded-pill px-5 mt-2">Mula</a>
-                        </div>
-                    </div>
-                }
-                else if (category == "Adult")
-                {
-                    <!-- Modul Dewasa (Profesional & Teknikal) -->
-                    <div class="module-item-v2 p-4 mb-3 d-flex align-items-center gap-4">
-                        <div class="mod-thumb bg-gold"></div>
-                        <div class="flex-grow-1">
-                            <h4 class="fw-bold">Analisis Phishing & Keselamatan Bank</h4>
-                            <p class="text-muted small">Modul mendalam mengenai transaksi digital selamat.</p>
-                            <a href="@Url.Action("Study", "Dashboard")" class="btn btn-dark rounded-pill px-5 mt-2">Mula</a>
-                        </div>
-                    </div>
+                    <div class="alert alert-info">Admin belum memasukkan sebarang modul untuk kategori ini.</div>
                 }
                 else
                 {
-                    <!-- Modul Kanak-Kanak (Warna-warni & Animasi) -->
-                    <div class="module-item-v2 p-4 mb-3 d-flex align-items-center gap-4">
-                        <div class="mod-thumb bg-green"></div>
-                        <div class="flex-grow-1">
-                            <h4 class="fw-bold">Misi Wira Siber: Melawan Phishing Bot</h4>
-                            <p class="text-muted small">Belajar internet selamat sambil bermain!</p>
-                            <a href="#" class="btn btn-dark rounded-pill px-5 mt-2">Mula</a>
+                    <!-- LOOP DINAMIK DARI DATABASE -->
+                    foreach (var mod in Model)
+                    {
+                        <!-- Gunakan mod.ThemeColor yang diset oleh Admin (contoh: #b45309) -->
+                        <div class="card mb-3 border-0 shadow-sm" style="border-radius: 15px; border-left: 6px solid @mod.ThemeColor !important;">
+                            <div class="card-body p-4 d-flex align-items-center justify-content-between">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="rounded-circle d-flex align-items-center justify-content-center text-white" style="background: @mod.ThemeColor; width: 55px; height: 55px; flex-shrink: 0;">
+                                        <ion-icon name="@mod.Icon" style="font-size: 28px;"></ion-icon>
+                                    </div>
+                                    <div>
+                                        <h6 class="fw-bold mb-1" style="color: @mod.ThemeColor">MODUL @mod.ModuleCode</h6>
+                                        <h4 class="fw-bold mb-2">@mod.Title</h4>
+                                        <p class="text-muted small mb-0">@mod.Description</p>
+                                    </div>
+                                </div>
+                                <a href="@Url.Action("Study", "Dashboard", new { id = mod.Id, page = 1 })"
+                                   class="btn rounded-pill px-4 fw-bold text-white shadow-sm" style="background: @mod.ThemeColor">Mula →</a>
+                            </div>
                         </div>
-                    </div>
+                    }
                 }
             </div>
         </div>
 
-        <!-- Right Column (Stats) -->
+        <!-- Kolum Kanan: Status -->
         <div class="col-lg-4">
-            <div class="stats-sidebar-card p-4 mb-4 shadow-sm">
+            <div class="stats-sidebar-card p-4 shadow-sm bg-white rounded-4 border">
                 <h6 class="fw-bold text-center">Status Semasa</h6>
-                <div class="d-flex align-items-center gap-3 mt-4 mb-3">
-                    <div class="user-avatar-placeholder"></div>
-                    <div>
-                        <p class="fw-bold mb-0 small">Pelajar Aktif</p>
-                        <p class="extra-small text-muted mb-0">ID: #KP2025</p>
-                    </div>
-                </div>
                 <hr>
-                <div class="progress-box mb-3">
-                    <p class="extra-small fw-bold mb-1">Status Modul: 10% Selesai</p>
-                    <div class="progress" style="height: 8px;">
-                        <div class="progress-bar bg-warning" style="width: 10%"></div>
-                    </div>
+                <p class="small text-muted text-center">Selesaikan semua modul untuk mendapatkan lencana <b>Pelajar @category</b>.</p>
+                <div class="progress" style="height: 10px;">
+                    <div class="progress-bar bg-success" style="width: 20%"></div>
                 </div>
-            </div>
-
-            <div class="calendar-sidebar-card p-4 shadow-sm text-center">
-                <h6 class="fw-bold">Jadual Latihan</h6>
-                <div class="mini-calendar-placeholder mt-3"></div>
             </div>
         </div>
     </div>

@@ -205,4 +205,123 @@
     color: #666;
 }
 
+/* 2. DEFINISI WARNA DINAMIK (CSS VARIABLES) */
+:root {
+    --primary-color: #0d6efd; /* Default Blue */
+    --sidebar-bg: #ffffff;
+    --bg-soft: #f8f9fa;
+}
 
+/* --- TEMA ADULT (Professional & Sleek) --- */
+.theme-adult {
+    --primary-color: #0061FF; /* Brand Blue */
+    --sidebar-bg: #FFFFFF;
+    --bg-soft: #F4F7FE; /* Very light blue-grey */
+    --text-color: #1B2559; /* Deep Navy Text */
+    --accent-success: #05CD99;
+}
+
+/* --- TEMA ELDER (Trustworthy & High Contrast) --- */
+.theme-elder {
+    --primary-color: #1B4F72; /* Deep Security Blue */
+    --sidebar-bg: #FDFCF0; /* Anti-glare Paper Cream */
+    --bg-soft: #F4F9F4; /* Soft Sage (Restful for eyes) */
+    --text-color: #0A2647; /* Maximum legibility */
+    --accent-warm: #D48806; /* Gold for importance, not "Warning Orange" */
+}
+
+/* --- TEMA CHILD (Vibrant & Gamified) --- */
+.theme-child {
+    --primary-color: #00B0FF; /* Friendly Sky Blue */
+    --sidebar-bg: #FFFFFF;
+    --bg-soft: #E0F7FA; /* Light Cyan */
+    --text-color: #2D3436;
+    --accent-fun: #FF8F00; /* Vivid Orange for Missions */
+}
+
+
+/* 3. APPLY VARIABLES PADA SIDEBAR & HEADER */
+.dashboard-body {
+    background-color: var(--bg-soft);
+    transition: all 0.3s ease;
+}
+
+.sidebar {
+    background-color: var(--sidebar-bg) !important;
+    border-right: 1px solid rgba(0,0,0,0.05);
+    width: 260px;
+    min-height: 100vh;
+}
+
+.sidebar-header h4 {
+    color: var(--primary-color);
+    transition: color 0.3s ease;
+}
+
+.nav-link {
+    color: #64748b;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 20px;
+    border-radius: 12px;
+    transition: all 0.2s;
+}
+
+    .nav-link ion-icon {
+        font-size: 1.2rem;
+    }
+
+    .nav-link:hover {
+        color: var(--primary-color);
+        background: rgba(0,0,0,0.02);
+    }
+
+    .nav-link.active {
+        background-color: var(--primary-color) !important;
+        color: white !important;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+.btn-logout {
+    background: #fee2e2;
+    color: #dc2626;
+    border-radius: 12px;
+    font-weight: 600;
+}
+
+    .btn-logout:hover {
+        background: #fecaca;
+        color: #b91c1c;
+    }
+
+.dashboard-header {
+    background: white;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+.user-name-text {
+    color: var(--primary-color);
+}
+
+
+/* Pastikan sidebar sentiasa di atas content */
+.sidebar {
+    z-index: 9999 !important;
+    position: relative; /* atau fixed jika anda guna fixed sidebar */
+}
+
+/* Pastikan content-wrapper tidak menutup sidebar */
+.content-wrapper {
+    position: relative;
+    z-index: 1;
+}
+
+/* Pastikan Ion Icons boleh diklik */
+ion-icon {
+    pointer-events: none; /* Supaya klik tembus ke tag <a> di belakangnya */
+}
+
+a ion-icon {
+    pointer-events: none;
+}

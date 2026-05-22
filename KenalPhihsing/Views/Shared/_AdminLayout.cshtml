@@ -31,20 +31,27 @@
                     </a>
                 </li>
                 <li class="nav-item mb-2">
-                    <a href="#" class="nav-link">
+                    <a href="@Url.Action("ManageUsers", "Admin")" class="nav-link @(ViewContext.RouteData.Values["action"].ToString() == "ManageUsers" ? "active" : "")">
                         <ion-icon name="people-outline"></ion-icon> <span>Senarai Pelajar</span>
                     </a>
                 </li>
                 <li class="nav-item mb-2">
-                    <a href="#" class="nav-link">
+                    <a href="@Url.Action("ManageAlerts", "Admin")" class="nav-link @(ViewContext.RouteData.Values["action"].ToString() == "ManageAlerts" ? "active" : "")">
+                        <ion-icon name="shield-half-outline"></ion-icon> <span>Urus Amaran</span>
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a href="@Url.Action("ManageReports", "Admin")" class="nav-link @(ViewContext.RouteData.Values["action"].ToString() == "ManageReports" ? "active" : "")">
                         <ion-icon name="megaphone-outline"></ion-icon> <span>Laporan Scam</span>
                     </a>
                 </li>
                 <li class="nav-item mb-2">
-                    <a href="#" class="nav-link">
-                        <ion-icon name="settings-outline"></ion-icon> <span>Konfigurasi Sistem</span>
+                    <!-- Points to the SystemConfig action in the Admin controller -->
+                    <a href="@Url.Action("SystemConfig", "Admin")" class="nav-link @(ViewBag.Title == "Konfigurasi Sistem" ? "active" : "")">
+                        <ion-icon name="settings-outline"></ion-icon>
+                        <span>Konfigurasi Sistem</span>
                     </a>
-                </li>
+                </li>3
             </ul>
             <div class="sidebar-footer p-4 mt-auto">
                 <!-- Log keluar kembali ke Landing Page -->

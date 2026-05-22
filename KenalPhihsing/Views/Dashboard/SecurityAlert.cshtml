@@ -1,60 +1,105 @@
-﻿@{
+﻿@model IEnumerable<KenalPhihsing.Models.SecurityAlert>
+@{
     Layout = "~/Views/Shared/_DashboardLayout.cshtml";
-    ViewBag.Title = "Amaran Keselamatan";
-}
-
-@section Styles {
-    <link href="~/Content/Dashboard.css" rel="stylesheet" type="text/css" />
-    <link href="~/Content/SecurityAlert.css" rel="stylesheet" type="text/css" />
-    
+    ViewBag.Title = "Pusat Ancaman (Radar)";
+    var verifiedReports = (List<KenalPhihsing.Models.ScamReport>)ViewBag.VerifiedReports;
 }
 
 <div class="container-fluid py-4">
-    <div class="mb-4">
-        <a href="@Url.Action("Activity", "Dashboard")" class="text-muted text-decoration-none small">
-            <ion-icon name="arrow-back-outline"></ion-icon> Kembali ke Aktiviti
-        </a>
+    <!-- Header: Search & Status -->
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <div>
+            <h2 class="fw-bold mb-0">Radar Ancaman Siber</h2>
+            <p class="text-muted">Data masa nyata ancaman phishing di Malaysia.</p>
+        </div>
+        <div class="status-indicator px-4 py-2 bg-danger bg-opacity-10 text-danger rounded-pill fw-bold border border-danger">
+            <span class="dot-animation"></span> STATUS: BERISIKO TINGGI
+        </div>
     </div>
 
-    <div class="alert-detail-card p-5 shadow-sm">
-        <div class="d-flex justify-content-between align-items-start mb-4">
-            <div>
-                <span class="severity-badge text-uppercase">Tahap Risiko: @ViewBag.Severity</span>
-                <h2 class="fw-bold mt-3">@ViewBag.AlertTitle</h2>
-                <p class="text-muted small">Diterbitkan pada: @ViewBag.AlertDate oleh Pasukan Keselamatan KenalPhishing</p>
-            </div>
-            <ion-icon name="warning" class="text-danger" style="font-size: 4rem;"></ion-icon>
+    <!-- Search Bar -->
+    <div class="card border-0 shadow-sm rounded-4 p-3 mb-5">
+        <div class="input-group">
+            <span class="input-group-text bg-transparent border-0"><ion-icon name="search-outline" class="fs-4"></ion-icon></span>
+            <input type="text" id="radarSearch" class="form-control border-0" placeholder="Cari nombor telefon, pautan palsu, atau taktik scam...">
         </div>
+    </div>
 
-        <hr>
-
-        <div class="alert-body mt-4 text-dark" style="line-height: 1.8;">
-            <h5 class="fw-bold mb-3">Ringkasan Ancaman</h5>
-            <p>Sejak kebelakangan ini, ramai rakyat Malaysia menerima SMS yang mendakwa akaun bank mereka telah disekat. Mesej ini mengandungi pautan (link) yang akan membawa mangsa ke laman web perbankan palsu yang nampak sangat <b>identikal</b> dengan yang asal.</p>
-
-            <!-- Visual Contoh Scam -->
-            <div class="scam-example-box my-5 text-center">
-                <h6 class="fw-bold mb-3 text-muted">Contoh Mesej Phishing:</h6>
-                <div class="bg-white p-3 shadow-sm rounded-4 d-inline-block text-start border" style="max-width: 300px;">
-                    <p class="mb-0 small"><b>RM0.00:</b> Maybank: Akaun anda telah disekat. Sila sahkan identiti anda di <span class="text-primary">https://maybank2u-verify.net</span> dalam masa 2 jam.</p>
+    <div class="row g-4">
+        <!-- BAHAGIAN KIRI: Amaran Rasmi Admin -->
+        <div class="col-lg-7">
+            <h5 class="fw-bold mb-4">Amaran Rasmi & Analisis</h5>
+            <!-- Bahagian Kiri: Amaran Rasmi -->
+            @foreach (var alert in Model)
+            {
+                <div class="card mb-4 border-0 border-start border-5 @(alert.Severity == "Tinggi" ? "border-danger" : "border-warning") shadow-sm rounded-4 overflow-hidden">
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <span class="badge @(alert.Severity == "Tinggi" ? "bg-danger" : "bg-warning text-dark") text-uppercase">RASMI</span>
+                            <small class="text-muted">@alert.DatePublished.ToString("dd MMM yyyy")</small>
+                        </div>
+                        <h5 class="fw-bold mb-1">@alert.Title</h5>
+                        <div class="mb-3">
+                            <small class="text-danger fw-bold"><ion-icon name="warning-outline"></ion-icon> IDENTITI: @alert.ScammerInfo</small>
+                        </div>
+                        <p class="text-muted small text-truncate">@alert.Content</p>
+                        <a href="@Url.Action("SecurityAlert", "Dashboard", new { id = alert.Id })" class="btn btn-sm btn-dark rounded-pill px-4 mt-2">
+                            Lihat Analisis Penuh
+                        </a>
+                    </div>
                 </div>
-                <p class="mt-3 small text-danger fw-bold">DILARANG KLIK PAUTAN DI ATAS!</p>
-            </div>
-
-            <h5 class="fw-bold mb-3">Apa Yang Perlu Anda Lakukan?</h5>
-            <ul class="mb-5">
-                <li><b>Jangan Panik:</b> Bank tidak akan menghantar amaran penutupan akaun melalui SMS dengan pautan pendek.</li>
-                <li><b>Semak URL:</b> Laman web rasmi bank selalunya berakhir dengan <b>.com.my</b>, bukan .net atau .top.</li>
-                <li><b>Lapor Segera:</b> Jika anda menerima mesej ini, sila buat laporan di bahagian <a href="@Url.Action("ReportScam", "Dashboard")">Lapor Scam</a> dalam sistem ini.</li>
-            </ul>
+            }
         </div>
 
-        <div class="alert-footer p-4 bg-light rounded-4 d-flex justify-content-between align-items-center">
-            <span class="small fw-bold">Adakah maklumat ini berguna?</span>
-            <div>
-                <button class="btn btn-outline-dark btn-sm rounded-pill px-4 me-2">Tidak</button>
-                <button class="btn btn-dark btn-sm rounded-pill px-4">Ya, Terima Kasih</button>
+        <!-- BAHAGIAN KANAN: Laporan Komuniti (Verified) -->
+        <div class="col-lg-5">
+            <h5 class="fw-bold mb-4">Laporan Komuniti Tersah</h5>
+            <div class="list-group rounded-4 shadow-sm border-0">
+                @if (ViewBag.VerifiedReports != null)
+                {
+                    foreach (var report in (IEnumerable<KenalPhihsing.Models.ScamReport>)ViewBag.VerifiedReports)
+                    {
+                        <div class="list-group-item p-3 border-0 border-bottom radar-item">
+                            <div class="d-flex justify-content-between">
+                                <span class="badge bg-success-subtle text-success small mb-2">VERIFIED</span>
+                                <small class="extra-small text-muted">@report.DateReported.ToString("dd/MM")</small>
+                            </div>
+                            <h6 class="fw-bold mb-1 text-danger">@report.ScammerInfo</h6>
+                            <p class="extra-small text-muted mb-0">Taktik: @report.Category</p>
+                        </div>
+                    }
+                }
             </div>
         </div>
     </div>
 </div>
+
+<style>
+    .dot-animation {
+        height: 10px;
+        width: 10px;
+        background-color: #dc3545;
+        border-radius: 50%;
+        display: inline-block;
+        margin-right: 8px;
+        animation: blink 1s infinite;
+    }
+
+    @@keyframes blink {
+        0% {
+            opacity: 1;
+        }
+
+        50% {
+            opacity: 0.3;
+        }
+
+        100% {
+            opacity: 1;
+        }
+    }
+
+    .border-start {
+        border-left-width: 8px !important;
+    }
+</style>

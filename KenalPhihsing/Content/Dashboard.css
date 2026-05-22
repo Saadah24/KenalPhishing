@@ -3,24 +3,7 @@
     color: #333;
 }
 
-/* Sidebar Styles */
-.sidebar {
-    width: 260px;
-    height: 100vh;
-    background-color: #000;
-    color: #fff;
-    position: sticky;
-    top: 0;
-}
 
-    .sidebar .nav-link {
-        color: #aaa;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        padding: 12px 15px;
-        border-radius: 10px;
-    }
 
         .sidebar .nav-link.active, .sidebar .nav-link:hover {
             color: #fff;
@@ -114,3 +97,128 @@
 .sidebar .nav-link:hover .text-danger {
     color: #ff4d4d !important;
 }
+
+:root {
+    /* ELDER — warm amber/gold */
+    --e-primary: #b45309;
+    --e-soft: #fef3c7;
+    --e-text: #44260a;
+    /* ADULT — cool teal/slate */
+    --a-primary: #0e7490;
+    --a-soft: #cffafe;
+    --a-text: #0c4a6e;
+    /* CHILD — vibrant coral/orange */
+    --c-primary: #ea580c;
+    --c-soft: #ffedd5;
+    --c-text: #7c2d12;
+}
+
+/* Base Styles */
+.study-paper {
+    border-radius: 20px;
+    background: #fff;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+}
+
+.simulation-box {
+    border-radius: 15px;
+    padding: 20px;
+    font-family: 'Courier New', monospace;
+    margin: 20px 0;
+    border: 2px dashed var(--theme-primary);
+    background: #f8f9fa;
+}
+
+.tip-box {
+    border-left: 5px solid var(--theme-primary);
+    background: var(--theme-soft);
+    padding: 15px;
+    border-radius: 0 12px 12px 0;
+    margin: 20px 0;
+    color: var(--theme-text);
+}
+
+.qopt-btn {
+    width: 100%;
+    text-align: left;
+    padding: 12px 20px;
+    border-radius: 12px;
+    margin-bottom: 10px;
+    border: 1.5px solid #e2e8f0;
+    background: #fff;
+    transition: 0.2s;
+    font-weight: 600;
+}
+
+    .qopt-btn:hover {
+        border-color: var(--theme-primary);
+        background: var(--theme-soft);
+    }
+
+/* Theme Selectors */
+:root {
+    /* The Brand Anchor */
+    --kenal-blue: #0061FF;
+}
+
+/* --- TEMA ADULT (Professional & Sleek) --- */
+.theme-adult {
+    --primary-color: #0061FF; /* Brand Blue */
+    --sidebar-bg: #FFFFFF;
+    --bg-soft: #F4F7FE; /* Very light blue-grey */
+    --text-color: #1B2559; /* Deep Navy Text */
+    --accent-success: #05CD99;
+}
+
+/* --- TEMA ELDER (Trustworthy & High Contrast) --- */
+.theme-elder {
+    --primary-color: #1B4F72; /* Deep Security Blue */
+    --sidebar-bg: #FDFCF0; /* Anti-glare Paper Cream */
+    --bg-soft: #F4F9F4; /* Soft Sage (Restful for eyes) */
+    --text-color: #0A2647; /* Maximum legibility */
+    --accent-warm: #D48806; /* Gold for importance, not "Warning Orange" */
+}
+
+/* --- TEMA CHILD (Vibrant & Gamified) --- */
+.theme-child {
+    --primary-color: #00B0FF; /* Friendly Sky Blue */
+    --sidebar-bg: #FFFFFF;
+    --bg-soft: #E0F7FA; /* Light Cyan */
+    --text-color: #2D3436;
+    --accent-fun: #FF8F00; /* Vivid Orange for Missions */
+}
+
+/* --- GUNAKAN VARIABLE INI PADA SIDEBAR DAN BUTTON --- */
+/* Sidebar Layout (No Colors Here) */
+.sidebar {
+    width: 260px;
+    height: 100vh;
+    position: sticky;
+    top: 0;
+    /* Remove background-color: #000; */
+    /* Remove color: #fff; */
+    background-color: var(--sidebar-bg) !important; /* Forces the theme variable */
+    color: var(--text-color);
+    border-right: 1px solid rgba(0,0,0,0.05);
+    transition: all 0.3s ease;
+}
+
+/* Ensure the links inside the sidebar also follow the theme */
+.sidebar .nav-link {
+    color: var(--text-color) !important; 
+    opacity: 0.7;
+}
+
+.sidebar .nav-link.active {
+    background-color: var(--primary-color) !important;
+    color: #fff !important; /* Text becomes white when background is primary */
+    opacity: 1;
+}
+
+/* Specific button update to match KenalPhishing brand blue */
+.btn-primary {
+    background-color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+    font-weight: 600;
+}
+

@@ -4,106 +4,169 @@
 }
 
 @section Styles {
-    <!-- Pastikan baris ini ada -->
     <link href="~/Content/ChildReport.css" rel="stylesheet" type="text/css" />
     <link href="~/Content/Dashboard.css" rel="stylesheet" type="text/css" />
+    <style>
+        /* Style untuk 'Empty State' jika tiada anak */
+        .empty-state-card {
+            background: white;
+            border-radius: 30px;
+            padding: 80px 40px;
+            text-align: center;
+            border: 2px dashed #dee2e6;
+            margin-top: 2rem;
+        }
+
+        .empty-state-icon {
+            font-size: 8rem;
+            color: #006aff;
+            opacity: 0.2;
+            margin-bottom: 20px;
+        }
+
+        /* Style tambahan untuk Badge Kid */
+        .badge-kid {
+            background: #eef2ff;
+            color: #4338ca;
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-size: 11px;
+            letter-spacing: 1px;
+        }
+    </style>
 }
 
-<div class="container-fluid">
-    <div class="d-flex justify-content-between align-items-center mb-5">
-        <div>
-            <h2 class="fw-bold">Pantauan Ibu Bapa</h2>
-            <p class="text-muted">Memantau aktiviti siber: <b>@ViewBag.ChildName</b></p>
-        </div>
-        <div class="text-end">
-            <span class="badge-kid fw-bold text-uppercase">Akaun Kanak-Kanak Terpaut</span>
-        </div>
-    </div>
-
-    <div class="row g-4">
-        <!-- RINGKASAN PROFIL ANAK -->
-        <div class="col-lg-4">
-            <div class="child-stat-card p-4 shadow-sm text-center">
-                <div class="avatar-lg bg-light-grey mx-auto mb-3 d-flex align-items-center justify-content-center rounded-circle" style="width:100px; height:100px;">
-                    <ion-icon name="person-outline" style="font-size: 3rem;"></ion-icon>
-                </div>
-                <h4 class="fw-bold mb-1">@ViewBag.ChildName</h4>
-                <p class="small text-muted mb-4">@ViewBag.ChildEmail</p>
-                <hr>
-                <div class="d-flex justify-content-around mt-4">
-                    <div>
-                        <h5 class="fw-bold mb-0">3</h5>
-                        <p class="extra-small text-muted">Modul Siap</p>
+<div class="container-fluid py-4">
+    @if (ViewBag.NoChild == true)
+    {
+        <!-- KEADAAN 1: TIADA ANAK TERPAUT (Empty State Professional) -->
+        <div class="row justify-content-center">
+            <div class="col-lg-7">
+                <div class="empty-state-card shadow-sm">
+                    <ion-icon name="people-outline" class="empty-state-icon"></ion-icon>
+                    <h2 class="fw-bold text-dark">Tiada Akaun Terpaut</h2>
+                    <p class="text-muted fs-5 mb-5">
+                        Anda belum mendaftarkan emel akaun anak untuk dipantau.<br />
+                        Sila hubungkan akaun anak anda untuk melihat kemajuan pembelajaran mereka.
+                    </p>
+                    <div class="d-flex justify-content-center gap-3">
+                        <a href="@Url.Action("Settings", "Dashboard")" class="btn btn-primary btn-lg rounded-pill px-5 fw-bold shadow">
+                            Hubung Sekarang
+                        </a>
+                        <a href="@Url.Action("Index", "Dashboard")" class="btn btn-light btn-lg rounded-pill px-5 fw-bold text-muted">
+                            Kembali
+                        </a>
                     </div>
-                    <div>
-                        <h5 class="fw-bold mb-0">@ViewBag.ChildLastQuiz%</h5>
-                        <p class="extra-small text-muted">Purata Skor</p>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <!-- KEADAAN 2: ANAK SUDAH TERPAUT (Laporan Penuh) -->
+        <div class="d-flex justify-content-between align-items-center mb-5">
+            <div>
+                <h2 class="fw-bold">Pantauan Ibu Bapa</h2>
+                <p class="text-muted">Memantau aktiviti siber: <b class="text-primary">@ViewBag.ChildName</b></p>
+            </div>
+            <div class="text-end">
+                <span class="badge-kid fw-bold text-uppercase">Akaun Kanak-Kanak Terpaut</span>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <!-- RINGKASAN PROFIL ANAK -->
+            <div class="col-lg-4">
+                <div class="card p-4 shadow-sm text-center border-0 rounded-4 bg-white">
+                    <div class="bg-light mx-auto mb-3 d-flex align-items-center justify-content-center rounded-circle" style="width:100px; height:100px;">
+                        <ion-icon name="person" style="font-size: 3rem;" class="text-primary"></ion-icon>
+                    </div>
+                    <h4 class="fw-bold mb-1">@ViewBag.ChildName</h4>
+                    <p class="small text-muted mb-4">@ViewBag.ChildEmail</p>
+                    <hr class="opacity-50">
+                    <div class="d-flex justify-content-around mt-4">
+                        <div>
+                            <h5 class="fw-bold mb-0 text-primary">3</h5>
+                            <p class="extra-small text-muted text-uppercase fw-bold">Modul Siap</p>
+                        </div>
+                        <div>
+                            <h5 class="fw-bold mb-0 text-success">@ViewBag.ChildLastQuiz%</h5>
+                            <p class="extra-small text-muted text-uppercase fw-bold">Purata Skor</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STATISTIK PEMBELAJARAN ANAK -->
+            <div class="col-lg-8">
+                <div class="bg-white p-4 rounded-4 shadow-sm h-100 border-0">
+                    <h6 class="fw-bold mb-4 d-flex align-items-center gap-2">
+                        <ion-icon name="bar-chart-outline" class="text-primary"></ion-icon> Kemajuan Modul Interaktif
+                    </h6>
+
+                    <div class="mb-4 p-3 border rounded-4 bg-light bg-opacity-50">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="small fw-bold">Misi Wira Siber: Melawan Phishing Bot</span>
+                            <span class="badge bg-success rounded-pill px-3">100% Selesai</span>
+                        </div>
+                        <div class="progress rounded-pill" style="height: 10px;">
+                            <div class="progress-bar bg-success" style="width: 100%"></div>
+                        </div>
+                    </div>
+
+                    <div class="mb-4 p-3 border rounded-4 bg-light bg-opacity-50">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="small fw-bold">Stranger Danger: Keselamatan Media Sosial</span>
+                            <span class="small text-primary fw-bold">@ViewBag.ChildProgress% Sedang Belajar</span>
+                        </div>
+                        <div class="progress rounded-pill" style="height: 10px;">
+                            <div class="progress-bar bg-info" style="@(string.Format("width: {0}%;", ViewBag.ChildProgress ?? 0))"></div>
+                        </div>
+                    </div>
+
+                    <div class="p-3 border rounded-4 bg-light">
+                        <h6 class="small fw-bold mb-3 d-flex align-items-center gap-2">
+                            <ion-icon name="ribbon-outline" class="text-warning"></ion-icon> Lencana Terkini Diterima:
+                        </h6>
+                        <div class="d-flex gap-2">
+                            <span class="badge bg-dark rounded-pill px-3">Cyber Hero 2025</span>
+                            <span class="badge bg-warning text-dark rounded-pill px-3">Phishing Spotter</span>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- STATISTIK PEMBELAJARAN ANAK -->
-        <div class="col-lg-8">
-            <div class="bg-white p-4 rounded-4 shadow-sm h-100">
-                <h6 class="fw-bold mb-4">Kemajuan Modul Interaktif</h6>
-
-                <div class="mb-4 p-3 border rounded-3">
-                    <div class="d-flex justify-content-between mb-2">
-                        <span class="small fw-bold">Misi Wira Siber: Melawan Phishing Bot</span>
-                        <span class="small text-success fw-bold">100% Selesai</span>
-                    </div>
-                    <div class="progress" style="height: 10px;">
-                        <div class="progress-bar bg-success" style="width: 100%"></div>
-                    </div>
-                </div>
-
-                <div class="mb-4 p-3 border rounded-3">
-                    <div class="d-flex justify-content-between mb-2">
-                        <span class="small fw-bold">Stranger Danger: Keselamatan Media Sosial</span>
-                        <span class="small text-info fw-bold">@ViewBag.ChildProgress% Sedang Belajar</span>
-                    </div>
-                    <div class="progress" style="height: 10px;">
-                        <div class="progress-bar bg-info" style="width: @ViewBag.ChildProgress%"></div>
-                    </div>
-                </div>
-
-                <div class="p-3 border rounded-3 bg-light">
-                    <h6 class="small fw-bold mb-3"><ion-icon name="ribbon-outline" class="me-2"></ion-icon>Lencana Terkini Diterima:</h6>
-                    <div class="d-flex gap-2">
-                        <span class="badge bg-dark rounded-pill px-3">Cyber Hero 2025</span>
-                        <span class="badge bg-warning text-dark rounded-pill px-3">Phishing Spotter</span>
-                    </div>
+        <!-- AKTIVITI TERKINI ANAK (Table) -->
+        <div class="mt-4">
+            <div class="bg-white p-4 rounded-4 shadow-sm border-0">
+                <h6 class="fw-bold mb-4 d-flex align-items-center gap-2">
+                    <ion-icon name="list-outline" class="text-primary"></ion-icon> Log Aktiviti Anak
+                </h6>
+                <div class="table-responsive">
+                    <table class="table table-hover small">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="border-0">Tarikh</th>
+                                <th class="border-0">Aktiviti</th>
+                                <th class="border-0">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>12 Jan 2025</td>
+                                <td>Menamatkan Kuiz "Asas Internet Selamat"</td>
+                                <td><span class="text-success fw-bold">Lulus (85%)</span></td>
+                            </tr>
+                            <tr>
+                                <td>11 Jan 2025</td>
+                                <td>Memulakan Simulasi "Stranger Danger"</td>
+                                <td><span class="text-warning fw-bold">Masih Berjalan</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
-    </div>
-
-    <!-- AKTIVITI TERKINI ANAK (Mock Log) -->
-    <div class="mt-4">
-        <div class="bg-white p-4 rounded-4 shadow-sm">
-            <h6 class="fw-bold mb-4">Log Aktiviti Anak</h6>
-            <table class="table table-sm small">
-                <thead class="table-light">
-                    <tr>
-                        <th>Tarikh</th>
-                        <th>Aktiviti</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>12 Jan 2025</td>
-                        <td>Menamatkan Kuiz "Asas Internet Selamat"</td>
-                        <td><span class="text-success fw-bold">Lulus (85%)</span></td>
-                    </tr>
-                    <tr>
-                        <td>11 Jan 2025</td>
-                        <td>Memulakan Simulasi "Stranger Danger"</td>
-                        <td><span class="text-warning fw-bold">Masih Berjalan</span></td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
+    }
 </div>

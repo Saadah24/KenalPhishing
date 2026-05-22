@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\EntityFramework.6.5.2\build\EntityFramework.props" Condition="Exists('..\packages\EntityFramework.6.5.2\build\EntityFramework.props')" />
   <Import Project="..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -45,6 +46,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.5.2\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.5.2\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -125,13 +132,90 @@
     <Compile Include="Controllers\DashboardController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\LearningController.cs" />
+    <Compile Include="Data\ApplicationDbContext.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202605102033586_InitialCreate.cs" />
+    <Compile Include="Migrations\202605102033586_InitialCreate.Designer.cs">
+      <DependentUpon>202605102033586_InitialCreate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202605111529315_InitialCreate1.cs" />
+    <Compile Include="Migrations\202605111529315_InitialCreate1.Designer.cs">
+      <DependentUpon>202605111529315_InitialCreate1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202605111605113_KemaskiniFieldKuizDanSimulasi.cs" />
+    <Compile Include="Migrations\202605111605113_KemaskiniFieldKuizDanSimulasi.Designer.cs">
+      <DependentUpon>202605111605113_KemaskiniFieldKuizDanSimulasi.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202605111941563_TambahPropertiSimType.cs" />
+    <Compile Include="Migrations\202605111941563_TambahPropertiSimType.Designer.cs">
+      <DependentUpon>202605111941563_TambahPropertiSimType.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202605121654590_UpdateUserTable.cs" />
+    <Compile Include="Migrations\202605121654590_UpdateUserTable.Designer.cs">
+      <DependentUpon>202605121654590_UpdateUserTable.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202605121705533_CreateUserTable.cs" />
+    <Compile Include="Migrations\202605121705533_CreateUserTable.Designer.cs">
+      <DependentUpon>202605121705533_CreateUserTable.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202605121801170_AddScamReportTable.cs" />
+    <Compile Include="Migrations\202605121801170_AddScamReportTable.Designer.cs">
+      <DependentUpon>202605121801170_AddScamReportTable.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202605121820253_AddScamReportTable1.cs" />
+    <Compile Include="Migrations\202605121820253_AddScamReportTable1.Designer.cs">
+      <DependentUpon>202605121820253_AddScamReportTable1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202605121844433_AddSecurityAlertTable.cs" />
+    <Compile Include="Migrations\202605121844433_AddSecurityAlertTable.Designer.cs">
+      <DependentUpon>202605121844433_AddSecurityAlertTable.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202605121911088_UpdateSecurityAlert.cs" />
+    <Compile Include="Migrations\202605121911088_UpdateSecurityAlert.Designer.cs">
+      <DependentUpon>202605121911088_UpdateSecurityAlert.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202605141754170_AddParentFeatures.cs" />
+    <Compile Include="Migrations\202605141754170_AddParentFeatures.Designer.cs">
+      <DependentUpon>202605141754170_AddParentFeatures.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202605141804450_AddParentFields.cs" />
+    <Compile Include="Migrations\202605141804450_AddParentFields.Designer.cs">
+      <DependentUpon>202605141804450_AddParentFields.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202605141834319_AddProfilePic.cs" />
+    <Compile Include="Migrations\202605141834319_AddProfilePic.Designer.cs">
+      <DependentUpon>202605141834319_AddProfilePic.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202605141938119_AddLinkedChildColumn.cs" />
+    <Compile Include="Migrations\202605141938119_AddLinkedChildColumn.Designer.cs">
+      <DependentUpon>202605141938119_AddLinkedChildColumn.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202605142009260_AddPhoneToUser.cs" />
+    <Compile Include="Migrations\202605142009260_AddPhoneToUser.Designer.cs">
+      <DependentUpon>202605142009260_AddPhoneToUser.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202605142124176_CreateSystemSettingsTable.cs" />
+    <Compile Include="Migrations\202605142124176_CreateSystemSettingsTable.Designer.cs">
+      <DependentUpon>202605142124176_CreateSystemSettingsTable.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Models\Module.cs" />
+    <Compile Include="Models\ModulePage.cs" />
+    <Compile Include="Models\ModulePageModel.cs" />
+    <Compile Include="Models\ScamReport.cs" />
+    <Compile Include="Models\SecurityAlert.cs" />
+    <Compile Include="Models\SystemSetting.cs" />
+    <Compile Include="Models\User.cs" />
     <Compile Include="Models\UserProgress.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="App_Data\KenalPhishingDB.mdf" />
+    <Content Include="App_Data\KenalPhishingDB_log.ldf">
+      <DependentUpon>KenalPhishingDB.mdf</DependentUpon>
+    </Content>
     <Content Include="Content\Activity.css" />
     <Content Include="Content\Admin.css" />
     <Content Include="Content\Auth.css" />
@@ -205,8 +289,8 @@
     <Content Include="Views\Dashboard\Progress.cshtml" />
     <Content Include="Views\Learning\Explore.cshtml" />
     <Content Include="Views\Dashboard\Modules.cshtml" />
-    <Content Include="Views\Dashboard\Study.cshtml" />
-    <Content Include="Views\Dashboard\Profile.cshtml" />
+    <Content Include="Views\Dashboard\belajar.cshtml" />
+    <Content Include="Views\Dashboard\UserProfile.cshtml" />
     <Content Include="Views\Dashboard\Settings.cshtml" />
     <Content Include="Views\Dashboard\Simulation.cshtml" />
     <Content Include="Views\Dashboard\Quiz.cshtml" />
@@ -225,9 +309,23 @@
     <Content Include="Views\Admin\Index.cshtml" />
     <Content Include="Views\Shared\_AdminLayout.cshtml" />
     <Content Include="Views\Dashboard\SecurityAlert.cshtml" />
+    <Content Include="Views\Dashboard\_DashboardAdult.cshtml" />
+    <Content Include="Views\Dashboard\_DashboardChild.cshtml" />
+    <Content Include="Views\Dashboard\_DashboardElder.cshtml" />
+    <Content Include="Views\Dashboard\Study.cshtml" />
+    <Content Include="Views\Dashboard\FinalResult.cshtml" />
+    <Content Include="Views\Dashboard\_ModuleItem.cshtml" />
+    <Content Include="Views\Admin\EditPage.cshtml" />
+    <Content Include="Views\Admin\ManagePages.cshtml" />
+    <Content Include="Views\Admin\ManageUsers.cshtml" />
+    <Content Include="Views\Admin\ManageReports.cshtml" />
+    <Content Include="Views\Admin\ManageAlerts.cshtml" />
+    <Content Include="Views\Admin\EditAlert.cshtml" />
+    <Content Include="Views\Dashboard\AlertDetail.cshtml" />
+    <Content Include="Views\Admin\SystemConfig.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="App_Data\" />
+    <Folder Include="Views\ModuleViewModel\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap.rtl.min.css.map" />
@@ -255,6 +353,56 @@
     <Content Include="Scripts\bootstrap.bundle.js.map" />
     <Content Include="Scripts\jquery-3.7.0.slim.min.map" />
     <Content Include="Scripts\jquery-3.7.0.min.map" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\202605102033586_InitialCreate.resx">
+      <DependentUpon>202605102033586_InitialCreate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202605111529315_InitialCreate1.resx">
+      <DependentUpon>202605111529315_InitialCreate1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202605111605113_KemaskiniFieldKuizDanSimulasi.resx">
+      <DependentUpon>202605111605113_KemaskiniFieldKuizDanSimulasi.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202605111941563_TambahPropertiSimType.resx">
+      <DependentUpon>202605111941563_TambahPropertiSimType.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202605121654590_UpdateUserTable.resx">
+      <DependentUpon>202605121654590_UpdateUserTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202605121705533_CreateUserTable.resx">
+      <DependentUpon>202605121705533_CreateUserTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202605121801170_AddScamReportTable.resx">
+      <DependentUpon>202605121801170_AddScamReportTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202605121820253_AddScamReportTable1.resx">
+      <DependentUpon>202605121820253_AddScamReportTable1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202605121844433_AddSecurityAlertTable.resx">
+      <DependentUpon>202605121844433_AddSecurityAlertTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202605121911088_UpdateSecurityAlert.resx">
+      <DependentUpon>202605121911088_UpdateSecurityAlert.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202605141754170_AddParentFeatures.resx">
+      <DependentUpon>202605141754170_AddParentFeatures.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202605141804450_AddParentFields.resx">
+      <DependentUpon>202605141804450_AddParentFields.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202605141834319_AddProfilePic.resx">
+      <DependentUpon>202605141834319_AddProfilePic.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202605141938119_AddLinkedChildColumn.resx">
+      <DependentUpon>202605141938119_AddLinkedChildColumn.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202605142009260_AddPhoneToUser.resx">
+      <DependentUpon>202605142009260_AddPhoneToUser.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202605142124176_CreateSystemSettingsTable.resx">
+      <DependentUpon>202605142124176_CreateSystemSettingsTable.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
@@ -295,5 +443,8 @@
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
+    <Error Condition="!Exists('..\packages\EntityFramework.6.5.2\build\EntityFramework.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EntityFramework.6.5.2\build\EntityFramework.props'))" />
+    <Error Condition="!Exists('..\packages\EntityFramework.6.5.2\build\EntityFramework.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EntityFramework.6.5.2\build\EntityFramework.targets'))" />
   </Target>
+  <Import Project="..\packages\EntityFramework.6.5.2\build\EntityFramework.targets" Condition="Exists('..\packages\EntityFramework.6.5.2\build\EntityFramework.targets')" />
 </Project>

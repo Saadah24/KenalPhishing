@@ -1,138 +1,219 @@
-﻿@{
+﻿@model KenalPhihsing.Models.User
+@{
     Layout = "~/Views/Shared/_DashboardLayout.cshtml";
-    ViewBag.Title = "Tetapan";
+    ViewBag.Title = "Tetapan Akaun";
+    string category = Session["UserCategory"]?.ToString() ?? "Adult";
 }
 
-@section Styles {
-    <link href="~/Content/Settings.css" rel="stylesheet" type="text/css" />
-}
+<style>
+    /* Paksa modal ke lapisan paling atas */
+    #confirmDeleteModal {
+        z-index: 99999 !important;
+    }
+    /* Pastikan lapisan gelap duduk di bawah modal */
+    .modal-backdrop {
+        z-index: 99998 !important;
+    }
+</style>
 
-<div class="settings-container">
-    <h2 class="fw-bold mb-4">Tetapan</h2>
 
-    <div class="row g-4">
-        <!-- Kolum Kiri -->
-        <div class="col-lg-6">
-            <!-- Info Peribadi -->
-            <div class="settings-card p-4 mb-4 shadow-sm">
-                <h6 class="fw-bold mb-3">Info Peribadi</h6>
-                <div class="mb-3">
-                    <label class="form-label small">Nama</label>
-                    <input type="text" class="form-control settings-input" value="@ViewBag.UserName">
-                </div>
-                <div class="mb-2">
-                    <label class="form-label small">E-mail</label>
-                    <input type="email" class="form-control settings-input" value="@ViewBag.UserEmail">
-                </div>
+<div class="row g-4">
+    <!-- LEFT: Identity -->
+    <div class="col-lg-4">
+        <div class="card border-0 shadow-sm rounded-4 overflow-hidden h-100">
+            <div class="p-5 text-center bg-dark text-white">
+                <ion-icon name="settings-outline" style="font-size: 5rem; opacity: 0.2;"></ion-icon>
+                <h4 class="fw-bold mt-3">Tetapan</h4>
+                <p class="small opacity-75">Uruskan akaun dan sekuriti anda.</p>
             </div>
-
-            <!-- Kata Laluan (KINI DENGAN FUNGSI SHOW PASSWORD) -->
-            <div class="settings-card p-4 shadow-sm">
-                <h6 class="fw-bold mb-3">Kata Laluan</h6>
-
-                <!-- Kata Laluan Semasa -->
-                <div class="mb-3">
-                    <label class="form-label small">Kata Laluan Semasa</label>
-                    <div class="password-wrapper">
-                        <input type="password" id="currentPwd" class="form-control settings-input" placeholder="••••••••">
-                        <button type="button" class="toggle-password" onclick="togglePassword('currentPwd', 'iconCurrent')">
-                            <ion-icon id="iconCurrent" name="eye-outline"></ion-icon>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Kata Laluan Baharu -->
-                <div class="mb-3">
-                    <label class="form-label small">Kata Laluan Baharu</label>
-                    <div class="password-wrapper">
-                        <input type="password" id="newPwd" class="form-control settings-input" placeholder="Sila Masukkan Kata Laluan Baharu">
-                        <button type="button" class="toggle-password" onclick="togglePassword('newPwd', 'iconNew')">
-                            <ion-icon id="iconNew" name="eye-outline"></ion-icon>
-                        </button>
-                    </div>
-                </div>
-
-                <button class="btn btn-dark rounded-pill px-4 mt-2" data-bs-toggle="modal" data-bs-target="#passwordModal">
-                    Simpan Kata Laluan
+            <div class="list-group list-group-flush p-3">
+                <button class="list-group-item list-group-item-action border-0 rounded-3 active mb-2" data-bs-toggle="pill" data-bs-target="#edit-profile">
+                    <ion-icon name="person-outline" class="me-2"></ion-icon> Kemaskini Profil
                 </button>
-            </div>
-        </div>
+                <button class="list-group-item list-group-item-action border-0 rounded-3 mb-2" data-bs-toggle="pill" data-bs-target="#edit-security">
+                    <ion-icon name="lock-closed-outline" class="me-2"></ion-icon> Kata Laluan
+                </button>
 
-        <!-- Kolum Kanan -->
-        <div class="col-lg-6">
-            <!-- Notifikasi -->
-            <div class="settings-card p-4 mb-4 shadow-sm">
-                <h6 class="fw-bold mb-3">Notifikasi</h6>
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <span class="small">Emel</span>
-                    <div class="form-check form-switch">
-                        <input class="form-check-input" type="checkbox" checked>
-                    </div>
-                </div>
-                <div class="d-flex justify-content-between align-items-center">
-                    <span class="small">Maklumat Notifikasi</span>
-                    <div class="form-check form-switch">
-                        <input class="form-check-input" type="checkbox">
-                    </div>
-                </div>
-            </div>
+                @if (category == "Adult")
+                {
+                    <button class="list-group-item list-group-item-action border-0 rounded-3 mb-2 text-primary" data-bs-toggle="pill" data-bs-target="#link-child">
+                        <ion-icon name="people-outline" class="me-2"></ion-icon> Paut Akaun Anak
+                    </button>
+                }
 
-            <!-- Aksi -->
-            <div class="settings-card p-4 shadow-sm">
-                <h6 class="fw-bold mb-3">Aksi</h6>
-                <p class="extra-small text-muted mb-3">Padamkan akaun anda secara kekal. Data anda tidak boleh dikembalikan selepas ini.</p>
-                <button class="btn btn-danger rounded-pill px-4" data-bs-toggle="modal" data-bs-target="#deleteModal">
-                    Padam Akaun
+                <button class="list-group-item list-group-item-action border-0 rounded-3 text-danger" data-bs-toggle="pill" data-bs-target="#danger-zone">
+                    <ion-icon name="trash-outline" class="me-2"></ion-icon> Padam Akaun
                 </button>
             </div>
         </div>
     </div>
-</div>
 
-<!-- MODAL: Kata Laluan Berjaya (input_file_4 - Setting Password) -->
-<div class="modal fade" id="passwordModal" tabindex="-1">
+    <!-- RIGHT: Forms -->
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm rounded-4 p-4 h-100 tab-content">
+
+            <!-- TAB: EDIT PROFILE -->
+            <div class="tab-pane fade show active" id="edit-profile">
+                <h5 class="fw-bold mb-4">Kemaskini Maklumat Peribadi</h5>
+                @using (Html.BeginForm("UpdateProfile", "Dashboard", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.HiddenFor(m => m.Id)
+                    <div class="row g-3">
+                        <div class="col-md-12 mb-2">
+                            <label class="form-label small fw-bold">Nama Penuh</label>
+                            <input type="text" name="FullName" class="form-control p-3 bg-light border-0" value="@Model.FullName" required>
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            <label class="form-label small fw-bold">E-mel</label>
+                            <input type="email" name="Email" class="form-control p-3 bg-light border-0" value="@Model.Email" required>
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            <label class="form-label small fw-bold">No. Telefon</label>
+                            <input type="text" name="Phone" class="form-control p-3 bg-light border-0" value="@Model.Phone">
+                        </div>
+                        <div class="col-md-12 mb-4">
+                            <label class="form-label small fw-bold">Tukar Gambar Profil</label>
+                            <input type="file" name="ProfileImage" class="form-control">
+                        </div>
+                        <div class="col-12 text-end">
+                            <button type="submit" class="btn btn-primary rounded-pill px-5 fw-bold">Simpan Profil</button>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <!-- TAB: SECURITY -->
+            <div class="tab-pane fade" id="edit-security">
+                <h5 class="fw-bold mb-4">Keselamatan Akaun</h5>
+                @using (Html.BeginForm("ChangePassword", "Dashboard", FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.HiddenFor(m => m.Id)
+                    <div class="row g-3">
+                        <div class="col-md-12 mb-2">
+                            <label class="small fw-bold">Kata Laluan Semasa</label>
+                            <input type="password" name="CurrentPassword" class="form-control p-3 bg-light border-0" required>
+                        </div>
+                        <div class="col-md-12 mb-2">
+                            <label class="small fw-bold">Kata Laluan Baharu</label>
+                            <input type="password" name="NewPassword" class="form-control p-3 bg-light border-0" required>
+                        </div>
+                        <div class="col-md-12 mb-4">
+                            <label class="small fw-bold">Sahkan Kata Laluan Baharu</label>
+                            <input type="password" name="ConfirmPassword" class="form-control p-3 bg-light border-0" required>
+                        </div>
+                        <div class="col-12 text-end">
+                            <button type="submit" class="btn btn-dark rounded-pill px-5 fw-bold">Tukar Kata Laluan</button>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <!-- TAB: LINK CHILD ACCOUNT -->
+            @if (category == "Adult")
+            {
+                <div class="tab-pane fade" id="link-child">
+                    <h5 class="fw-bold mb-3">Pantauan Ibu Bapa</h5>
+                    <p class="text-muted small mb-4">Pautkan akaun anak anda untuk mula memantau kemajuan mereka.</p>
+                    @using (Html.BeginForm("LinkChildAccount", "Dashboard", FormMethod.Post))
+                    {
+                        @Html.AntiForgeryToken()
+                        <div class="mb-4">
+                            <label class="small fw-bold mb-2">E-mel Akaun Anak</label>
+                            <input type="email" name="ChildEmail" class="form-control p-3 bg-light border-0" value="@Session["ChildEmail"]" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary rounded-pill px-5 fw-bold">Pautkan Sekarang</button>
+                    }
+                </div>
+            }
+
+            <!-- TAB: DANGER ZONE -->
+            <div class="tab-pane fade" id="danger-zone">
+                <div class="text-center py-5">
+                    <div class="bg-danger bg-opacity-10 p-4 rounded-circle d-inline-block mb-3">
+                        <ion-icon name="trash-bin-outline" class="text-danger" style="font-size: 4rem;"></ion-icon>
+                    </div>
+                    <h4 class="fw-bold text-danger">Padam Akaun Secara Kekal</h4>
+                    <p class="text-muted px-md-5">Tindakan ini akan memadamkan semua data anda secara kekal.</p>
+                    <button class="btn btn-danger rounded-pill px-5 fw-bold mt-3 shadow"
+                            data-bs-toggle="modal"
+                            data-bs-target="#confirmDeleteModal"
+                            data-bs-container="body">
+                        <!-- TAMBAH INI -->
+                        Mula Proses Pemadaman
+                    </button>
+                </div>
+            </div>
+        </div> <!-- Penutup tab-content -->
+    </div> <!-- Penutup col-lg-8 -->
+</div> <!-- Penutup row g-4 Utama -->
+
+<!-- MODAL: CONFIRM DELETE -->
+<div class="modal fade" id="confirmDeleteModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content text-center p-5 border-0 shadow-lg modal-custom">
-            <div class="modal-body">
-                <h5 class="fw-bold mb-4">Kata Laluan Baharu Disimpan</h5>
-                <button type="button" class="btn btn-dark rounded-pill px-5" data-bs-dismiss="modal">Baik</button>
+        <div class="modal-content border-0 rounded-4 shadow-lg">
+            <div class="modal-header border-0 pt-4 px-4">
+                <h5 class="fw-bold text-dark">Sahkan Pemadaman</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body px-4 pb-4 text-center">
+                <p class="text-muted">Tindakan ini tidak boleh diundur.</p>
+                @using (Html.BeginForm("DeleteAccount", "Dashboard", FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken()
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-danger rounded-pill fw-bold">Ya, Padam Akaun</button>
+                        <button type="button" class="btn btn-light rounded-pill" data-bs-dismiss="modal">Batal</button>
+                    </div>
+                }
             </div>
         </div>
     </div>
 </div>
 
-<!-- MODAL: Akaun Dipadam (input_file_4 - Account) -->
-<div class="modal fade" id="deleteModal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content text-center p-5 border-0 shadow-lg modal-custom">
-            <div class="modal-body">
-                <h5 class="fw-bold mb-4 text-danger">Akaun Anda telah Dipadamkan</h5>
-                <a href="@Url.Action("Index", "Home")" class="btn btn-dark rounded-pill px-5">Baik</a>
-            </div>
-        </div>
-    </div>
-</div>
-
-
+<!-- SCRIPTS: FIX TS ERRORS -->
 @section Scripts {
     <script>
-        function togglePassword(inputId, iconId) {
-            // 1. Ambil input berdasarkan ID yang dihantar (currentPwd atau newPwd)
-            var passwordInput = document.getElementById(inputId);
+        document.addEventListener("DOMContentLoaded", function () {
+            // 1. Ambil data mesej dari server
+            var activeTab = "@TempData["ActiveTab"]";
+            var errMsg = "@TempData["ErrorMessage"]";
+            var successMsg = "@TempData["SuccessMessage"]";
 
-            // 2. Ambil icon berdasarkan ID yang dihantar (iconCurrent atau iconNew)
-            var icon = document.getElementById(iconId);
+            // 2. Papar alert jika ada mesej
+            if (errMsg) { alert(errMsg); }
+            if (successMsg) { alert(successMsg); }
 
-            // Debugging: Lihat di Console (F12) jika function ini dipanggil
-            console.log("Menukar paparan untuk: " + inputId);
+            // 3. LOGIK PENUKARAN TAB (Supaya tidak 'stuck' pada profil jika ada ralat password)
+            if (activeTab) {
+                var targetBtn = document.querySelector('[data-bs-target="#' + activeTab + '"]');
+                var targetPane = document.getElementById(activeTab);
 
-            if (passwordInput.type === "password") {
-                passwordInput.type = "text"; // Tunjukkan password
-                icon.setAttribute("name", "eye-off-outline"); // Tukar ikon ke mata pangkah
-            } else {
-                passwordInput.type = "password"; // Sembunyikan password
-                icon.setAttribute("name", "eye-outline"); // Tukar ikon ke mata biasa
+                var defaultBtn = document.querySelector('[data-bs-target="#edit-profile"]');
+                var defaultPane = document.getElementById('edit-profile');
+
+                if (targetBtn && targetPane && defaultBtn && defaultPane) {
+                    defaultBtn.classList.remove('active');
+                    defaultPane.classList.remove('show', 'active');
+
+                    targetBtn.classList.add('active');
+                    targetPane.classList.add('show', 'active');
+                }
             }
-        }
+        });
+
+
+
+        document.addEventListener("DOMContentLoaded", function () {
+            // Ambil elemen modal
+            var modalElement = document.getElementById('confirmDeleteModal');
+
+            // TAMBAH SEMAKAN INI: Hanya pindahkan jika elemen wujud
+            if (modalElement !== null) {
+                document.body.appendChild(modalElement);
+            }
+        });
+
     </script>
 }

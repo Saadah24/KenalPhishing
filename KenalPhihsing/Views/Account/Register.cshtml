@@ -3,10 +3,17 @@
     Layout = "~/Views/Shared/_AuthLayout.cshtml";
 }
 
+@if (ViewBag.Error != null)
+{
+    <div class="alert alert-danger py-2 small">
+        <ion-icon name="alert-circle-outline" class="me-2"></ion-icon>
+        @ViewBag.Error
+    </div>
+}
+
 @section Styles {
     <link href="~/Content/Auth.css" rel="stylesheet" type="text/css" />
     <style>
-        /* Tambahan style sikit untuk bahagian parent */
         .parent-box {
             background: rgba(255,255,255,0.5);
             border-radius: 15px;
@@ -15,6 +22,10 @@
 
         .extra-small {
             font-size: 0.7rem;
+        }
+        /* Ensure the card looks the same even though we changed div to span */
+        .cat-card {
+            display: block;
         }
     </style>
 }
@@ -33,108 +44,110 @@
         </div>
 
         <form action="@Url.Action("Register", "Account")" method="post" class="mt-4">
-            <!-- Personal Info -->
+            @Html.ValidationSummary(true, "", new { @class = "text-danger small" })
+
             <div class="mb-3 auth-group">
                 <label class="form-label">Nama Penuh</label>
-                <input type="text" name="fullname" class="auth-input" required placeholder="Contoh: Ali Bin Abu">
+                <input type="text" name="FullName" class="auth-input" required placeholder="Contoh: Ali Bin Abu">
             </div>
 
             <div class="mb-3 auth-group">
                 <label class="form-label">Alamat Emel</label>
-                <input type="email" name="email" class="auth-input" required placeholder="nama@emel.com">
+                <input type="email" name="Email" class="auth-input" required placeholder="nama@emel.com">
             </div>
 
-            <!-- CATEGORY SELECTION -->
             <div class="mb-4">
                 <label class="form-label fw-bold mb-3">Pilih Kategori Pembelajaran</label>
                 <div class="category-grid">
-                    <!-- Kanak-Kanak -->
+                    <!-- FIX: Changed <div> to <span> inside <label> to fix HTML warnings -->
                     <label class="cat-option">
-                        <input type="radio" name="userCategory" value="Child" required onclick="toggleParentalOptions(false)">
-                        <div class="cat-card">
+                        <input type="radio" name="Category" value="Child" required onclick="toggleParentalOptions(false)">
+                        <span class="cat-card">
                             <ion-icon name="happy-outline"></ion-icon>
-                            <span class="cat-name">Kanak-Kanak</span>
+                            <span class="cat-name">Golongan Muda</span>
                             <span class="cat-age">7 - 17 Tahun</span>
-                        </div>
+                        </span>
                     </label>
 
-                    <!-- Dewasa -->
                     <label class="cat-option">
-                        <input type="radio" name="userCategory" value="Adult" checked onclick="toggleParentalOptions(true)">
-                        <div class="cat-card">
+                        <input type="radio" name="Category" value="Adult" checked onclick="toggleParentalOptions(true)">
+                        <span class="cat-card">
                             <ion-icon name="laptop-outline"></ion-icon>
                             <span class="cat-name">Dewasa</span>
                             <span class="cat-age">18 - 59 Tahun</span>
-                        </div>
+                        </span>
                     </label>
 
-                    <!-- Warga Emas -->
                     <label class="cat-option">
-                        <input type="radio" name="userCategory" value="Elder" onclick="toggleParentalOptions(false)">
-                        <div class="cat-card">
+                        <input type="radio" name="Category" value="Elder" onclick="toggleParentalOptions(false)">
+                        <span class="cat-card">
                             <ion-icon name="accessibility-outline"></ion-icon>
                             <span class="cat-name">Warga Emas</span>
                             <span class="cat-age">60+ Tahun</span>
-                        </div>
+                        </span>
                     </label>
                 </div>
             </div>
 
-            <!-- BAHAGIAN PANTUAN IBU BAPA (Hanya muncul jika Dewasa dipilih) -->
+            <!-- Bahagian Pantauan Ibu Bapa -->
             <div id="parentSection" class="parent-box p-3 mb-4 shadow-sm">
                 <div class="form-check mb-2">
-                    <input class="form-check-input" type="checkbox" id="isParent" name="isParent" onchange="toggleChildEmail()">
+                    <!-- FIX 1: Change name to "IsParent" and add value="true" -->
+                    <input class="form-check-input" type="checkbox" id="isParent" name="IsParent" value="true" onchange="toggleChildEmail()">
                     <label class="form-check-label small fw-bold" for="isParent">
                         Daftar sebagai Ibu Bapa (Pantau akaun anak)
                     </label>
                 </div>
                 <div id="childEmailGroup" style="display: none;" class="mt-2">
                     <label class="form-label extra-small text-muted mb-1">Masukkan Emel Akaun Anak</label>
-                    <input type="email" name="childEmail" class="auth-input" placeholder="anak@emel.com">
-                    <p class="extra-small text-danger mt-1">*Pastikan anak anda telah mendaftar akaun Kanak-Kanak.</p>
+                    <!-- FIX 2: Change name to "ChildEmail" -->
+                    <input type="email" name="ChildEmail" class="auth-input" placeholder="anak@emel.com">
+                    <p class="extra-small text-danger mt-1">*Pastikan anak anda telah mendaftar akaun Golongan Muda.</p>
                 </div>
             </div>
 
             <div class="mb-4 auth-group">
                 <label class="form-label">Kata Laluan</label>
-                <input type="password" name="password" class="auth-input" required placeholder="••••••••">
+                <!-- FIX: Changed name to "Password" for successful redirection -->
+                <input type="password" name="Password" class="auth-input" required placeholder="••••••••">
             </div>
 
             <div class="text-center mt-5">
                 <button type="submit" class="btn btn-auth w-100">Daftar Sekarang</button>
-                <p class="mt-3 small">
-                    Sudah berdaftar?
-                    <a href="@Url.Action("Login", "Account")" class="auth-link">Log Masuk</a>
-                </p>
+                <p class="mt-3 small">Sudah berdaftar? <a href="@Url.Action("Login", "Account")" class="auth-link">Log Masuk</a></p>
             </div>
         </form>
     </div>
 </div>
 
-<!-- JAVASCRIPT UNTUK LOGIK DINAMIK -->
 <script>
-    // 1. Tunjuk/Sorok Parent Section berdasarkan radio button
-    function toggleParentalOptions(show) {
+    // Setting show = true tells Visual Studio that 'show' is a boolean
+    function toggleParentalOptions(show = true) {
         const section = document.getElementById('parentSection');
-        section.style.display = show ? 'block' : 'none';
+        if (section) {
+            section.style.display = show ? 'block' : 'none';
+        }
 
-        // Reset checkbox jika sorok
-        if(!show) {
-            document.getElementById('isParent').checked = false;
-            toggleChildEmail();
+        if (!show) {
+            const checkbox = document.getElementById('isParent');
+            if (checkbox instanceof HTMLInputElement) {
+                checkbox.checked = false;
+                toggleChildEmail();
+            }
         }
     }
 
-    // 2. Tunjuk/Sorok Input Emel Anak berdasarkan checkbox
     function toggleChildEmail() {
         const checkbox = document.getElementById('isParent');
         const emailGroup = document.getElementById('childEmailGroup');
-        emailGroup.style.display = checkbox.checked ? 'block' : 'none';
+
+        if (checkbox instanceof HTMLInputElement && emailGroup) {
+            emailGroup.style.display = checkbox.checked ? 'block' : 'none';
+        }
     }
 
-    // Jalankan sekali semasa page load
-    window.onload = function() {
-        // Secara default 'Adult' terpilih, jadi kita tunjuk parent section
+    window.onload = function () {
+        // This will call the function with the default value
         toggleParentalOptions(true);
     };
 </script>

@@ -1,80 +1,34 @@
 ﻿@{
-    ViewBag.Title = "Dashboard";
     Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+    ViewBag.Title = "Ringkasan";
+
+    // Logik: Ambil kategori dari Session. Jika tiada, default ke Adult.
+    string category = Session["UserCategory"]?.ToString() ?? "Adult";
 }
 
 @section Styles {
     <link href="~/Content/Dashboard.css" rel="stylesheet" type="text/css" />
+    @if (category == "Child")
+    {
+        <style>
+            .dashboard-body {
+                background-color: #ebfaff !important;
+            }
+        </style>
+}
 }
 
-<div class="row g-4">
-    <!-- Left Column -->
-    <div class="col-lg-8">
-        <!-- Welcome Card -->
-        <div class="welcome-card p-5 mb-4 shadow-sm">
-            <h2 class="fw-bold">Selamat Datang, Rabiatul!</h2>
-            <p class="text-muted">Skor kesedaran siber anda meningkat 15% minggu ini. Teruskan belajar untuk perlindungan maksima.</p>
-        </div>
-
-        <!-- Progress Cards -->
-        <div class="row g-3 mb-4">
-            <div class="col-md-4">
-                <div class="status-card p-4">
-                    <p class="small text-muted mb-1">Asas Phishing</p>
-                    <h5 class="fw-bold">100% Selesai</h5>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="status-card p-4">
-                    <p class="small text-muted mb-1">Taktik Psikologi</p>
-                    <h5 class="fw-bold">80% Selesai</h5>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="status-card p-4">
-                    <p class="small text-muted mb-1">Keselamatan Perbankan</p>
-                    <h5 class="fw-bold text-danger">Belum Mula</h5>
-                </div>
-            </div>
-        </div>
-
-        <!-- Simulation Graph Placeholder -->
-        <div class="graph-card p-4 shadow-sm">
-            <h6 class="fw-bold mb-4">Prestasi Simulasi</h6>
-            <div class="mock-graph">
-                <!-- You can use Chart.js here later -->
-                <p class="text-center text-muted mt-5">Graf Prestasi Mingguan</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- Right Column -->
-    <div class="col-lg-4">
-        <!-- Calendar Placeholder -->
-        <div class="calendar-card p-4 mb-4 shadow-sm text-center">
-            <h6 class="fw-bold">Jadual Latihan</h6>
-            <div class="calendar-placeholder mt-3">
-                <!-- Mock calendar grid -->
-                <div class="d-flex justify-content-between mb-2"><span>Is</span><span>Se</span><span>Ra</span><span>Kh</span><span>Ju</span><span>Sa</span><span>Ah</span></div>
-                <div class="calendar-grid"></div>
-            </div>
-        </div>
-
-        <!-- Recent Activity -->
-        <div class="activity-card p-4 shadow-sm">
-            <h6 class="fw-bold mb-3">Aktiviti Terkini</h6>
-            <div class="activity-item py-2 border-bottom">
-                <p class="mb-0 fw-bold small">Sijil Diperoleh</p>
-                <span class="text-muted extra-small">11 Januari 2025</span>
-            </div>
-            <div class="activity-item py-2 border-bottom">
-                <p class="mb-0 fw-bold small">Amaran Keselamatan</p>
-                <span class="text-muted extra-small">9 Januari 2025</span>
-            </div>
-            <div class="activity-item py-2">
-                <p class="mb-0 fw-bold small">Simulasi Selesai</p>
-                <span class="text-muted extra-small">8 Januari 2025</span>
-            </div>
-        </div>
-    </div>
+<div class="container-fluid py-4">
+    @if (category == "Child")
+    {
+        @Html.Partial("~/Views/Dashboard/_DashboardChild.cshtml")
+    }
+    else if (category == "Elder")
+    {
+        @Html.Partial("~/Views/Dashboard/_DashboardElder.cshtml")
+    }
+    else
+    {
+        @Html.Partial("~/Views/Dashboard/_DashboardAdult.cshtml")
+    }
 </div>

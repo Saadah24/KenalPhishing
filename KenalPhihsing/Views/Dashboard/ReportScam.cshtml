@@ -1,93 +1,89 @@
-﻿@{
+﻿@model KenalPhihsing.Models.ScamReport
+@{
     Layout = "~/Views/Shared/_DashboardLayout.cshtml";
     ViewBag.Title = "Buat Laporan Scam";
 }
 
-@section Styles {
-    <link href="~/Content/Report.css" rel="stylesheet" type="text/css" />
-    <link href="~/Content/Dashboard.css" rel="stylesheet" type="text/css" />
-}
-
-<div class="container-fluid">
+<div class="container-fluid py-4">
     <div class="mb-5">
         <h2 class="fw-bold">Buat Laporan</h2>
-        <p class="text-muted">Trend Scam Terkini: Sila laporkan sebarang cubaan mencurigakan yang anda hadapi.</p>
+        <p class="text-muted">Laporan anda membantu komuniti mengesan trend scam terkini.</p>
     </div>
 
     <div class="row g-4">
-        <!-- BAHAGIAN KIRI: Borang Laporan -->
         <div class="col-lg-7">
-            <div class="report-form-card p-4 shadow-sm">
+            <div class="card p-4 shadow-sm border-0 rounded-4">
                 <h6 class="fw-bold mb-4">Borang Laporan Scam Phishing</h6>
-                <p class="extra-small text-muted mb-4">Lengkapkan borang ini untuk melaporkan kes scam phishing. Untuk bantuan kecemasan, hubungi nombor di sebelah.</p>
 
-                <form>
-                    <div class="mb-4">
-                        <label class="form-label small fw-bold">Pautan / Nombor Telefon Mencurigakan</label>
-                        <input type="text" class="form-control report-input" placeholder="Contoh: https://bank-palsu.com atau 012-XXXXXXX">
+                @if (TempData["Success"] != null)
+                {
+                    <div class="alert alert-success alert-dismissible fade show rounded-4 shadow-sm mb-4" role="alert">
+                        <ion-icon name="checkmark-circle-outline" class="align-middle me-2 fs-4"></ion-icon>
+                        @TempData["Success"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
+
+                @if (TempData["Error"] != null)
+                {
+                    <div class="alert alert-danger alert-dismissible fade show rounded-4 shadow-sm mb-4" role="alert">
+                        <ion-icon name="alert-circle-outline" class="align-middle me-2 fs-4"></ion-icon>
+                        @TempData["Error"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
+
+                @using (Html.BeginForm("SubmitReport", "Dashboard", FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken()
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Kategori Scam</label>
+                        @Html.DropDownListFor(m => m.Category, new SelectList(new[] { "WhatsApp", "SMS", "E-mel", "Panggilan Telefon", "Lain-lain" }), "Pilih Kategori", new { @class = "form-select", required = "required" })
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Pautan / No. Telefon Scammer</label>
+                        @Html.TextBoxFor(m => m.ScammerInfo, new { @class = "form-control", placeholder = "Contoh: https://bank-palsu.com atau 012-XXXXXXX", required = "required" })
                     </div>
 
                     <div class="mb-4">
                         <label class="form-label small fw-bold">Perihal Kes (Kronologi)</label>
-                        <textarea class="form-control report-input" rows="5" placeholder="Sila terangkan bagaimana anda menerima mesej ini..."></textarea>
+                        @Html.TextAreaFor(m => m.Description, new { @class = "form-control", rows = "5", placeholder = "Terangkan bagaimana anda menerima mesej ini...", required = "required" })
+                        @Html.ValidationMessageFor(m => m.Description, "", new { @class = "text-danger small" })
                     </div>
 
-                    <button type="button" class="btn btn-dark rounded-pill px-5 fw-bold" onclick="submitReport()">Hantar Laporan</button>
-                </form>
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger small" })
+
+                    <button type="submit" class="btn btn-dark rounded-pill px-5 fw-bold shadow-sm">Hantar Laporan</button>
+                }
+            </div>
+
+            <!-- DISCLAIMER -->
+            <div class="alert alert-light border mt-4 small rounded-3">
+                <ion-icon name="information-circle-outline" class="align-middle me-1"></ion-icon>
+                <b>Nota:</b> Laporan ini adalah untuk tujuan kesedaran komuniti KenalPhishing sahaja. Untuk tindakan undang-undang, sila hubungi <b>997 (NSRC)</b>.
             </div>
         </div>
 
-        <!-- BAHAGIAN KANAN: Nombor Kecemasan & Tip -->
+  <!-- Sambungan Bahagian Kanan (Hubungi 997) -->
         <div class="col-lg-5">
-            <div class="emergency-card p-4 mb-4 shadow-sm bg-white rounded-4 text-dark">
-                <h6 class="fw-bold mb-4 border-bottom pb-2">Hubungi Nombor Kecemasan</h6>
+            <div class="card bg-danger text-white p-4 shadow-sm border-0 rounded-4 mb-4">
                 <div class="d-flex align-items-center mb-3">
-                    <div class="hotline-icon me-3"><ion-icon name="call"></ion-icon></div>
-                    <div>
-                        <p class="mb-0 small fw-bold">Pusat Respons Scam Kebangsaan: 997</p>
-                        <p class="extra-small text-muted">Hubungi segera jika anda telah menjadi mangsa.</p>
-                    </div>
+                    <ion-icon name="call" class="fs-1 me-3"></ion-icon>
+                    <h5 class="fw-bold mb-0">Kecemasan Scam?</h5>
                 </div>
-                <div class="d-flex align-items-center">
-                    <div class="hotline-icon me-3"><ion-icon name="globe-outline"></ion-icon></div>
-                    <div>
-                        <p class="mb-0 small fw-bold">Suruhanjaya Komunikasi dan Multimedia Malaysia: 1-800-188-030</p>
-                    </div>
-                </div>
+                <p>Jika anda baru sahaja menjadi mangsa transaksi wang, hubungi <b>997</b> (NSRC) dengan segera dalam tempoh 24 jam.</p>
             </div>
 
-            <div class="tips-card p-4 shadow-sm bg-white rounded-4 text-dark border-start border-5 border-warning">
-                <h6 class="fw-bold mb-3"><ion-icon name="bulb-outline" class="me-2"></ion-icon> Tip Keselamatan:</h6>
-                <p class="small mb-0 opacity-75">Sentiasa semak alamat e-mail dan pautan sebelum klik. Jangan kongsikan TAC atau OTP anda kepada sesiapa walaupun mereka menyamar sebagai pegawai bank.</p>
+            <div class="card p-4 shadow-sm border-0 rounded-4">
+                <h6 class="fw-bold mb-3">Tips Melapor</h6>
+                <ul class="small text-muted ps-3">
+                    <li>Sertakan pautan penuh (contoh: bit.ly/xxx).</li>
+                    <li>Nyatakan modus operandi yang digunakan.</li>
+                    <li>Jangan kongsi maklumat peribadi anda di sini.</li>
+                </ul>
             </div>
         </div>
     </div>
 </div>
-
-<!-- POPUP: Laporan Telah Dihantar (input_file_11) -->
-<div class="modal fade" id="reportSuccessModal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content text-center p-5 rounded-4 border-0 shadow-lg" style="background-color: #d1d1d1;">
-            <div class="modal-body">
-                <div class="mb-4">
-                    <ion-icon name="checkmark-done-circle" class="display-1 text-success"></ion-icon>
-                </div>
-                <h4 class="fw-bold mb-4 text-dark">Laporan Telah di Hantar</h4>
-                <p class="small text-muted mb-4">Terima kasih kerana membantu komuniti kami. Kami akan menyemak laporan anda secepat mungkin.</p>
-                <button type="button" class="btn btn-dark rounded-pill px-5" data-bs-dismiss="modal">Baik</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-@section Scripts {
-    <script>
-        function submitReport() {
-            // Pastikan id ini sama tepat dengan id pada div modal anda
-            var modalElement = document.getElementById('reportSuccessModal');
-            var myModal = new bootstrap.Modal(modalElement);
-            myModal.show();
-        }
-    </script>
-}

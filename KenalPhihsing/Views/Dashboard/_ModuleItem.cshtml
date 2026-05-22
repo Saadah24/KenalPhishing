@@ -1,0 +1,20 @@
+﻿@{
+    var cat = ViewData["Cat"]?.ToString();
+    var code = ViewData["Code"]?.ToString();
+    var title = ViewData["Title"]?.ToString();
+    var desc = ViewData["Desc"]?.ToString();
+    var themeColor = cat == "Elder" ? "var(--e-primary)" : (cat == "Adult" ? "var(--a-primary)" : "var(--c-primary)");
+    var themeSoft = cat == "Elder" ? "var(--e-soft)" : (cat == "Adult" ? "var(--a-soft)" : "var(--c-soft)");
+}
+
+<div class="card mb-3 border-0 shadow-sm" style="border-radius: 15px; border-left: 6px solid @themeColor !important;">
+    <div class="card-body p-4 d-flex align-items-center justify-content-between">
+        <div>
+            <h6 class="fw-bold mb-1" style="color: @themeColor">MODUL @code</h6>
+            <h4 class="fw-bold mb-2">@title</h4>
+            <p class="text-muted small mb-0">@desc</p>
+        </div>
+        <a href="@Url.Action("Study", "Dashboard", new { category = cat, module = code, page = 1 })" 
+           class="btn rounded-pill px-4 fw-bold text-white shadow-sm" style="background: @themeColor">Mula →</a>
+    </div>
+</div>

@@ -1,0 +1,355 @@
+﻿<!-- Inside User Dashboard -->
+@{
+    var settings = new KenalPhihsing.Data.ApplicationDbContext().SystemSettings.FirstOrDefault();
+}
+
+@if (settings != null && !string.IsNullOrEmpty(settings.GlobalAnnouncement))
+{
+    <div class="alert alert-info">
+        @settings.GlobalAnnouncement
+    </div>
+}
+
+@{
+    var userName = Session["UserName"] ?? "Abu";
+    var avgScore = ViewBag.AvgScore ?? 85;
+}
+
+<div class="container-fluid py-4 theme-elder-warm">
+
+    <!-- 1. HERO HEADER: Greeting dengan Ikon Ceria -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="elder-hero-card p-5 shadow-sm d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center gap-4">
+                    <div class="icon-circle-lg bg-sunny animate-float">
+                        <ion-icon name="sunny" class="text-white"></ion-icon>
+                    </div>
+                    <div>
+                        <h1 class="display-4 fw-bold mb-1 text-navy">Selamat Pagi, @userName! 👋</h1>
+                        <p class="fs-3 text-muted mb-0">Hari ini adalah hari yang baik untuk belajar.</p>
+                    </div>
+                </div>
+                <div class="d-none d-lg-block">
+                    <div class="user-avatar-wrap shadow-sm">
+                        <ion-icon name="person-circle" class="text-navy" style="font-size: 100px;"></ion-icon>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. QUICK STATS: Ikon sebagai Penunjuk Utama -->
+    <div class="row g-4 mb-5">
+        <div class="col-md-4">
+            <div class="stat-tactile-card shadow-sm bg-white p-4 d-flex align-items-center gap-4">
+                <div class="stat-icon-wrap bg-amber-soft text-amber">
+                    <ion-icon name="medal"></ion-icon>
+                </div>
+                <div>
+                    <h2 class="fw-bold mb-0">8</h2>
+                    <span class="fs-5 text-muted fw-bold text-uppercase">Lencana</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stat-tactile-card shadow-sm bg-white p-4 d-flex align-items-center gap-4 border-active-blue">
+                <div class="stat-icon-wrap bg-blue-soft text-blue">
+                    <ion-icon name="speedometer"></ion-icon>
+                </div>
+                <div>
+                    <h2 class="fw-bold mb-0">@avgScore%</h2>
+                    <span class="fs-5 text-muted fw-bold text-uppercase">Siap</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stat-tactile-card shadow-sm bg-white p-4 d-flex align-items-center gap-4">
+                <div class="stat-icon-wrap bg-green-soft text-green">
+                    <ion-icon name="ribbon"></ion-icon>
+                </div>
+                <div>
+                    <h2 class="fw-bold mb-0">2</h2>
+                    <span class="fs-5 text-muted fw-bold text-uppercase">Sijil</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- 3. MAIN LESSONS: Ikon Besar untuk Sasaran Klik -->
+        <div class="col-lg-8">
+            <div class="card-elder-main p-5 h-100">
+                <div class="d-flex align-items-center gap-3 mb-5 border-bottom pb-4">
+                    <ion-icon name="book" class="text-blue display-5"></ion-icon>
+                    <h2 class="fw-bold m-0 text-navy">Latihan Untuk Anda</h2>
+                </div>
+
+                <div class="d-grid gap-4">
+                    <!-- Lesson 1 -->
+                    <div class="lesson-tactile-row p-4 d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center gap-4">
+                            <div class="lesson-icon-circle bg-blue text-white shadow-blue">
+                                <ion-icon name="call"></ion-icon>
+                            </div>
+                            <div>
+                                <h3 class="fw-bold mb-1">Scam Panggilan</h3>
+                                <p class="fs-4 text-muted mb-0">Kenali suara pemanggil palsu.</p>
+                            </div>
+                        </div>
+                        <a href="#" class="btn-elder-action shadow-blue">
+                            <ion-icon name="play-circle" class="me-2"></ion-icon> Mula
+                        </a>
+                    </div>
+
+                    <!-- Lesson 2 -->
+                    <div class="lesson-tactile-row p-4 d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center gap-4">
+                            <div class="lesson-icon-circle bg-green text-white shadow-green">
+                                <ion-icon name="chatbubble-ellipses"></ion-icon>
+                            </div>
+                            <div>
+                                <h3 class="fw-bold mb-1">Scam Mesej (SMS)</h3>
+                                <p class="fs-4 text-muted mb-0">Waspada pautan yang mencurigakan.</p>
+                            </div>
+                        </div>
+                        <a href="#" class="btn-elder-action shadow-green" style="background-color: var(--e-green);">
+                            <ion-icon name="play-circle" class="me-2"></ion-icon> Mula
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. HELP CARD: Ikon sebagai Penyelamat (Panic Button) -->
+        <div class="col-lg-4">
+            <div class="help-tactile-card p-5 text-center h-100">
+                <div class="mb-4">
+                    <ion-icon name="help-buoy" class="display-1 text-amber animate-pulse"></ion-icon>
+                </div>
+                <h2 class="fw-bold text-navy mb-3">Perlu Bantuan?</h2>
+                <p class="fs-4 text-muted mb-5">Jangan bimbang, pakar kami sedia menjawab soalan anda.</p>
+
+                <div class="phone-display-box p-4 shadow-sm mb-4">
+                    <ion-icon name="call" class="text-blue me-2"></ion-icon>
+                    <a href="tel:1800889999" class="display-6 fw-bold text-navy text-decoration-none">1-800-88-9999</a>
+                </div>
+
+                <button class="btn-elder-voice w-100" onclick="window.speechSynthesis.speak(new SpeechSynthesisUtterance('Jika anda perlukan bantuan, hubungi nombor satu lapan kosong kosong, lapan lapan, sembilan sembilan lapan lapan'))">
+                    <ion-icon name="volume-high" class="fs-2"></ion-icon> Dengar Nombor
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- CSS KHUSUS: PROFESSIONAL ELDER STYLE -->
+<style>
+    :root {
+        --e-navy: #1A365D;
+        --e-blue: #0056B3;
+        --e-green: #2D6A4F;
+        --e-amber: #D97706;
+        --e-bg: #F8FAFC;
+    }
+
+    .theme-elder-warm {
+        background-color: var(--e-bg);
+        font-family: 'Inter', sans-serif;
+    }
+
+    /* Hero Banner */
+    .elder-hero-card {
+        background: linear-gradient(135deg, #E0F2FE 0%, #FFFFFF 100%);
+        border-radius: 30px;
+        border: 3px solid #BAE6FD;
+    }
+
+    .icon-circle-lg {
+        width: 100px;
+        height: 100px;
+        border-radius: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 4rem;
+    }
+
+    .bg-sunny {
+        background: linear-gradient(135deg, #FDE68A, #F59E0B);
+        box-shadow: 0 10px 20px rgba(245, 158, 11, 0.3);
+    }
+
+    /* Stat Cards */
+    .stat-tactile-card {
+        border-radius: 24px;
+        border: 3px solid #E2E8F0;
+        transition: 0.3s;
+    }
+
+    .border-active-blue {
+        border-color: var(--e-blue);
+        background-color: #EFF6FF !important;
+    }
+
+    .stat-icon-wrap {
+        width: 70px;
+        height: 70px;
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+    }
+
+    .bg-amber-soft {
+        background-color: #FFFBEB;
+    }
+
+    .bg-blue-soft {
+        background-color: #E0F2FE;
+    }
+
+    .bg-green-soft {
+        background-color: #DCFCE7;
+    }
+
+    .text-amber {
+        color: var(--e-amber);
+    }
+
+    .text-blue {
+        color: var(--e-blue);
+    }
+
+    .text-green {
+        color: var(--e-green);
+    }
+
+    /* Lesson Rows */
+    .card-elder-main {
+        background: white;
+        border-radius: 35px;
+        border: 3px solid #E2E8F0;
+    }
+
+    .lesson-tactile-row {
+        background: #F8FAFC;
+        border-radius: 24px;
+        border: 3px solid #EDF2F7;
+        transition: all 0.2s ease;
+    }
+
+        .lesson-tactile-row:hover {
+            transform: scale(1.02);
+            background: white;
+            border-color: var(--e-blue);
+        }
+
+    .lesson-icon-circle {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3rem;
+    }
+
+    .bg-blue {
+        background-color: var(--e-blue);
+    }
+
+    .bg-green {
+        background-color: var(--e-green);
+    }
+
+    .shadow-blue {
+        box-shadow: 0 8px 0px #1E40AF;
+    }
+
+    .shadow-green {
+        box-shadow: 0 8px 0px #14532D;
+    }
+
+    /* Buttons */
+    .btn-elder-action {
+        background-color: var(--e-blue);
+        color: white !important;
+        padding: 15px 40px;
+        border-radius: 50px;
+        font-weight: 800;
+        font-size: 1.5rem;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+    }
+
+        .btn-elder-action:active {
+            transform: translateY(4px);
+            box-shadow: 0 4px 0px #1E40AF;
+        }
+
+    /* Help Card */
+    .help-tactile-card {
+        background-color: #FFFBEB;
+        border-radius: 35px;
+        border: 4px solid #FDE68A;
+    }
+
+    .phone-display-box {
+        background: white;
+        border-radius: 20px;
+        border: 3px solid #F59E0B;
+    }
+
+    .btn-elder-voice {
+        background-color: white;
+        border: 3px solid var(--e-blue);
+        color: var(--e-blue);
+        padding: 15px;
+        border-radius: 50px;
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    /* Animations */
+    .animate-float {
+        animation: float 3s infinite ease-in-out;
+    }
+
+    @@keyframes float {
+        0%, 100% {
+            transform: translateY(0);
+        }
+
+        50% {
+            transform: translateY(-10px);
+        }
+    }
+
+    .animate-pulse {
+        animation: pulse 2s infinite;
+    }
+
+    @@keyframes pulse {
+        0% {
+            opacity: 1;
+        }
+
+        50% {
+            opacity: 0.6;
+        }
+
+        100% {
+            opacity: 1;
+        }
+    }
+
+    .text-navy {
+        color: var(--e-navy);
+    }
+</style>

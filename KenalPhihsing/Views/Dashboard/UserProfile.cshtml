@@ -1,0 +1,138 @@
+﻿@{
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+    ViewBag.Title = "Profil Pengguna";
+    string category = Session["UserCategory"]?.ToString() ?? "Adult";
+}
+
+<div class="row g-4">
+
+    <!-- LAJUR KIRI: HANYA GAMBAR PROFIL -->
+    <div class="col-lg-4">
+        <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+            <!-- Kotak Biru: Hanya Gambar & Butang Kamera -->
+            <div class="p-5 text-center" style="background: linear-gradient(135deg, #006aff, #004dc2); min-height: 250px; display: flex; align-items: center; justify-content: center;">
+                <div class="position-relative d-inline-block">
+                    <div class="profile-avatar-wrapper rounded-circle p-1 shadow-sm bg-white">
+                        @{
+                            var pic = Session["UserProfilePic"] != null ? "/Uploads/Profiles/" + Session["UserProfilePic"] : "https://ui-avatars.com/api/?name=" + ViewBag.FullName;
+                        }
+                        <img src="@pic" id="avatarPreview" class="rounded-circle" style="width: 130px; height: 130px; object-fit: cover;" />
+                    </div>
+
+                    <!-- Butang Kamera -->
+                    <label for="imageUpload" class="btn btn-sm btn-light position-absolute bottom-0 end-0 rounded-circle shadow-sm" style="cursor:pointer; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center;">
+                        <ion-icon name="camera" class="fs-5"></ion-icon>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Info Status Akaun di bawah kotak biru -->
+            <div class="card-body p-4">
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-muted small">Status Akaun</span>
+                    <span class="text-success small fw-bold">Aktif</span>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <span class="text-muted small">Kategori</span>
+                    <span class="badge bg-light text-primary rounded-pill">@category</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- LAJUR KANAN: SEMUA MAKLUMAT (STRAIGHT LAYOUT) -->
+    <div class="col-lg-8">
+
+        <!-- KAD 1: KEMASKINI PROFIL -->
+        <div class="card border-0 shadow-sm rounded-4 p-4 mb-4">
+            <h5 class="fw-bold mb-4 d-flex align-items-center gap-2">
+                <ion-icon name="person-outline" class="text-primary"></ion-icon> Kemaskini Maklumat
+            </h5>
+
+            @using (Html.BeginForm("UpdateProfile", "Dashboard", FormMethod.Post, new { enctype = "multipart/form-data" }))
+            {
+                @Html.AntiForgeryToken()
+
+                <input type="hidden" name="Email" value="@ViewBag.Email" />
+
+                <input type="file" id="imageUpload" name="ProfileImage" style="display:none;" onchange="previewImage()">
+
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label text-muted small fw-bold text-uppercase">Nama Penuh</label>
+                        <input type="text" name="FullName" class="form-control bg-light border-0 p-3 rounded-3" value="@ViewBag.FullName">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label text-muted small fw-bold text-uppercase">No. Telefon</label>
+                        <input type="text" name="Phone" class="form-control bg-light border-0 p-3 rounded-3" value="@ViewBag.Phone">
+                    </div>
+                </div>
+
+                <div class="mt-4 text-end">
+                    <button type="submit" class="btn btn-primary rounded-pill px-5 fw-bold shadow-sm">Simpan Perubahan</button>
+                </div>
+            }
+        </div>
+
+        <!-- KAD 2: RINGKASAN & PENCAPAIAN -->
+        <div class="card border-0 shadow-sm rounded-4 p-4">
+            <h5 class="fw-bold mb-4 d-flex align-items-center gap-2">
+                <ion-icon name="ribbon-outline" class="text-primary"></ion-icon> Ringkasan Profil & Lencana
+            </h5>
+
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <label class="text-muted small fw-bold text-uppercase d-block mb-1">E-mel Terpaut</label>
+                    <p class="fs-6 fw-bold text-dark">@ViewBag.Email</p>
+                </div>
+
+                <div class="col-12 mt-2">
+                    <div class="d-flex gap-3">
+                        <div class="text-center p-3 border rounded-4 bg-light bg-opacity-50" style="width: 100px;">
+                            <ion-icon name="ribbon" class="text-warning fs-1"></ion-icon>
+                            <small class="d-block fw-bold mt-1">Wira</small>
+                        </div>
+                        <div class="text-center p-3 border rounded-4 bg-light bg-opacity-50" style="width: 100px;">
+                            <ion-icon name="shield-checkmark" class="text-primary fs-1"></ion-icon>
+                            <small class="d-block fw-bold mt-1">Kebal</small>
+                        </div>
+                    </div>
+                </div>
+
+                @if (Session["IsParent"] != null && (bool)Session["IsParent"] == true)
+                {
+                    <div class="col-12">
+                        <div class="p-3 rounded-4 bg-info bg-opacity-10 border-start border-4 border-info">
+                            <h6 class="fw-bold mb-1 small">Pantauan Ibu Bapa Aktif</h6>
+                            <span class="text-info small">Memantau: <b>@Session["ChildEmail"]</b></span>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <div class="mt-4 pt-3 border-top text-end">
+                <a href="@Url.Action("Settings", "Dashboard")" class="btn btn-sm btn-outline-secondary rounded-pill px-4">
+                    Urus Keselamatan & Kata Laluan →
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function previewImage() {
+        var inputs = document.getElementsByTagName('input');
+        var el = inputs.namedItem('imageUpload');
+
+        if (el && el.files && el.files[0]) {
+            var fr = new FileReader();
+            fr.onload = function (ev) {
+                var image = document.getElementById('avatarPreview');
+                if (image && ev.target && ev.target.result) {
+                    image.setAttribute('src', ev.target.result.toString());
+                }
+            };
+            fr.readAsDataURL(el.files[0]);
+        }
+    }
+</script>

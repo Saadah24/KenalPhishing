@@ -1,4 +1,6 @@
-﻿@{
+﻿@model KenalPhihsing.Models.Module
+
+@{
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
     ViewBag.Title = ViewBag.IsEdit ? "Sunting Modul" : "Tambah Modul";
 }
@@ -8,77 +10,117 @@
     <link href="~/Content/Dashboard.css" rel="stylesheet" type="text/css" />
 }
 
-<div class="container-fluid">
+<div class="container-fluid py-4">
     <div class="row">
         <div class="col-lg-8">
-            <div class="edit-module-card p-5 shadow-sm bg-white rounded-4">
+            <div class="edit-module-card p-5 shadow-sm bg-white rounded-4 border">
                 <h3 class="fw-bold mb-4">@(ViewBag.IsEdit ? "Sunting Modul" : "Tambah Modul Baharu")</h3>
 
-                <form>
-                    <div class="mb-3">
-                        <label class="form-label small fw-bold">Tajuk Modul</label>
-                        <input type="text" class="form-control" placeholder="Contoh: Asas Phishing" value="@(ViewBag.IsEdit ? "Asas Phishing" : "")">
-                    </div>
+                <!-- Mula Form (POST ke action SaveModule) -->
+                @using (Html.BeginForm("SaveModule", "Admin", FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken()
+                    <!-- Hantar ID (Hidden) supaya sistem tahu ini fungsi edit -->
+                    @Html.HiddenFor(m => m.Id)
 
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <label class="form-label small fw-bold">Kategori</label>
-                            <select class="form-select">
-                                <option>Dewasa</option>
-                                <option selected>Warga Emas</option>
-                                <option>Kanak-Kanak</option>
-                            </select>
+                            <label class="form-label small fw-bold">Kod Modul (Cth: Intro / A / B)</label>
+                            @Html.TextBoxFor(m => m.ModuleCode, new { @class = "form-control", placeholder = "A", required = "required" })
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label small fw-bold">Durasi (minit)</label>
-                            <input type="number" class="form-control" value="10">
+                            <label class="form-label small fw-bold">Kategori Sasaran</label>
+                            @Html.DropDownListFor(m => m.Category, new SelectList(new[]
+                            {
+                                new { Value="Elder", Text="Warga Emas" },
+                                new { Value="Adult", Text="Dewasa" },
+                                new { Value="Child", Text="Kanak-Kanak" }
+                            }, "Value", "Text"), "Pilih Kategori", new { @class = "form-select", required = "required" })
                         </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Tajuk Modul</label>
+                        @Html.TextBoxFor(m => m.Title, new { @class = "form-control", placeholder = "Cth: Urusan Digital Selamat", required = "required" })
                     </div>
 
                     <div class="mb-4">
-                        <label class="form-label small fw-bold">Deskripsi Modul</label>
-                        <textarea class="form-control" rows="4">Belajar cara mengenal pasti emel penipuan dan cara melindungi maklumat peribadi anda.</textarea>
+                        <label class="form-label small fw-bold">Deskripsi Ringkas</label>
+                        @Html.TextAreaFor(m => m.Description, new { @class = "form-control", rows = "3", placeholder = "Ringkasan yang akan terpapar di katalog pengguna..." })
                     </div>
 
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Ikon Modul (Ionicon)</label>
+                            @Html.TextBoxFor(m => m.Icon, new { @class = "form-control", placeholder = "Cth: shield-outline" })
+                            <small class="text-muted">Rujuk ionicons.com untuk senarai ikon.</small>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Warna Tema (CSS Color)</label>
+                            @Html.TextBoxFor(m => m.ThemeColor, new { @class = "form-control", placeholder = "Cth: #b45309" })
+                        </div>
+                    </div>
+
+                    <!-- Bahagian butang di EditModule.cshtml -->
                     <div class="d-flex gap-2 border-top pt-4">
-                        <button type="button" class="btn btn-dark rounded-pill px-5" onclick="showAdminPopup('Modul Telah Disimpan')">Simpan Modul</button>
+                        <button type="submit" class="btn btn-dark rounded-pill px-5 fw-bold">
+                            Seterusnya (Urus Kandungan) <ion-icon name="arrow-forward-outline" class="align-middle ms-1"></ion-icon>
+                        </button>
                         <a href="@Url.Action("ManageModules", "Admin")" class="btn btn-outline-dark rounded-pill px-4">Batal</a>
                     </div>
-                </form>
+                }
             </div>
         </div>
 
-        <div class="col-lg-4 text-center">
-            <div class="p-4 bg-light rounded-4 border border-dashed">
-                <h6 class="fw-bold mb-3">Ilustrasi Modul</h6>
-                <div class="img-preview-placeholder mb-3">
-                    <ion-icon name="image-outline" class="display-1 text-muted"></ion-icon>
-                </div>
-                <button class="btn btn-sm btn-outline-dark rounded-pill">Ganti Gambar</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Pop-up Modal (input_file_15) -->
-<div class="modal fade" id="adminActionModal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content text-center p-5 rounded-4 border-0 shadow-lg bg-light-grey">
-            <div class="modal-body">
-                <h4 id="adminActionText" class="fw-bold mb-4"></h4>
-                <button type="button" class="btn btn-dark rounded-pill px-5" data-bs-dismiss="modal">Baik</button>
+        <div class="col-lg-4">
+            <!-- Nota Panduan untuk Admin -->
+            <div class="p-4 bg-light rounded-4 border border-dashed text-start">
+                <h6 class="fw-bold mb-3"><ion-icon name="information-circle-outline" class="align-middle fs-5 text-primary"></ion-icon> Panduan Warna</h6>
+                <p class="small text-muted mb-2">Tuliskan kod warna yang sesuai untuk kategori:</p>
+                <ul class="small text-muted">
+                    <li><b class="text-warning">Warga Emas:</b> #b45309</li>
+                    <li><b class="text-info">Dewasa:</b> #0e7490</li>
+                    <li><b class="text-danger">Kanak-kanak:</b> #ea580c</li>
+                </ul>
+                <hr />
+                <p class="small text-muted mb-0">Selepas mencipta modul, anda perlu menetapkan muka surat (halaman) kandungan untuk modul tersebut dari menu yang berasingan.</p>
             </div>
         </div>
     </div>
 </div>
 
 
-@section Scripts {
-    <script>
-        function showAdminPopup(text) {
-            var myModal = new bootstrap.Modal(document.getElementById('adminActionModal'));
-            document.getElementById('adminActionText').innerText = text;
-            myModal.show();
+
+
+<!-- SCRIPT UNTUK REAL-TIME PREVIEW -->
+<script>
+    function updatePreview() {
+        // 1. Get elements and cast them to specific types to satisfy Visual Studio
+        const inputSender = document.getElementById('inputSender');
+        const inputSubject = document.getElementById('inputSubject');
+        const inputBody = document.getElementById('inputBody');
+        const inputLink = document.getElementById('inputLink');
+
+        const prevSender = document.getElementById('prevSender');
+        const prevSubject = document.getElementById('prevSubject');
+        const prevBody = document.getElementById('prevBody');
+        const prevLink = document.getElementById('prevLink');
+
+        // 2. Perform safety checks before accessing properties
+        if (inputSender instanceof HTMLInputElement && prevSender) {
+            prevSender.innerText = inputSender.value || "Pengirim";
         }
-    </script>
-}
+
+        if (inputSubject instanceof HTMLInputElement && prevSubject) {
+            prevSubject.innerText = inputSubject.value || "Tajuk";
+        }
+
+        if ((inputBody instanceof HTMLTextAreaElement || inputBody instanceof HTMLInputElement) && prevBody) {
+            prevBody.innerText = inputBody.value || "Kandungan mesej...";
+        }
+
+        if (inputLink instanceof HTMLInputElement && prevLink) {
+            prevLink.innerText = inputLink.value || "http://link-palsu.com";
+        }
+    }
+</script>

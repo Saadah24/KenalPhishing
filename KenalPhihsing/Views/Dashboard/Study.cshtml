@@ -1,59 +1,296 @@
-﻿@{
+﻿@model KenalPhihsing.Models.ModulePage
+
+@{
     Layout = "~/Views/Shared/_DashboardLayout.cshtml";
-    ViewBag.Title = "Belajar Modul";
+
+    // Tarik data dari Model (Database)
+    string cat = Model.Module.Category;
+    string modCode = Model.Module.ModuleCode;
+    string themeClass = "theme-" + cat.ToLower();
+
+    int currentPage = Model.PageNumber;
+    int totalPages = ViewBag.TotalPages ?? 1;
+
+    ViewBag.Title = "Belajar: " + modCode;
 }
 
 @section Styles {
-    <link href="~/Content/Study.cshtml.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/Study.css" rel="stylesheet" type="text/css" />
     <link href="~/Content/Dashboard.css" rel="stylesheet" type="text/css" />
 }
 
-<div class="study-container py-4">
-    <!-- Breadcrumb (Navigasi Kecil) -->
-    <nav aria-label="breadcrumb" class="mb-4">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="@Url.Action("Modules", "Dashboard")">Katalog</a></li>
-            <li class="breadcrumb-item active">@ViewBag.ModuleTitle</li>
-        </ol>
-    </nav>
+<div class="study-container py-4 @themeClass">
+    <div class="study-paper shadow-lg mx-auto overflow-hidden" style="max-width: 900px; border-radius: 20px;">
 
-    <!-- Kertas Kandungan -->
-    <div class="study-paper shadow-sm">
-        <div class="study-header border-bottom p-5">
-            <h1 class="fw-bold">@ViewBag.ModuleTitle</h1>
-            <p class="text-muted">Topik 1: Apa itu Phishing?</p>
+        <!-- 1. HEADER DINAMIK -->
+        <div class="p-5 text-center" style="background-color: var(--theme-soft)">
+            <div class="mb-3">
+                <ion-icon name="@Model.Module.Icon" class="display-1" style="color: var(--theme-primary)"></ion-icon>
+            </div>
+            <h1 class="fw-bold" style="color: var(--theme-text)">@Model.Module.Title</h1>
+            <p class="mb-0" style="color: var(--theme-primary); font-weight: 700; letter-spacing: 1px;">
+                <ion-icon name="book-outline" class="align-middle me-1"></ion-icon> HALAMAN @currentPage / @totalPages
+            </p>
         </div>
 
-        <div class="study-body p-5">
-            <div class="content-text fs-5">
-                <p>Phishing adalah salah satu teknik penipuan siber yang paling berkesan dan biasa digunakan oleh penjenayah untuk mendapatkan maklumat sensitif anda.</p>
+        <!-- 2. KANDUNGAN DINAMIK BERDASARKAN JENIS HALAMAN (PAGE TYPE) -->
+        <div class="study-body p-5" style="min-height:450px; color: var(--theme-text)">
 
-                <h4 class="fw-bold mt-5 mb-3">Bagaimana ia berfungsi?</h4>
-                <p>Penipu akan menghantar mesej (emel, SMS, atau panggilan) yang menyamar sebagai pihak berkuasa seperti bank, pejabat pos, atau syarikat kerajaan.</p>
+            <h3 class="fw-bold mb-4">@Model.PageTitle</h3>
 
-                <!-- Gambar/Visual Analisis -->
-                <div class="study-visual-box my-5 p-4 rounded-4 text-center">
-                    <div class="placeholder-img bg-light border rounded-3 mb-3" style="height: 300px;">
-                        <p class="pt-5 mt-5 text-muted">[ Visual: Contoh Emel Palsu vs Benar ]</p>
+            @if (Model.PageType == "Content")
+            {
+                <!-- Teks Biasa -->
+                <div class="fs-5 mb-4">
+                    @Html.Raw(Model.BodyContent)
+                </div>
+            }
+            else if (Model.PageType == "Simulation")
+            {
+                <style>
+                    .fake-browser {
+                        border-radius: 15px;
+                        overflow: hidden;
+                        background: #fff;
+                        border: 1px solid #ddd;
+                    }
+
+                    .browser-top {
+                        background: #f1f1f1;
+                        padding: 10px 15px;
+                        display: flex;
+                        align-items: center;
+                        border-bottom: 1px solid #ddd;
+                    }
+
+                    .url-bar {
+                        background: #fff;
+                        border: 1px solid #ccc;
+                        border-radius: 20px;
+                        flex-grow: 1;
+                        margin-left: 15px;
+                        padding: 2px 15px;
+                        font-size: 0.8rem;
+                        display: flex;
+                        align-items: center;
+                    }
+
+                    .trap-link:hover {
+                        background-color: #fff3f3;
+                        cursor: pointer;
+                    }
+                </style>
+
+                <div class="row g-4">
+                    <div class="col-lg-8">
+                        <div class="fake-browser shadow-lg">
+                            <!-- Browser Header -->
+                            <div class="browser-top">
+                                <div class="d-flex gap-1">
+                                    <span style="width:10px;height:10px;background:#ff5f56;border-radius:50%"></span>
+                                    <span style="width:10px;height:10px;background:#ffbd2e;border-radius:50%"></span>
+                                    <span style="width:10px;height:10px;background:#27c93f;border-radius:50%"></span>
+                                </div>
+                                <div class="url-bar">
+                                    <ion-icon name="lock-closed" class="me-2 text-success"></ion-icon>
+                                    <span id="browserUrl">@Model.SimPhishLink</span>
+                                </div>
+                            </div>
+
+                            <!-- KANDUNGAN MENGIKUT JENIS (SIMTYPE) -->
+                            <div class="p-4" style="min-height: 400px; background: #f8fafc;">
+
+                                @if (Model.SimType == "Financial")
+                                {
+                                    <!-- UI BANK -->
+                                    <div class="text-center mb-4">
+                                        <div class="bg-warning p-3 d-inline-block rounded-circle mb-2"><ion-icon name="business" class="fs-1"></ion-icon></div>
+                                        <h4 class="fw-bold">Selamat Datang ke Perbankan Dalam Talian</h4>
+                                    </div>
+                                    <div class="card p-4 mx-auto border-0 shadow-sm" style="max-width: 350px;">
+                                        <label class="small fw-bold">ID Pengguna</label>
+                                        <input type="text" class="form-control mb-3" value="Azman_88" readonly>
+                                        <label class="small fw-bold">Adakah ini frasa keselamatan anda? <span class="text-danger trap-link" onclick="foundRedFlag()">"KucingGemuk"</span></label>
+                                        <button class="btn btn-warning w-100 mt-3 fw-bold" onclick="foundRedFlag()">Ya, Teruskan</button>
+                                    </div>
+                                }
+                                else if (Model.SimType == "Social")
+                                {
+                                    <!-- UI MEDIA SOSIAL -->
+                                    <div class="mx-auto border p-4 bg-white" style="max-width: 350px; border-radius: 20px;">
+                                        <h2 class="text-center mb-4" style="font-family: 'Billabong', cursive;">Instagrarn</h2>
+                                        <div class="alert alert-danger small p-2">Akaun anda akan dipadam dalam masa 24 jam. Sila log masuk untuk pengesahan.</div>
+                                        <input type="text" class="form-control mb-2" placeholder="Phone, username, or email">
+                                        <input type="password" class="form-control mb-3" placeholder="Password">
+                                        <button class="btn btn-primary w-100 fw-bold" onclick="foundRedFlag()">Log In</button>
+                                    </div>
+                                }
+                                else if (Model.SimType == "Government")
+                                {
+                                    <!-- UI KERAJAAN -->
+                                    <div class="bg-primary text-white p-3 rounded-top-4">
+                                        <h5 class="mb-0 fw-bold text-center">PORTAL SUBSIDI MADANI</h5>
+                                    </div>
+                                    <div class="bg-white p-4 text-center border">
+                                        <h6 class="text-muted">Baki Bantuan Anda:</h6>
+                                        <h2 class="fw-bold text-success">RM 850.00</h2>
+                                        <hr>
+                                        <p class="small">Klik butang di bawah untuk pindahan wang ke akaun bank anda:</p>
+                                        <button class="btn btn-success rounded-pill px-5 shadow-sm trap-link" onclick="foundRedFlag()">TEBUS SEKARANG</button>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <!-- DEFAULT / WEBMAIL -->
+                                    <div class="email-mockup bg-white shadow-sm border p-4 rounded-3">
+                                        <div class="d-flex border-bottom pb-2 mb-3">
+                                            <div class="bg-danger text-white rounded-circle me-3 d-flex align-items-center justify-content-center" style="width:40px; height:40px;">!</div>
+                                            <div>
+                                                <h6 class="mb-0 fw-bold">@Model.SimSender</h6>
+                                                <small class="text-muted">Subjek: @Model.SimSubject</small>
+                                            </div>
+                                        </div>
+                                        <p>@Model.SimBody</p>
+                                        <div class="text-center mt-4">
+                                            <a href="javascript:void(0)" class="text-primary text-decoration-underline trap-link" onclick="foundRedFlag()">@Model.SimPhishLink</a>
+                                        </div>
+                                    </div>
+                                }
+
+                            </div>
+                        </div>
                     </div>
-                    <p class="small text-muted italic">Rajah 1.1: Contoh taktik pancingan data melalui emel.</p>
+
+                    <!-- PANEL ANALISIS (KANAN) -->
+                    <div class="col-lg-4">
+                        <div class="card p-4 rounded-4 shadow-sm border-0 h-100 bg-white">
+                            <h5 class="fw-bold mb-4 text-danger"><ion-icon name="warning-outline" class="me-2"></ion-icon>Kesan Red Flag</h5>
+                            <p class="small text-muted">Berdasarkan jenis simulasi ini (<b>@Model.SimType</b>), lalui tetikus anda pada elemen yang mencurigakan.</p>
+
+                            <div id="successMsg" class="alert alert-success d-none shadow-sm">
+                                <h6 class="fw-bold"><ion-icon name="checkmark-circle"></ion-icon> Hebat!</h6>
+                                <p class="small mb-0">@Model.SimClues</p>
+                            </div>
+
+                            <div class="mt-auto">
+                                <button class="btn btn-outline-danger w-100 rounded-pill mb-2" onclick="alert('Ini adalah pancingan data (Phishing)! Perhatikan URL dan kandungannya.')">Lapor Scam</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <p>Tujuannya adalah untuk mendesak anda klik pada pautan (link) palsu atau memuat turun fail yang mengandungi virus.</p>
+                <script>
+                    function foundRedFlag() {
+                        document.getElementById('successMsg').classList.remove('d-none');
+                        // Tambahkan efek visual pada URL bar
+                        document.querySelector('.url-bar').style.backgroundColor = '#fee2e2';
+                        document.querySelector('.url-bar span').style.color = '#dc2626';
+                    }
+                </script>
+            }
+            else if (Model.PageType == "Quiz")
+            {
+                <h3 class="fw-bold mb-4 text-primary">
+                    <ion-icon name="help-circle-outline" class="align-middle me-2"></ion-icon> Uji Minda
+                </h3>
+
+                <!-- Soalan -->
+                <p class="fs-5 fw-bold mb-4">@Model.QuizQuestion</p>
+
+                <!-- Pilihan Jawapan -->
+                <div class="quiz-options d-grid gap-3">
+                    @if (!string.IsNullOrEmpty(Model.OptionA))
+                    {
+                        <button class="btn btn-outline-primary text-start p-3 rounded-4 shadow-sm option-btn" onclick="checkAnswer('A', this)">
+                            <b>A.</b> @Model.OptionA
+                        </button>
+                    }
+                    @if (!string.IsNullOrEmpty(Model.OptionB))
+                    {
+                        <button class="btn btn-outline-primary text-start p-3 rounded-4 shadow-sm option-btn" onclick="checkAnswer('B', this)">
+                            <b>B.</b> @Model.OptionB
+                        </button>
+                    }
+                    @if (!string.IsNullOrEmpty(Model.OptionC))
+                    {
+                        <button class="btn btn-outline-primary text-start p-3 rounded-4 shadow-sm option-btn" onclick="checkAnswer('C', this)">
+                            <b>C.</b> @Model.OptionC
+                        </button>
+                    }
+                    @if (!string.IsNullOrEmpty(Model.OptionD))
+                    {
+                        <button class="btn btn-outline-primary text-start p-3 rounded-4 shadow-sm option-btn" onclick="checkAnswer('D', this)">
+                            <b>D.</b> @Model.OptionD
+                        </button>
+                    }
+                </div>
+
+                <!-- Mesej Maklum Balas -->
+                <div id="quizFeedback" class="mt-4 p-3 rounded-4 d-none fw-bold shadow-sm text-center"></div>
+
+                <script>
+        function checkAnswer(selected, element) {
+            var correctAnswer = '@Model.CorrectAnswer'; // Ambil jawapan betul dari database
+            var feedback = document.getElementById('quizFeedback');
+            var buttons = document.querySelectorAll('.option-btn');
+
+            // Disable semua butang selepas pilih
+            buttons.forEach(btn => btn.classList.add('disabled'));
+
+            feedback.classList.remove('d-none', 'alert-success', 'alert-danger');
+
+            if (selected === correctAnswer) {
+                element.classList.replace('btn-outline-primary', 'btn-success');
+                feedback.innerHTML = "🎉 Tahniah! Jawapan anda BETUL.";
+                feedback.className = "mt-4 p-3 rounded-4 fw-bold shadow-sm text-center alert alert-success";
+            } else {
+                element.classList.replace('btn-outline-primary', 'btn-danger');
+                feedback.innerHTML = "❌ Maaf, jawapan anda SALAH. Cuba lagi!";
+                feedback.className = "mt-4 p-3 rounded-4 fw-bold shadow-sm text-center alert alert-danger";
+
+                // Tunjukkan jawapan yang betul juga
+                setTimeout(() => {
+                    alert("Jawapan yang betul adalah pilihan " + correctAnswer);
+                }, 500);
+            }
+        }
+                </script>
+            }
+
+        </div>
+
+        <!-- 3. FOOTER NAVIGASI DINAMIK -->
+        <div class="p-4 border-top d-flex justify-content-between align-items-center bg-light">
+            @if (currentPage > 1)
+            {
+                <a href="@Url.Action("Study", "Dashboard", new { id = Model.ModuleId, page = currentPage - 1 })" class="btn btn-outline-dark rounded-pill px-4">
+                    <ion-icon name="arrow-back-outline" class="align-middle me-1"></ion-icon> Kembali
+                </a>
+            }
+            else
+            {
+                <a href="@Url.Action("Modules", "Dashboard")" class="btn btn-outline-dark rounded-pill px-4">
+                    <ion-icon name="close-outline" class="align-middle me-1"></ion-icon> Batal
+                </a>
+            }
+
+            <div class="d-flex gap-2">
+                @if (currentPage < totalPages)
+                {
+                    <a href="@Url.Action("Study", "Dashboard", new { id = Model.ModuleId, page = currentPage + 1 })"
+                       class="btn text-white rounded-pill px-5 fw-bold shadow-sm" style="background: var(--theme-primary)">
+                        Seterusnya <ion-icon name="arrow-forward-outline" class="align-middle ms-1"></ion-icon>
+                    </a>
+                }
+                else
+                {
+                    <a href="@Url.Action("Modules", "Dashboard")"
+                       class="btn btn-success rounded-pill px-5 fw-bold shadow-sm">
+                        <ion-icon name="trophy-outline" class="align-middle me-1"></ion-icon> Tamat Modul
+                    </a>
+                }
             </div>
         </div>
 
-        <!-- Navigasi Bawah -->
-        <div class="study-footer p-4 border-top d-flex justify-content-between align-items-center">
-            <a href="@Url.Action("Modules", "Dashboard")" class="btn btn-outline-dark rounded-pill px-4">
-                <ion-icon name="arrow-back-outline" class="align-middle me-2"></ion-icon> Kembali ke Katalog
-            </a>
-
-            <div class="page-indicator small fw-bold">Halaman 1 / 5</div>
-
-            <a href="@Url.Action("ActivitySelection", "Dashboard")" class="btn btn-dark rounded-pill px-5 fw-bold">
-                Seterusnya <ion-icon name="arrow-forward-outline" class="align-middle ms-2"></ion-icon>
-            </a>
-        </div>
     </div>
 </div>

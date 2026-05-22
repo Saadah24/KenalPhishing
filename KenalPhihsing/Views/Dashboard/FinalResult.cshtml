@@ -1,0 +1,42 @@
+﻿@{
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+    bool sim = ViewBag.SimSuccess;
+    bool quiz = ViewBag.QuizSuccess;
+    bool overallPass = sim && quiz;
+}
+
+<div class="container py-5 text-center">
+    <div class="result-card p-5 shadow-lg rounded-5 @(overallPass ? "bg-success-light" : "bg-danger-light")">
+        <ion-icon name="@(overallPass ? "ribbon-outline" : "alert-circle-outline")" class="display-1 mb-3 @(overallPass ? "text-success" : "text-danger")"></ion-icon>
+
+        <h1 class="fw-bold">@(overallPass ? "Tahniah! Anda Lulus" : "Sila Cuba Lagi")</h1>
+        <p class="text-muted">Modul: @ViewBag.Module (@ViewBag.Category)</p>
+
+        <div class="row g-3 mt-4 text-start">
+            <div class="col-md-6">
+                <div class="p-3 bg-white rounded-3 shadow-sm d-flex justify-content-between align-items-center">
+                    <span>Ujian Simulasi:</span>
+                    <span class="badge @(sim ? "bg-success" : "bg-danger")">@(sim ? "BERJAYA" : "GAGAL")</span>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="p-3 bg-white rounded-3 shadow-sm d-flex justify-content-between align-items-center">
+                    <span>Ujian Kuiz:</span>
+                    <span class="badge @(quiz ? "bg-success" : "bg-danger")">@(quiz ? "BERJAYA" : "GAGAL")</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-5 d-flex justify-content-center gap-3">
+            @if (overallPass)
+            {
+                <a href="@Url.Action("CertificateDetail", "Dashboard")" class="btn btn-dark rounded-pill px-5">Lihat Sijil</a>
+            }
+            else
+            {
+                <a href="@Url.Action("Study", "Dashboard", new { category = ViewBag.Category, module = ViewBag.Module, page = 1 })" class="btn btn-outline-dark rounded-pill px-5">Ulang Modul</a>
+            }
+            <a href="@Url.Action("Index", "Dashboard")" class="btn btn-dark rounded-pill px-4">Dashboard</a>
+        </div>
+    </div>
+</div>

@@ -1,29 +1,45 @@
-﻿<!DOCTYPE html>
+﻿@{
+    // 1. Ambil kategori dari session untuk tentukan tema
+    string category = Session["UserCategory"]?.ToString() ?? "Adult";
+    string themeClass = "theme-" + category.ToLower();
+}
+
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewBag.Title - KenalPhishing</title>
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Sora:wght@400;700&family=Baloo+2:wght@600;800&display=swap" rel="stylesheet">
+
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+
     <link href="~/Content/Site.css" rel="stylesheet" type="text/css" />
+
+ 
     @RenderSection("Styles", required: false)
 </head>
-<body class="dashboard-body">
+
+<body class="dashboard-body @themeClass">
     <div class="d-flex">
         <!-- Sidebar -->
-        <nav class="sidebar shadow-lg">
-            <div class="sidebar-header p-4">
-                <h4 class="fw-bold">KenalPhishing</h4>
+        <nav class="sidebar shadow-sm">
+            <div class="sidebar-header p-4 text-center">
+                <h4 class="fw-bold mb-0">KenalPhishing</h4>
+                <small class="text-muted text-uppercase" style="font-size: 10px; letter-spacing: 1px;">Portal @category</small>
             </div>
-            <ul class="nav flex-column px-3 mt-4">
+
+            <ul class="nav flex-column px-3 mt-3">
                 <li class="nav-item mb-2">
                     <a href="@Url.Action("Index", "Dashboard")" class="nav-link @(ViewContext.RouteData.Values["action"].ToString() == "Index" ? "active" : "")">
                         <ion-icon name="grid-outline"></ion-icon> <span>Ringkasan</span>
                     </a>
                 </li>
                 <li class="nav-item mb-2">
-                    <a href="@Url.Action("Modules", "Dashboard")" class="nav-link @(ViewContext.RouteData.Values["action"].ToString() == "Modules" ? "active" : "")">
+                    <a href="@Url.Action("Modules", "Dashboard")" class="nav-link @(ViewContext.RouteData.Values["action"].ToString() == "Modules" || ViewContext.RouteData.Values["action"].ToString() == "Study" ? "active" : "")">
                         <ion-icon name="book-outline"></ion-icon> <span>Modul Belajar</span>
                     </a>
                 </li>
@@ -32,21 +48,26 @@
                         <ion-icon name="time-outline"></ion-icon> <span>Aktiviti Terkini</span>
                     </a>
                 </li>
+
                 <li class="nav-item mb-2">
                     <a href="@Url.Action("Progress", "Dashboard")" class="nav-link @(ViewContext.RouteData.Values["action"].ToString() == "Progress" ? "active" : "")">
                         <ion-icon name="bar-chart-outline"></ion-icon> <span>Laporan Saya</span>
                     </a>
                 </li>
 
-                <!-- LOGIK BARU: HANYA TUNJUK LAPORAN ANAK JIKA ADULT -->
-                @if (Session["UserCategory"]?.ToString() == "Adult")
+                <!-- MENU KHAS: HANYA UNTUK ADULT -->
+                @if (category == "Adult")
                 {
                     <li class="nav-item mb-2">
                         <a href="@Url.Action("ChildReport", "Dashboard")" class="nav-link @(ViewContext.RouteData.Values["action"].ToString() == "ChildReport" ? "active" : "")">
-                            <ion-icon name="shield-half-outline" class="text-info"></ion-icon> <span class="text-info fw-bold">Laporan Anak</span>
+                            <ion-icon name="people-outline"></ion-icon> <span>Laporan Anak</span>
                         </a>
                     </li>
                 }
+
+                <li class="nav-item">
+                    <hr class="mx-3 my-3" style="opacity: 0.1;">
+                </li>
 
                 <li class="nav-item mb-2">
                     <a href="@Url.Action("ReportScam", "Dashboard")" class="nav-link @(ViewContext.RouteData.Values["action"].ToString() == "ReportScam" ? "active" : "")">
@@ -55,13 +76,20 @@
                 </li>
 
                 <li class="nav-item mb-2">
-                    <a href="@Url.Action("Profile", "Dashboard")" class="nav-link @(ViewContext.RouteData.Values["action"].ToString() == "Profile" ? "active" : "")">
+                    <a href="@Url.Action("SecurityAlert", "Dashboard")" class="nav-link @(ViewContext.RouteData.Values["action"].ToString() == "SecurityAlert" ? "active" : "")">
+                        <ion-icon name="shield-half-outline"></ion-icon> <span>Radar Ancaman</span>
+                    </a>
+                </li>
+
+                <li class="nav-item mb-2">
+                    <a href="@Url.Action("Settings", "Dashboard")" class="nav-link @(ViewContext.RouteData.Values["action"].ToString() == "Settings" ? "active" : "")">
                         <ion-icon name="settings-outline"></ion-icon> <span>Tetapan</span>
                     </a>
                 </li>
             </ul>
+
             <div class="sidebar-footer p-4 mt-auto">
-                <a href="@Url.Action("Index", "Home")" class="btn btn-logout w-100">
+                <a href="@Url.Action("Index", "Home")" class="btn btn-logout w-100 d-flex align-items-center justify-content-center gap-2">
                     <ion-icon name="log-out-outline"></ion-icon> Log Keluar
                 </a>
             </div>
@@ -71,30 +99,49 @@
         <div class="content-wrapper flex-grow-1">
             <header class="dashboard-header d-flex justify-content-between align-items-center p-4">
                 <div class="search-box">
-                    <ion-icon name="search-outline"></ion-icon>
-                    <input type="text" placeholder="Cari modul...">
+                    <ion-icon name="search-outline" class="text-muted me-2"></ion-icon>
+                    <input type="text" placeholder="Cari modul..." class="border-0 bg-transparent" style="outline: none;">
                 </div>
 
-                <div class="user-profile-nav d-flex align-items-center">
-                    <ion-icon name="notifications-outline" class="me-3 fs-4"></ion-icon>
-                    <a href="@Url.Action("Profile", "Dashboard")" class="d-flex align-items-center text-decoration-none text-dark">
-                        <span class="fw-bold me-2">@Session["UserName"]</span>
-                        <div class="avatar-sm">
-                            <ion-icon name="person-circle" class="fs-2 text-secondary"></ion-icon>
+                <div class="user-profile-nav d-flex align-items-center gap-3">
+                    <!-- Notification Icon -->
+                    <ion-icon name="notifications-outline" class="fs-4 text-muted" style="cursor: pointer;"></ion-icon>
+
+                    <!-- Combined Profile Link (Name + Avatar) -->
+                    <a href="@Url.Action("UserProfile", "Dashboard")" class="d-flex align-items-center text-decoration-none">
+
+                        <!-- User Info (Text) -->
+                        <div class="text-end me-3 d-none d-sm-block">
+                            <span class="fw-bold d-block text-dark" style="line-height: 1;">@Session["UserName"]</span>
+                            <small class="text-muted" style="font-size: 11px;">@category</small>
+                        </div>
+
+                        <!-- User Avatar (Image or Icon) -->
+                        <div class="avatar-circle d-flex align-items-center justify-content-center bg-white rounded-circle shadow-sm"
+                             style="width: 42px; height: 42px; overflow: hidden; border: 2px solid #fff;">
+
+                            @if (Session["UserProfilePic"] != null)
+                            {
+                                <img src="~/Uploads/Profiles/@Session["UserProfilePic"]" style="width: 100%; height: 100%; object-fit: cover;" />
+                            }
+                            else
+                            {
+                                <!-- If no image, show the default IonIcon -->
+                                <ion-icon name="person-circle" class="fs-1 text-secondary"></ion-icon>
+                            }
                         </div>
                     </a>
                 </div>
             </header>
 
-            <div class="p-4">
+            <div class="p-4 p-md-5">
                 @RenderBody()
             </div>
         </div>
     </div>
 
-    <!-- PENTING: BARIS INI WAJIB ADA SUPAYA MODAL/POPUP BERFUNGSI -->
+    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
     @RenderSection("Scripts", required: false)
 </body>
 </html>
