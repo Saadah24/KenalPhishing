@@ -1,0 +1,328 @@
+@model KenalPhishing.Models.ActivityDashboardViewModel
+@{
+    ViewBag.Title = "Aktiviti Terkini";
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+
+    string initials = "?";
+    if (Model != null && !string.IsNullOrWhiteSpace(Model.FullName))
+    {
+        var parts = Model.FullName.Trim().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+        initials = parts.Length == 1
+            ? Model.FullName.Substring(0, Math.Min(2, Model.FullName.Length)).ToUpper()
+            : string.Format("{0}{1}", parts[0][0], parts[parts.Length - 1][0]).ToUpper();
+    }
+
+    double pct = (Model != null && Model.TotalModules > 0) ? (double)Model.CompletedModules / Model.TotalModules * 100 : 0;
+    string tahap = pct == 0 ? "Pemula" : pct < 50 ? "Perintis" : pct < 100 ? "Rakan Pematuhan Siber" : "Pakar Siber";
+}
+
+@section Styles {
+    <style>
+        .at-page {
+            padding: 32px 36px;
+            background: #f0f4ff;
+            min-height: 100vh;
+            border-radius: 20px;
+        }
+
+        .at-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+
+        .at-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1a1a2e;
+            margin: 0 0 4px;
+        }
+
+        .streak-badge {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border: 2px solid #f59e0b;
+            border-radius: 12px;
+            padding: 10px 18px;
+            background: #fff;
+            min-width: 130px;
+        }
+
+        .at-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .at-tab {
+            padding: 9px 20px;
+            border-radius: 50px;
+            font-size: 14px;
+            font-weight: 600;
+            border: 1.5px solid #e5e7eb;
+            background: #fff;
+            color: #374151;
+            cursor: pointer;
+            transition: all .2s;
+        }
+
+            .at-tab.active {
+                background: #1a1a2e;
+                color: #fff;
+                border-color: #1a1a2e;
+            }
+
+        .feed-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .feed-item {
+            background: #fff;
+            border-radius: 14px;
+            padding: 16px 20px;
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            border-left: 4px solid transparent;
+            transition: box-shadow .2s;
+        }
+
+            .feed-item.Sijil, .feed-item.Lencana {
+                border-left-color: #f59e0b;
+            }
+
+            .feed-item.Selesai {
+                border-left-color: #10b981;
+            }
+
+            .feed-item.Simulasi {
+                border-left-color: #3b82f6;
+            }
+
+        .progress-bar-wrap {
+            background: #e5e7eb;
+            border-radius: 99px;
+            height: 6px;
+            margin-top: 6px;
+            width: 100%;
+        }
+
+        .progress-bar-fill {
+            background: #3b82f6;
+            border-radius: 99px;
+            height: 6px;
+            transition: width .4s;
+        }
+
+        .side-card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 20px 22px;
+            margin-bottom: 16px;
+        }
+
+        .konsistensi-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+
+        .k-box {
+            width: 18px;
+            height: 18px;
+            border-radius: 4px;
+            background: #e5e7eb;
+        }
+
+            .k-box.active {
+                background: #22c55e;
+            }
+
+            .k-box.today {
+                outline: 2px solid #6366f1;
+                outline-offset: 1px;
+            }
+
+        .pematuhan-card {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 60%, #0f3460 100%);
+            border-radius: 16px;
+            padding: 22px;
+            color: #fff;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pematuhan-avatar {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: #f59e0b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 18px;
+            color: #1a1a2e;
+            margin: 0 auto 10px;
+            overflow: hidden;
+        }
+
+            .pematuhan-avatar img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                border-radius: 50%;
+            }
+    </style>
+}
+
+<div class="at-page">
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="at-header">
+                <div>
+                    <h1 class="at-title">Aktiviti Terkini</h1>
+                    <p class="text-muted small">Jejaki setiap langkah kejayaan anda di sini.</p>
+                </div>
+                <div class="streak-badge">
+                    <div style="font-size: 12px; font-weight: bold; color: #f59e0b; margin-right: 5px;">STREAK</div>
+                    <div>
+                        <div style="font-size: 22px; font-weight: 700; color: #1a1a2e;">@Model.CurrentStreak Hari</div>
+                        <div style="font-size: 10px; font-weight: 600; color: #6b7280; text-transform: uppercase;">Streak Aktif</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="at-tabs">
+                <button type="button" class="at-tab active" data-filter="Semua">Semua</button>
+                <button type="button" class="at-tab" data-filter="Pencapaian">Pencapaian</button>
+            </div>
+
+            <div class="feed-list" id="feed-list">
+                @if (Model.ActivitiesList != null && Model.ActivitiesList.Any())
+                {
+                    foreach (var item in Model.ActivitiesList)
+                    {
+                        int prog = 0;
+                        if (item.ActivityType == "Simulasi" && !string.IsNullOrEmpty(item.Description))
+                        {
+                            var match = System.Text.RegularExpressions.Regex.Match(item.Description, @"(\d+)%");
+                            if (match.Success) { int.TryParse(match.Groups[1].Value, out prog); }
+                        }
+
+                <div class="feed-item @item.ActivityType" data-type="@item.ActivityType">
+                    <div style="flex: 1;">
+                        <span class="badge bg-light text-dark rounded-pill mb-1" style="font-size: 10px;">@item.ActivityType.ToUpper()</span>
+                        <div class="fw-bold">@item.Title</div>
+                        <div class="small text-muted">@item.Description</div>
+                        @if (item.ActivityType == "Simulasi")
+                                {
+                        <div class="progress-bar-wrap">
+                            <div class="progress-bar-fill" style="@(string.Format("width: {0}%;", prog))"></div>
+                        </div>
+                                }
+                        <div class="mt-2 text-muted" style="font-size: 11px;">@item.CreatedAt.ToString("dd MMM yyyy, hh:mm tt")</div>
+                    </div>
+                </div>
+                    }
+                }
+                else
+                {
+                <div class="text-center p-5 bg-white rounded-4 border">
+                    <p class="fw-bold mt-2">Tiada rekod dijumpai</p>
+                </div>
+                }
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="side-card">
+                <div class="fw-bold mb-3 small" style="color: #374151;">KONSISTENSI LATIHAN</div>
+                <div class="konsistensi-grid">
+                    @for (int i = 27; i >= 0; i--)
+                    {
+                        bool act = Model.HeatmapData != null && Model.HeatmapData.ContainsKey(i) && Model.HeatmapData[i] > 0;
+                    <div class="k-box @(act ? "active" : "") @(i == 0 ? "today" : "")"></div>
+                    }
+                </div>
+            </div>
+
+            <div class="side-card">
+                <div class="fw-bold mb-3 small" style="color: #374151;">RINGKASAN</div>
+                <div class="d-flex justify-content-around text-center">
+                    <div>
+                        <!-- Ini akan memaparkan contoh: 2/5 jika ada 5 modul dalam DB dan 2 siap -->
+                        <div class="fw-bold">@Model.CompletedCertificates/@Model.TotalCertificates</div>
+                        <div class="small text-muted">Sijil</div>
+                    </div>
+                    <div>
+                        <!-- Ini juga akan ikut jumlah dinamik -->
+                        <div class="fw-bold">@Model.CompletedModules/@Model.TotalModules</div>
+                        <div class="small text-muted">Modul</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pematuhan-card">
+                <div class="pematuhan-avatar">
+                    @if (!string.IsNullOrEmpty(Model.ProfilePicture))
+                    {<img src="~/Uploads/Profiles/@Model.ProfilePicture" /> }
+                    else
+                    { @initials}
+                </div>
+                <div class="text-center fw-bold">@tahap</div>
+                <div class="text-center small">Syabas, @Model.FullName!</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var tabs = document.querySelectorAll('.at-tab');
+
+            for (var i = 0; i < tabs.length; i++) {
+                tabs[i].addEventListener('click', function (e) {
+                    var btn = e.currentTarget;
+
+                    // SEMAKAN INI AKAN MENGHILANGKAN RALAT TS18047 & TS2339
+                    // Ia memberitahu Visual Studio bahawa 'btn' disahkan sebagai Elemen HTML
+                    if (btn instanceof HTMLElement) {
+
+                        var fType = btn.getAttribute('data-filter');
+
+                        // 1. Buang kelas 'active' dari semua tab
+                        for (var j = 0; j < tabs.length; j++) {
+                            tabs[j].classList.remove('active');
+                        }
+                        // Tambah kelas pada tab yang ditekan
+                        btn.classList.add('active');
+
+                        // 2. Tapis senarai (feed items)
+                        var items = document.querySelectorAll('.feed-item');
+                        for (var k = 0; k < items.length; k++) {
+                            var el = items[k];
+                            var dType = el.getAttribute('data-type');
+                            var display = 'none';
+
+                            if (fType === 'Semua') {
+                                display = 'flex';
+                            } else if (fType === 'Pencapaian') {
+                                if (dType === 'Sijil' || dType === 'Selesai' || dType === 'Lencana') {
+                                    display = 'flex';
+                                }
+                            }
+
+                            el.setAttribute('style', 'display:' + display);
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+}

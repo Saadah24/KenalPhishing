@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 
-namespace KenalPhihsing.Models
+namespace KenalPhishing.Models
 {
     public class SystemSetting
     {
@@ -15,5 +16,7 @@ namespace KenalPhihsing.Models
         public int ScoreElder { get; set; }
         public int QuizAttempts { get; set; }
         public int SessionTimeout { get; set; }
+        public DateTime? LastUpdated { get; set; }
+        public string UpdatedBy { get; set; }
     }
 }

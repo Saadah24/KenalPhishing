@@ -1,0 +1,56 @@
+﻿@model IEnumerable<KenalPhishing.Models.User>
+@{
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+    ViewBag.Title = "Ranking Dunia";
+    int currentUserId = ViewBag.CurrentUserId;
+}
+<div class="container py-4" style="font-family: 'Baloo 2', cursive;">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold text-info"><ion-icon name="globe"></ion-icon> Ranking Dunia Siber</h2>
+        <a href="@Url.Action("Progress", "Dashboard")" class="btn btn-outline-dark rounded-pill px-4">Kembali</a>
+    </div>
+
+    <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
+        <div class="bg-info text-white p-4 text-center">
+            <h4 class="fw-bold mb-0">Papan Pendahulu (Leaderboard)</h4>
+        </div>
+        <div class="card-body p-0">
+            <table class="table table-hover mb-0 text-center align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th># Rank</th>
+                        <th class="text-start">Nama Wira</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        int rank = 1;
+                        foreach (var child in Model.OrderBy(c => c.Id).Take(10)) // Diambil 10 senarai (mock data order)
+                        {
+                            bool isMe = child.Id == currentUserId;
+                            <tr class="@(isMe ? "table-warning fw-bold" : "")">
+                                <td class="fs-5">
+                                    @if (rank == 1)
+                                    {<ion-icon name="trophy" class="text-warning"></ion-icon> }
+                                    else if (rank == 2)
+                                    { <ion-icon name="medal" class="text-secondary"></ion-icon> }
+                                    else if (rank == 3)
+                                    { <ion-icon name="medal" style="color: #cd7f32;"></ion-icon> }
+                                    else
+                                    { @rank}
+                                </td>
+                                <td class="text-start py-3">
+                                    <ion-icon name="person-circle" class="fs-3 align-middle me-2 @(isMe ? "text-primary" : "text-muted")"></ion-icon>
+                                    @child.FullName @(isMe ? "(Anda)" : "")
+                                </td>
+                                <td><span class="badge bg-success rounded-pill px-3">Aktif</span></td>
+                            </tr>
+                            rank++;
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

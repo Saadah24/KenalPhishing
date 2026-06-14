@@ -1,77 +1,161 @@
-﻿@{
+﻿@using KenalPhishing.Models
+@{
     Layout = "~/Views/Shared/_DashboardLayout.cshtml";
     ViewBag.Title = "Sijil Pencapaian";
+
+    // Ambil data modul cadangan yang dihantar dari Controller
+    var recommended = ViewBag.RecommendedModules as List<Module> ?? new List<Module>();
 }
 
 @section Styles {
+    <!-- Google Font untuk tandatangan profesional -->
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
     <link href="~/Content/Certificates.css" rel="stylesheet" type="text/css" />
-    <link href="~/Content/Dashboard.css" rel="stylesheet" type="text/css" />
+
+    <style>
+        .cert-signature {
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.8rem;
+            color: #1a1a2e;
+            border-bottom: 2px solid #333;
+            display: inline-block;
+            padding: 0 20px;
+            margin-bottom: 5px;
+        }
+
+        .cert-border-inner {
+            background-image: url('https://www.transparenttextures.com/patterns/paper.png');
+        }
+
+        @@media print {
+            body * {
+                visibility: hidden;
+            }
+
+            .certificate-frame, .certificate-frame * {
+                visibility: visible;
+            }
+
+            .certificate-frame {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                border: none !important;
+                box-shadow: none !important;
+            }
+
+            .d-print-none {
+                display: none !important;
+            }
+        }
+    </style>
 }
 
 <div class="cert-detail-container">
-    <div class="mb-4">
+    <div class="mb-4 d-print-none">
         <h2 class="fw-bold">Sijil Pencapaian</h2>
         <p class="text-muted small">Tahniah! Anda telah menamatkan modul "@ViewBag.Module".</p>
     </div>
 
     <div class="row g-4">
         <div class="col-lg-8">
-            <!-- DOKUMEN SIJIL (The Frame) -->
+            <!-- DOKUMEN SIJIL -->
             <div class="certificate-frame p-5 shadow-lg text-center bg-white text-dark border border-5 border-warning">
-                <div class="cert-border-inner p-4 border border-1 border-dark h-100">
-                    <p class="cert-top-text text-uppercase mb-4">Sijil Pencapaian</p>
-                    <p class="mb-1">Diberikan kepada:</p>
-                    <h1 class="display-4 fw-bold mb-4 text-decoration-underline">@ViewBag.StudentName</h1>
-                    <p class="mb-1">Kerana telah Berjaya Menamatkan Modul:</p>
-                    <h3 class="fw-bold text-primary mb-5">@ViewBag.Module</h3>
+                <div class="cert-border-inner p-4 border border-1 border-dark h-100 position-relative">
 
-                    <div class="row mt-5 pt-4">
-                        <div class="col-4 border-top border-dark pt-2 small">Tarikh Tamat: @ViewBag.Date</div>
+                    <div class="mb-4">
+                        <!-- FIX TS2683: Atribut onerror dibuang untuk elak ralat Visual Studio. Kita guna skrip di bawah. -->
+                        <img id="certLogo" src="~/Content/Images/logo.png" alt="KenalPhishing" style="height: 50px; opacity: 0.8;" />
+                        <p class="fw-bold text-muted small">KENALPHISHING DIGITAL ACADEMY</p>
+                    </div>
+
+                    <p class="cert-top-text text-uppercase mb-4 fw-bold" style="letter-spacing: 5px;">Sijil Pencapaian</p>
+                    <p class="mb-1">Diberikan kepada:</p>
+                    <h1 class="display-4 fw-bold mb-4 text-primary">@ViewBag.StudentName</h1>
+                    <p class="mb-1">Kerana telah Berjaya Menamatkan Modul:</p>
+                    <h3 class="fw-bold mb-5">@ViewBag.Module</h3>
+
+                    <div class="row mt-5 align-items-end">
+                        <div class="col-4 text-center">
+                            <p class="small text-muted mb-1">Tarikh Tamat:</p>
+                            <p class="fw-bold small">@ViewBag.Date</p>
+                            <div class="border-top border-dark mx-auto" style="width: 80%;"></div>
+                        </div>
                         <div class="col-4 text-center">
                             <div class="cert-seal mx-auto">
                                 <ion-icon name="shield-checkmark" class="fs-1 text-warning"></ion-icon>
-                                <p class="extra-small mt-1 fw-bold">Verified</p>
+                                <p class="extra-small mt-1 fw-bold">SAH & DISAHKAN</p>
                             </div>
+                            <p class="small mt-2 mb-0">Skor: @ViewBag.Score</p>
                         </div>
-                        <div class="col-4 border-top border-dark pt-2 small">Skor Modul: @ViewBag.Score</div>
+                        <div class="col-4 text-center">
+                            <!-- BAHAGIAN TANDATANGAN (SIGN) -->
+                            <div class="cert-signature">Pentadbir KenalPhishing</div>
+                            <p class="extra-small fw-bold text-uppercase">Pengarah Program</p>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Butang Aksi Bawah Sijil -->
-            <div class="d-flex justify-content-center gap-3 mt-4">
-                <button class="btn btn-dark rounded-pill px-4" onclick="showPopup('Muat Turun Selesai')">Muat Turun Sijil</button>
-                <button class="btn btn-dark rounded-pill px-4" onclick="showPopup('Selesai Di Kongsi')">Kongsi di LinkedIn</button>
-                <button class="btn btn-dark rounded-pill px-4" onclick="showPopup('Selesai Cetak Sijil')">Cetak Sijil</button>
+            <!-- Butang Aksi -->
+            <div class="d-flex justify-content-center gap-3 mt-4 d-print-none">
+                <button class="btn btn-primary rounded-pill px-4" onclick="window.print()">
+                    <ion-icon name="download-outline" class="me-1"></ion-icon> Muat Turun (PDF)
+                </button>
+                <a href="@Url.Action("Certificates", "Dashboard")" class="btn btn-outline-dark rounded-pill px-4">Kembali</a>
             </div>
         </div>
 
-        <div class="col-lg-4">
+        <!-- LANJUTKAN PEMBELAJARAN (DATABASE CONNECTED) -->
+        <div class="col-lg-4 d-print-none">
             <div class="next-steps-card p-4 shadow-sm bg-white rounded-4 text-dark h-100">
-                <h6 class="fw-bold mb-4">Lanjutkan Pembelajaran:</h6>
-                <div class="p-3 border rounded-3 mb-3">
-                    <p class="small fw-bold mb-1">Taktik Psikologi</p>
-                    <div class="progress" style="height: 5px;"><div class="progress-bar bg-warning" style="width: 10%"></div></div>
-                    <a href="#" class="btn btn-dark btn-sm w-100 mt-3 rounded-pill">Sambung Modul</a>
-                </div>
-                <div class="p-3 border rounded-3 text-center bg-light">
+                <h6 class="fw-bold mb-4"><ion-icon name="rocket-outline" class="me-2 text-primary"></ion-icon>Lanjutkan Pembelajaran:</h6>
+
+                @if (recommended != null && recommended.Any())
+                {
+                    foreach (var mod in recommended)
+                    {
+                        <div class="p-3 border rounded-4 mb-3 bg-light bg-opacity-50">
+                            <p class="small fw-bold mb-2">@mod.Title</p>
+                            <div class="progress mb-3" style="height: 6px; background: #e9ecef;">
+                                <div class="progress-bar bg-warning" style="width: 25%"></div>
+                            </div>
+                            <a href="@Url.Action("Study", "Dashboard", new { id = mod.Id })" class="btn btn-dark btn-sm w-100 rounded-pill fw-bold">
+                                Sambung Modul Ini
+                            </a>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="text-center py-4">
+                        <ion-icon name="checkmark-done-circle" class="fs-1 text-success mb-2"></ion-icon>
+                        <p class="small fw-bold text-muted">Syabas! Semua modul telah tamat.</p>
+                    </div>
+                }
+
+                <div class="p-3 border rounded-4 text-center bg-primary bg-opacity-10 mt-4">
                     <ion-icon name="trophy" class="fs-1 text-warning mb-2"></ion-icon>
-                    <p class="small fw-bold">Anda Telah Meraih:</p>
-                    <span class="badge bg-dark rounded-pill px-3">Phishing Mastery</span>
+                    <p class="small fw-bold mb-1">Status Pencapaian:</p>
+                    <span class="badge bg-dark rounded-pill px-3">@ViewBag.Score Mastery</span>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Modal Pop-up (Kemas kini Selesai - rujuk input_file_11) -->
-<div class="modal fade" id="certActionModal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content text-center p-5 rounded-4 border-0 shadow-lg" style="background-color: #d1d1d1;">
-            <div class="modal-body">
-                <h4 id="actionText" class="fw-bold mb-4 text-dark"></h4>
-                <button type="button" class="btn btn-dark rounded-pill px-5" data-bs-dismiss="modal">Baik</button>
-            </div>
-        </div>
-    </div>
-</div>
+<script>
+    /**
+     * @@ts-nocheck
+     */
+    document.addEventListener("DOMContentLoaded", function () {
+        // PEMBAIKAN RALAT TS2683: Sembunyikan logo jika fail gambar tiada
+        var logoImg = document.getElementById('certLogo');
+        if (logoImg instanceof HTMLImageElement) {
+            logoImg.onerror = function () {
+                this.style.display = 'none';
+            };
+        }
+    });
+</script>

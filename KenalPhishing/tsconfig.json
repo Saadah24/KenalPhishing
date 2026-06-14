@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "noImplicitAny": false,
+    "strict": false,
+    "checkJs": false,
+    "allowJs": true
+  },
+  "exclude": [
+    "Views",
+    "Scripts",
+    "Content",
+    "bin",
+    "obj"
+  ]
+}

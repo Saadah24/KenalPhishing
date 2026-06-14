@@ -2,23 +2,50 @@
     Layout = "~/Views/Shared/_DashboardLayout.cshtml";
     ViewBag.Title = "Ringkasan";
 
-    // Logik: Ambil kategori dari Session. Jika tiada, default ke Adult.
     string category = Session["UserCategory"]?.ToString() ?? "Adult";
 }
 
 @section Styles {
     <link href="~/Content/Dashboard.css" rel="stylesheet" type="text/css" />
-    @if (category == "Child")
-    {
-        <style>
-            .dashboard-body {
-                background-color: #ebfaff !important;
-            }
-        </style>
-}
+    <style>
+        @if (category == "Child") {
+            <text>
+            .dashboard-body { background-color: #ebfaff !important; }
+            .alert-announcement { background-color: #ffda6a; border: none; color: #856404; }
+            </text>
+        } else if (category == "Elder") {
+            <text>
+            .dashboard-body { background-color: #f8f9fa !important; }
+            .alert-announcement { background-color: #343a40; border: none; color: #ffffff; }
+            </text>
+        } else {
+            <text>
+            .alert-announcement { background-color: #fff3cd; border-left: 5px solid #ffc107; color: #856404; }
+            </text>
+        }
+
+        .alert-announcement {
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+    </style>
 }
 
 <div class="container-fluid py-4">
+
+    <!-- BAHAGIAN PENGUMUMAN DARI DATABASE -->
+    @if (!string.IsNullOrEmpty(ViewBag.GlobalAnnouncement))
+    {
+        <div class="alert alert-announcement mb-4 p-3 d-flex align-items-center animate__animated animate__fadeInDown">
+            <ion-icon name="megaphone-outline" class="fs-3 me-3"></ion-icon>
+            <div>
+                <small class="d-block fw-bold opacity-75 text-uppercase" style="font-size: 10px;">Hebahan Rasmi Sistem</small>
+                <span class="fw-bold">@ViewBag.GlobalAnnouncement</span>
+            </div>
+        </div>
+    }
+
+    <!-- PAPARAN DASHBOARD MENGIKUT KATEGORI -->
     @if (category == "Child")
     {
         @Html.Partial("~/Views/Dashboard/_DashboardChild.cshtml")

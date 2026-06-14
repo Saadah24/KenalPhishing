@@ -1,5 +1,5 @@
-﻿using KenalPhihsing.Data;
-using KenalPhihsing.Models;  
+﻿using KenalPhishing.Data;
+using KenalPhishing.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +7,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Data.Entity;
 
-namespace KenalPhihsing.Controllers
+namespace KenalPhishing.Controllers
 {
     public class AdminController : Controller
     {
@@ -23,6 +23,32 @@ namespace KenalPhihsing.Controllers
         {
             if (!IsAdmin()) return RedirectToAction("Login", "Account");
 
+            // 1. STATISTIK RINGKAS
+            ViewBag.TotalUsers = db.Users.Count();
+            ViewBag.TotalModules = db.Modules.Count();
+            ViewBag.TotalScamReports = db.ScamReports.Count();
+            ViewBag.PendingReports = db.ScamReports.Count(r => r.Status == "Pending");
+
+            // Sijil dikira berdasarkan jumlah modul yang berjaya disiapkan dalam UserProgress
+            ViewBag.TotalCertificates = db.UserProgresses.Count();
+
+            // 2. AKTIVITI TERKINI (Live Feed Dashboard)
+            // KEMASKINI: Hanya mengambil 3 aktiviti terbaru untuk dashboard yang lebih bersih
+            ViewBag.RecentActivities = db.UserActivities
+                                         .Include(u => u.User)
+                                         .OrderByDescending(a => a.CreatedAt)
+                                         .Take(3)
+                                         .ToList();
+
+            // 3. DATA CARTA (Pendaftaran Pelajar)
+            var registrationTrend = db.Users
+                .GroupBy(u => u.Category)
+                .Select(g => new { Category = g.Key, Count = g.Count() })
+                .ToList();
+
+            ViewBag.ChartLabels = registrationTrend.Select(x => x.Category).ToList();
+            ViewBag.ChartValues = registrationTrend.Select(x => x.Count).ToList();
+
             return View();
         }
 
@@ -32,37 +58,23 @@ namespace KenalPhihsing.Controllers
         public ActionResult ManageModules()
         {
             if (!IsAdmin()) return RedirectToAction("Login", "Account");
-
-            // Ambil semua modul dari Database dan susun mengikut Kategori
             var modules = db.Modules.OrderBy(m => m.Category).ToList();
             return View(modules);
         }
 
-        // ==========================================
-        // 2. PAPARKAN BORANG (TAMBAH / SUNTING)
-        // ==========================================
         public ActionResult EditModule(int? id)
         {
             if (!IsAdmin()) return RedirectToAction("Login", "Account");
-
             ViewBag.IsEdit = id.HasValue;
-
             if (id.HasValue)
             {
-                // Jika URL ada ID (Maksudnya Admin nak Edit)
                 var module = db.Modules.Find(id);
                 if (module == null) return HttpNotFound();
-
-                return View(module); // Hantar data sedia ada ke form
+                return View(module);
             }
-
-            // Jika URL tiada ID (Maksudnya Admin nak Tambah Baru)
             return View(new Module());
         }
 
-        // ==========================================
-        // 3. PROSES SIMPAN DATA (POST)
-        // ==========================================
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult SaveModule(Module model)
@@ -78,59 +90,46 @@ namespace KenalPhihsing.Controllers
                     db.Modules.Add(model);
                 }
                 db.SaveChanges();
-
-                // SELEPAS SIMPAN, terus pergi ke page urus kandungan (halaman)
                 return RedirectToAction("ManagePages", new { moduleId = model.Id });
             }
             return View("EditModule", model);
         }
 
-        // ==========================================
-        // 4. PROSES PADAM MODUL (POST)
-        // ==========================================
         [HttpPost]
         public ActionResult DeleteModule(int id)
         {
             if (!IsAdmin()) return RedirectToAction("Login", "Account");
-
             var module = db.Modules.Find(id);
             if (module != null)
             {
                 db.Modules.Remove(module);
-                db.SaveChanges(); // Buang dari database
+                db.SaveChanges();
             }
             return RedirectToAction("ManageModules");
         }
 
-        // ==========================================
-        // 5. PAPARKAN BORANG EDIT "MUKA SURAT" (KANDUNGAN / SIMULASI)
-        // ==========================================
         public ActionResult EditPage(int? id, int moduleId)
         {
-            if (Session["UserRole"] == null || Session["UserRole"].ToString() != "Admin")
-                return RedirectToAction("Login", "Account");
-
-            ViewBag.ModuleId = moduleId; // Hantar Module ID ke View
-
+            if (!IsAdmin()) return RedirectToAction("Login", "Account");
+            ViewBag.ModuleId = moduleId;
             if (id.HasValue)
             {
                 var page = db.ModulePages.Find(id);
-                return View(page); // Edit page sedia ada
+                return View(page);
             }
-
-            // Tambah page baru
             return View(new ModulePage { ModuleId = moduleId, PageType = "Content" });
         }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [ValidateInput(false)] // <--- ADD THIS LINE HERE
+        [ValidateInput(false)]
         public ActionResult SavePage(ModulePage model)
         {
             if (ModelState.IsValid)
             {
                 if (model.Id > 0)
                 {
-                    db.Entry(model).State = System.Data.Entity.EntityState.Modified;
+                    db.Entry(model).State = EntityState.Modified;
                 }
                 else
                 {
@@ -142,44 +141,28 @@ namespace KenalPhihsing.Controllers
             return View("EditPage", model);
         }
 
-        // 6. PAPARKAN SENARAI HALAMAN UNTUK SESUATU MODUL
         public ActionResult ManagePages(int moduleId)
         {
             if (!IsAdmin()) return RedirectToAction("Login", "Account");
-
-            // Ambil data modul sekali dengan senarai Pages di dalamnya
-            var module = db.Modules
-                           .Include(m => m.Pages)
-                           .FirstOrDefault(m => m.Id == moduleId);
-
+            var module = db.Modules.Include(m => m.Pages).FirstOrDefault(m => m.Id == moduleId);
             if (module == null) return HttpNotFound();
-
             return View(module);
         }
 
-        // ==========================================
-        // 7. PAPARKAN SENARAI PELAJAR
-        // ==========================================
         public ActionResult ManageUsers()
         {
             if (!IsAdmin()) return RedirectToAction("Login", "Account");
-
-            // Ambil semua pengguna kecuali Admin
             var users = db.Users.OrderBy(u => u.FullName).ToList();
             return View(users);
         }
 
-        // --- BAHAGIAN ADMIN ---
-
-        // Papar senarai laporan untuk Admin
         public ActionResult ManageReports()
         {
-            // Hanya Admin boleh akses (tambah logic check session role di sini)
+            if (!IsAdmin()) return RedirectToAction("Login", "Account");
             var reports = db.ScamReports.OrderByDescending(r => r.DateReported).ToList();
             return View(reports);
         }
 
-        // Update status laporan (Sahkan/Tolak)
         [HttpPost]
         public ActionResult UpdateStatus(int id, string status)
         {
@@ -192,9 +175,6 @@ namespace KenalPhihsing.Controllers
             return RedirectToAction("ManageReports");
         }
 
-        // --- PENGURUSAN SECURITY ALERTS (ADMIN) ---
-
-        // 1. Senarai Amaran
         public ActionResult ManageAlerts()
         {
             if (!IsAdmin()) return RedirectToAction("Login", "Account");
@@ -202,7 +182,6 @@ namespace KenalPhihsing.Controllers
             return View(alerts);
         }
 
-        // 2. Borang Tambah/Edit
         public ActionResult EditAlert(int? id)
         {
             if (!IsAdmin()) return RedirectToAction("Login", "Account");
@@ -214,45 +193,30 @@ namespace KenalPhihsing.Controllers
             return View(new SecurityAlert { DatePublished = DateTime.Now });
         }
 
-        // 3. Simpan Amaran
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [ValidateInput(false)] // <--- ADD THIS LINE HERE
+        [ValidateInput(false)]
         public ActionResult SaveAlert(SecurityAlert alert)
         {
             if (ModelState.IsValid)
             {
-                // Semak adakah ID ini benar-benar wujud dalam table SecurityAlerts
                 var exists = db.SecurityAlerts.Any(a => a.Id == alert.Id);
-
                 if (alert.Id > 0 && exists)
                 {
-                    // Jika ID wujud, maksudnya ini adalah PROSES EDIT (Update)
                     db.Entry(alert).State = EntityState.Modified;
                 }
                 else
                 {
-                    // Jika ID adalah 0 ATAU ID tidak wujud dalam table (Promote dari ScamReport)
-                    // Kita paksa ID jadi 0 supaya Database buat ID baru (Auto-increment)
                     alert.Id = 0;
                     alert.DatePublished = DateTime.Now;
                     db.SecurityAlerts.Add(alert);
                 }
-
-                try
-                {
-                    db.SaveChanges();
-                    return RedirectToAction("ManageAlerts");
-                }
-                catch (Exception ex)
-                {
-                    ModelState.AddModelError("", "Ralat semasa menyimpan: " + ex.Message);
-                }
+                db.SaveChanges();
+                return RedirectToAction("ManageAlerts");
             }
             return View("EditAlert", alert);
         }
 
-        // 4. Padam Amaran
         [HttpPost]
         public ActionResult DeleteAlert(int id)
         {
@@ -265,37 +229,28 @@ namespace KenalPhihsing.Controllers
             return RedirectToAction("ManageAlerts");
         }
 
-        // Fungsi untuk 'promote' laporan user kepada Buletin Rasmi
         public ActionResult PromoteToAlert(int id)
         {
             if (!IsAdmin()) return RedirectToAction("Login", "Account");
-
             var report = db.ScamReports.Find(id);
             if (report == null) return HttpNotFound();
 
-            // Cipta objek SecurityAlert baru dan isi dengan data dari ScamReport
             var newAlert = new SecurityAlert
             {
                 Title = "AMARAN: Taktik Scam " + report.Category,
                 ScammerInfo = report.ScammerInfo,
-                ExampleMessage = report.Description, // Masukkan kronologi sebagai contoh mesej
-                Severity = "Sederhana", // Default severity
+                ExampleMessage = report.Description,
+                Severity = "Sederhana",
                 DatePublished = DateTime.Now,
-                Content = "Analisis: Taktik ini dikesan melalui laporan komuniti. Modus operandi melibatkan..."
+                Content = "Analisis: Taktik ini dikesan melalui laporan komuniti."
             };
-
-            // Bawa ke View EditAlert dengan data yang sudah diisi
             return View("EditAlert", newAlert);
         }
 
-
-        // 1. DISPLAY THE CONFIG PAGE (GET)
         public ActionResult SystemConfig()
         {
-            // Fetch the first row of settings. 
-            // If the table is empty, create a default one so the page doesn't crash.
+            if (!IsAdmin()) return RedirectToAction("Login", "Account");
             var settings = db.SystemSettings.FirstOrDefault();
-
             if (settings == null)
             {
                 settings = new SystemSetting
@@ -303,45 +258,59 @@ namespace KenalPhihsing.Controllers
                     ScoreChild = 70,
                     ScoreAdult = 85,
                     ScoreElder = 80,
-                    QuizAttempts = 3
+                    QuizAttempts = 3,
+                    SessionTimeout = 30,
+                    IsMaintenanceMode = false
                 };
             }
-
             return View(settings);
         }
 
-        // 2. SAVE THE SETTINGS (POST)
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult UpdateSystemSettings(SystemSetting model, bool IsMaintenanceMode = false)
         {
-            var dbSettings = db.SystemSettings.FirstOrDefault();
-
-            if (dbSettings != null)
+            if (!IsAdmin()) return RedirectToAction("Login", "Account");
+            if (ModelState.IsValid)
             {
-                // Update existing row
-                dbSettings.IsMaintenanceMode = IsMaintenanceMode;
-                dbSettings.GlobalAnnouncement = model.GlobalAnnouncement;
-                dbSettings.ScoreChild = model.ScoreChild;
-                dbSettings.ScoreAdult = model.ScoreAdult;
-                dbSettings.ScoreElder = model.ScoreElder;
-                dbSettings.QuizAttempts = model.QuizAttempts;
-                dbSettings.SessionTimeout = model.SessionTimeout;
-
+                var dbSettings = db.SystemSettings.FirstOrDefault();
+                if (dbSettings != null)
+                {
+                    dbSettings.IsMaintenanceMode = IsMaintenanceMode;
+                    dbSettings.GlobalAnnouncement = model.GlobalAnnouncement;
+                    dbSettings.ScoreChild = model.ScoreChild;
+                    dbSettings.ScoreAdult = model.ScoreAdult;
+                    dbSettings.ScoreElder = model.ScoreElder;
+                    dbSettings.QuizAttempts = model.QuizAttempts;
+                    dbSettings.SessionTimeout = model.SessionTimeout;
+                    dbSettings.LastUpdated = DateTime.Now;
+                    dbSettings.UpdatedBy = Session["UserName"]?.ToString() ?? "Administrator";
+                    db.Entry(dbSettings).State = EntityState.Modified;
+                }
+                else
+                {
+                    model.IsMaintenanceMode = IsMaintenanceMode;
+                    model.LastUpdated = DateTime.Now;
+                    model.UpdatedBy = Session["UserName"]?.ToString() ?? "Administrator";
+                    db.SystemSettings.Add(model);
+                }
                 db.SaveChanges();
-                TempData["SuccessMessage"] = "Tetapan sistem telah berjaya dikemaskini!";
+                TempData["SuccessMessage"] = "Tetapan sistem berjaya dikemaskini!";
             }
-            else
-            {
-                // If table is empty, add the first row
-                model.IsMaintenanceMode = IsMaintenanceMode;
-                db.SystemSettings.Add(model);
-                db.SaveChanges();
-            }
-
             return RedirectToAction("SystemConfig");
         }
 
+        // HALAMAN DEDIKASI UNTUK SEMUA LOG AKTIVITI
+        public ActionResult PortalActivity()
+        {
+            if (!IsAdmin()) return RedirectToAction("Login", "Account");
 
+            var allActivities = db.UserActivities
+                                  .Include(u => u.User)
+                                  .OrderByDescending(a => a.CreatedAt)
+                                  .ToList();
+
+            return View(allActivities);
+        }
     }
 }

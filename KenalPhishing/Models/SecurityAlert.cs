@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 
-namespace KenalPhihsing.Models
+namespace KenalPhishing.Models
 {
     public class SecurityAlert
     {

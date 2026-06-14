@@ -1,11 +1,11 @@
-﻿using KenalPhihsing.Models;
+﻿using KenalPhishing.Models;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Web;
 
-namespace KenalPhihsing.Data
+namespace KenalPhishing.Data
 {
     public class ApplicationDbContext : DbContext
     {
@@ -27,5 +27,8 @@ namespace KenalPhihsing.Data
         public DbSet<SecurityAlert> SecurityAlerts { get; set; }
 
         public DbSet<SystemSetting> SystemSettings { get; set; }
+        public DbSet<UserProgress> UserProgresses { get; set; }
+        public DbSet<UserLogin> UserLogins { get; set; }
+        public DbSet<UserActivity> UserActivities { get; set; }
     }
 }

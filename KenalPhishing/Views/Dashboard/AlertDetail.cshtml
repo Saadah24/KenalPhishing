@@ -1,4 +1,4 @@
-﻿@model KenalPhihsing.Models.SecurityAlert
+﻿@model KenalPhishing.Models.SecurityAlert
 @{
     Layout = "~/Views/Shared/_DashboardLayout.cshtml";
     ViewBag.Title = "Buletin Keselamatan";
@@ -86,7 +86,9 @@
                             </li>
                             <li class="mb-3">
                                 <label class="d-block small text-muted fw-bold">KATEGORI:</label>
-                                <span class="badge bg-dark">Phishing @Model.Title.Split(' ').Last()</span>
+                                <span class="badge bg-dark">
+                                    Phishing @(Model.Title != null ? Model.Title.Split(' ').Last() : "Umum")
+                                </span>
                             </li>
                         </ul>
                     </div>
@@ -114,7 +116,7 @@
                     </a>
                 </div>
                 <div class="col-md-6 mb-2">
-                    <a href="https://wa.me/?text=Amaran Scam Terkini: @Model.Title. Sila semak di KenalPhishing!" class="btn btn-success w-100 py-3 rounded-pill fw-bold shadow-sm">
+                    <a href="https://wa.me/?text=Amaran Scam Terkini: @(Model.Title ?? "Amaran Baharu"). Sila semak di KenalPhishing!" class="btn btn-success w-100 py-3 rounded-pill fw-bold shadow-sm">
                         <ion-icon name="logo-whatsapp" class="me-2"></ion-icon> KONGSI KE WHATSAPP
                     </a>
                 </div>

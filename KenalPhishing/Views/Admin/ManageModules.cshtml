@@ -1,4 +1,4 @@
-﻿@model IEnumerable<KenalPhihsing.Models.Module>
+﻿@model IEnumerable<KenalPhishing.Models.Module>
 @{
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
     ViewBag.Title = "Pengurusan Modul";
@@ -17,11 +17,32 @@
         </a>
     </div>
 
+    <!-- Bahagian Penapisan -->
+    <div class="card border-0 shadow-sm rounded-4 p-3 mb-4">
+        <div class="row align-items-center">
+            <div class="col-md-4">
+                <div class="input-group">
+                    <span class="input-group-text bg-transparent border-0"><ion-icon name="filter-outline"></ion-icon></span>
+                    <select id="categoryFilter" class="form-select border-0 bg-light rounded-3">
+                        <option value="all">Semua Kategori</option>
+                        <option value="Adult">Dewasa (Adult)</option>
+                        <option value="Child">Kanak-Kanak (Child)</option>
+                        <option value="Elder">Warga Emas (Elder)</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-8 text-md-end mt-2 mt-md-0">
+                <small class="text-muted italic">* Gunakan menu di atas untuk menapis senarai dengan pantas.</small>
+            </div>
+        </div>
+    </div>
+
     <div class="admin-table-card shadow-sm overflow-hidden bg-white rounded-4 border">
-        <table class="table table-hover mb-0">
+        <table class="table table-hover mb-0" id="moduleTable">
             <thead class="bg-dark text-white">
                 <tr>
-                    <th class="ps-4">Kod</th>
+                    <th class="ps-4" style="width: 50px;">#</th>
+                    <th>Kod</th>
                     <th>Tajuk Modul</th>
                     <th>Kategori</th>
                     <th>Ikon</th>
@@ -32,18 +53,20 @@
                 @if (Model == null || !Model.Any())
                 {
                     <tr>
-                        <td colspan="5" class="text-center p-4 text-muted">Tiada modul direkodkan. Sila tambah modul baharu.</td>
+                        <td colspan="6" class="text-center p-4 text-muted">Tiada modul direkodkan. Sila tambah modul baharu.</td>
                     </tr>
                 }
                 else
                 {
+                    int i = 1;
                     foreach (var mod in Model)
                     {
-                        <tr>
-                            <td class="ps-4 fw-bold text-muted">@mod.ModuleCode</td>
+                        @* Tambah data-category di sini *@
+                        <tr class="module-row" data-category="@mod.Category">
+                            <td class="ps-4 text-muted numbering">@(i++)</td>
+                            <td class="fw-bold text-muted">@mod.ModuleCode</td>
                             <td class="fw-bold">@mod.Title</td>
-                            <td>
-                                <!-- Warna lencana berbeza ikut Kategori -->
+                            <td class="category-cell">
                                 @if (mod.Category == "Elder")
                                 {<span class="badge bg-warning text-dark">Warga Emas</span> }
                                 else if (mod.Category == "Adult")
@@ -54,8 +77,6 @@
                             <td><ion-icon name="@mod.Icon" class="fs-5"></ion-icon></td>
                             <td class="text-center pe-4">
                                 <a href="@Url.Action("EditModule", "Admin", new { id = mod.Id })" class="btn btn-sm btn-outline-dark me-2">Sunting</a>
-
-                                <!-- Borang Hapus -->
                                 <form action="@Url.Action("DeleteModule", "Admin")" method="post" class="d-inline" onsubmit="return confirm('Anda pasti mahu memadam modul ini?');">
                                     <input type="hidden" name="id" value="@mod.Id" />
                                     <button type="submit" class="btn btn-sm btn-danger">Hapus</button>
@@ -68,3 +89,30 @@
         </table>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const filterDropdown = document.getElementById('categoryFilter');
+            const moduleRows = document.querySelectorAll('.module-row');
+
+            if (filterDropdown instanceof HTMLSelectElement) {
+                filterDropdown.addEventListener('change', function () {
+                    const selectedCategory = filterDropdown.value;
+
+                    moduleRows.forEach(function (row) {
+                        if (row instanceof HTMLElement) {
+                            const rowCategory = row.getAttribute('data-category');
+
+                            if (selectedCategory === "all" || rowCategory === selectedCategory) {
+                                row.style.display = "";
+                            } else {
+                                row.style.display = "none";
+                            }
+                        }
+                    });
+                });
+            }
+        });
+    </script>
+}

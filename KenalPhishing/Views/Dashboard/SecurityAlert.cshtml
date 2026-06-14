@@ -1,8 +1,8 @@
-﻿@model IEnumerable<KenalPhihsing.Models.SecurityAlert>
+﻿@model IEnumerable<KenalPhishing.Models.SecurityAlert>
 @{
     Layout = "~/Views/Shared/_DashboardLayout.cshtml";
     ViewBag.Title = "Pusat Ancaman (Radar)";
-    var verifiedReports = (List<KenalPhihsing.Models.ScamReport>)ViewBag.VerifiedReports;
+    var verifiedReports = (List<KenalPhishing.Models.ScamReport>)ViewBag.VerifiedReports;
 }
 
 <div class="container-fluid py-4">
@@ -32,7 +32,7 @@
             <!-- Bahagian Kiri: Amaran Rasmi -->
             @foreach (var alert in Model)
             {
-                <div class="card mb-4 border-0 border-start border-5 @(alert.Severity == "Tinggi" ? "border-danger" : "border-warning") shadow-sm rounded-4 overflow-hidden">
+                <div class="alert-card card mb-4 border-0 border-start border-5 @(alert.Severity == "Tinggi" ? "border-danger" : "border-warning") shadow-sm rounded-4 overflow-hidden">
                     <div class="card-body p-4">
                         <div class="d-flex justify-content-between align-items-start mb-2">
                             <span class="badge @(alert.Severity == "Tinggi" ? "bg-danger" : "bg-warning text-dark") text-uppercase">RASMI</span>
@@ -57,15 +57,26 @@
             <div class="list-group rounded-4 shadow-sm border-0">
                 @if (ViewBag.VerifiedReports != null)
                 {
-                    foreach (var report in (IEnumerable<KenalPhihsing.Models.ScamReport>)ViewBag.VerifiedReports)
+                    foreach (var report in ViewBag.VerifiedReports as List<KenalPhishing.Models.ScamReport>)
                     {
-                        <div class="list-group-item p-3 border-0 border-bottom radar-item">
-                            <div class="d-flex justify-content-between">
-                                <span class="badge bg-success-subtle text-success small mb-2">VERIFIED</span>
-                                <small class="extra-small text-muted">@report.DateReported.ToString("dd/MM")</small>
+                        <div class="report-card card border-0 shadow-sm rounded-4 mb-3 overflow-hidden">
+                            <div class="card-body p-3">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span class="badge bg-success-subtle text-success small">VERIFIED</span>
+                                    <small class="text-muted">@report.DateReported.ToString("dd/MM")</small>
+                                </div>
+
+                                <h6 class="text-danger fw-bold mb-1">@report.ScammerInfo</h6>
+                                <p class="small text-muted mb-2">Taktik: @report.Category</p>
+
+                                <!-- TAMBAHAN: Paparan Kronologi untuk Pengguna -->
+                                <div class="mt-2 p-2 bg-light rounded border-start border-3 border-danger shadow-sm">
+                                    <label class="d-block fw-bold text-dark mb-1" style="font-size: 10px; text-transform: uppercase;">Kronologi Kes:</label>
+                                    <p class="mb-0 text-secondary" style="font-size: 0.85rem; line-height: 1.4; white-space: pre-line;">
+                                        "@report.Description"
+                                    </p>
+                                </div>
                             </div>
-                            <h6 class="fw-bold mb-1 text-danger">@report.ScammerInfo</h6>
-                            <p class="extra-small text-muted mb-0">Taktik: @report.Category</p>
                         </div>
                     }
                 }
@@ -103,3 +114,46 @@
         border-left-width: 8px !important;
     }
 </style>
+
+@section Scripts {
+    <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Gunakan casting atau semakan null untuk memuaskan IntelliSense
+        const searchInput = document.getElementById('radarSearch');
+
+        // Semak jika searchInput wujud dan jenisnya adalah input
+        if (searchInput instanceof HTMLInputElement) {
+            searchInput.addEventListener('keyup', function () {
+                const searchTerm = searchInput.value.toLowerCase();
+
+                // 1. Tapis Amaran Rasmi (Sebelah Kiri)
+                const alertCards = document.querySelectorAll('.alert-card');
+                alertCards.forEach(function (card) {
+                    // Tukar Element kepada HTMLElement supaya .style boleh dibaca
+                    if (card instanceof HTMLElement) {
+                        const text = (card.textContent || "").toLowerCase();
+                        if (text.includes(searchTerm)) {
+                            card.style.display = "";
+                        } else {
+                            card.style.display = "none";
+                        }
+                    }
+                });
+
+                // 2. Tapis Laporan Komuniti (Sebelah Kanan)
+                const reportCards = document.querySelectorAll('.report-card');
+                reportCards.forEach(function (card) {
+                    if (card instanceof HTMLElement) {
+                        const text = (card.textContent || "").toLowerCase();
+                        if (text.includes(searchTerm)) {
+                            card.style.display = "";
+                        } else {
+                            card.style.display = "none";
+                        }
+                    }
+                });
+            });
+        }
+    });
+    </script>
+}

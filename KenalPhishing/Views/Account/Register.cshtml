@@ -15,15 +15,17 @@
     <link href="~/Content/Auth.css" rel="stylesheet" type="text/css" />
     <style>
         .parent-box {
-            background: rgba(255,255,255,0.5);
-            border-radius: 15px;
+            background-color: #f1f5f9;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
             transition: all 0.3s ease;
         }
 
         .extra-small {
-            font-size: 0.7rem;
+            font-size: 0.75rem;
+            color: #64748b;
         }
-        /* Ensure the card looks the same even though we changed div to span */
+
         .cat-card {
             display: block;
         }
@@ -57,14 +59,13 @@
             </div>
 
             <div class="mb-4">
-                <label class="form-label fw-bold mb-3">Pilih Kategori Pembelajaran</label>
+                <label class="form-label mb-3">Pilih Kategori Pembelajaran</label>
                 <div class="category-grid">
-                    <!-- FIX: Changed <div> to <span> inside <label> to fix HTML warnings -->
                     <label class="cat-option">
                         <input type="radio" name="Category" value="Child" required onclick="toggleParentalOptions(false)">
                         <span class="cat-card">
                             <ion-icon name="happy-outline"></ion-icon>
-                            <span class="cat-name">Golongan Muda</span>
+                            <span class="cat-name">Pelajar Sekolah</span>
                             <span class="cat-age">7 - 17 Tahun</span>
                         </span>
                     </label>
@@ -92,15 +93,13 @@
             <!-- Bahagian Pantauan Ibu Bapa -->
             <div id="parentSection" class="parent-box p-3 mb-4 shadow-sm">
                 <div class="form-check mb-2">
-                    <!-- FIX 1: Change name to "IsParent" and add value="true" -->
                     <input class="form-check-input" type="checkbox" id="isParent" name="IsParent" value="true" onchange="toggleChildEmail()">
-                    <label class="form-check-label small fw-bold" for="isParent">
+                    <label class="form-check-label small fw-bold text-dark" for="isParent">
                         Daftar sebagai Ibu Bapa (Pantau akaun anak)
                     </label>
                 </div>
                 <div id="childEmailGroup" style="display: none;" class="mt-2">
                     <label class="form-label extra-small text-muted mb-1">Masukkan Emel Akaun Anak</label>
-                    <!-- FIX 2: Change name to "ChildEmail" -->
                     <input type="email" name="ChildEmail" class="auth-input" placeholder="anak@emel.com">
                     <p class="extra-small text-danger mt-1">*Pastikan anak anda telah mendaftar akaun Golongan Muda.</p>
                 </div>
@@ -108,20 +107,18 @@
 
             <div class="mb-4 auth-group">
                 <label class="form-label">Kata Laluan</label>
-                <!-- FIX: Changed name to "Password" for successful redirection -->
                 <input type="password" name="Password" class="auth-input" required placeholder="••••••••">
             </div>
 
             <div class="text-center mt-5">
                 <button type="submit" class="btn btn-auth w-100">Daftar Sekarang</button>
-                <p class="mt-3 small">Sudah berdaftar? <a href="@Url.Action("Login", "Account")" class="auth-link">Log Masuk</a></p>
+                <p class="mt-3 small text-muted">Sudah berdaftar? <a href="@Url.Action("Login", "Account")" class="auth-link">Log Masuk</a></p>
             </div>
         </form>
     </div>
 </div>
 
 <script>
-    // Setting show = true tells Visual Studio that 'show' is a boolean
     function toggleParentalOptions(show = true) {
         const section = document.getElementById('parentSection');
         if (section) {
@@ -147,7 +144,6 @@
     }
 
     window.onload = function () {
-        // This will call the function with the default value
         toggleParentalOptions(true);
     };
 </script>

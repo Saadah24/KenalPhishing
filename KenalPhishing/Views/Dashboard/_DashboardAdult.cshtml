@@ -1,13 +1,25 @@
-﻿<!-- Inside User Dashboard -->
+﻿@using KenalPhishing.Models
+@using KenalPhishing.Models
 @{
-    var settings = new KenalPhihsing.Data.ApplicationDbContext().SystemSettings.FirstOrDefault();
-}
+    // 1. Tangkap data dari Pangkalan Data (Controller)
+    int completedModules = ViewBag.CompletedModules ?? 0;
+    int totalModules = ViewBag.TotalModules ?? 0;
+    double avgScore = ViewBag.AvgScore ?? 0.0;
+    int totalReports = ViewBag.TotalReports ?? 0;
+    int badgeCount = ViewBag.Badges ?? 0; // Data lencana baru
 
-@if (settings != null && !string.IsNullOrEmpty(settings.GlobalAnnouncement))
-{
-    <div class="alert alert-info">
-        @settings.GlobalAnnouncement
-    </div>
+    var recentActivities = ViewBag.RecentActivities as List<UserActivity> ?? new List<UserActivity>();
+    var latestAlerts = ViewBag.LatestAlerts as List<SecurityAlert> ?? new List<SecurityAlert>();
+
+    var chartLabels = ViewBag.ChartLabels as List<string> ?? new List<string>();
+    var chartValues = ViewBag.ChartValues as List<double> ?? new List<double>();
+
+    // 2. Logik Pengiraan untuk Paparan
+    int safeTotal = totalModules == 0 ? 1 : totalModules;
+    int progressPercent = (completedModules * 100) / safeTotal;
+
+    string statusTahap = avgScore >= 80 ? "Cemerlang" : (avgScore >= 50 ? "Sederhana" : "Rendah");
+    string tahapIcon = avgScore >= 80 ? "checkmark-done-outline" : (avgScore >= 50 ? "shield-checkmark-outline" : "warning-outline");
 }
 
 <style>
@@ -113,13 +125,29 @@
         .bar:hover {
             opacity: 0.8;
         }
+
+    /* Extra Styling for Adult Badges */
+    .badge-slot {
+        width: 40px;
+        height: 40px;
+        background: #f8f9fa;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #dee2e6;
+    }
+
+    .badge-earned {
+        background: #e6f0ff;
+        color: #006aff;
+    }
 </style>
 
 <div class="dashboard-adult container-fluid">
     <div class="row g-4">
         <!-- LEFT COLUMN -->
         <div class="col-lg-8">
-
             <!-- Welcome Header -->
             <div class="welcome-card card p-5 shadow-sm mb-4">
                 <div class="d-flex justify-content-between align-items-center">
@@ -127,7 +155,7 @@
                         <h5 class="text-primary fw-bold mb-0">Selamat Kembali,</h5>
                         <h1 class="fw-bold mb-3">@Session["UserName"]</h1>
                         <p class="text-muted mb-4 w-75">
-                            Status Latihan: <b>40% Selesai</b>. Tingkatkan skor kesedaran anda dengan menyelesaikan modul seterusnya.
+                            Status Latihan: <b>@progressPercent% Selesai</b>. Tingkatkan skor kesedaran anda dengan menyelesaikan modul seterusnya.
                         </p>
                         <div class="d-flex gap-3">
                             <a href="@Url.Action("Modules", "Dashboard")" class="btn btn-primary rounded-pill px-4 py-2 fw-bold d-flex align-items-center gap-2 shadow">
@@ -140,9 +168,9 @@
                     </div>
                     <div class="d-none d-md-block">
                         <div class="shield-badge">
-                            <ion-icon name="checkmark-done-outline" style="font-size: 3rem;"></ion-icon>
+                            <ion-icon name="@tahapIcon" style="font-size: 3rem;"></ion-icon>
                             <span class="fw-bold mt-1">Tahap</span>
-                            <small>Sederhana</small>
+                            <small>@statusTahap</small>
                         </div>
                     </div>
                 </div>
@@ -155,7 +183,7 @@
                         <div class="stat-icon bg-soft-warning mb-3">
                             <ion-icon name="medal" class="fs-4"></ion-icon>
                         </div>
-                        <h2 class="fw-bold mb-0">85%</h2>
+                        <h2 class="fw-bold mb-0">@avgScore%</h2>
                         <small class="text-muted text-uppercase fw-bold" style="font-size: 10px; letter-spacing: 1px;">Skor Kesedaran</small>
                     </div>
                 </div>
@@ -164,7 +192,7 @@
                         <div class="stat-icon bg-soft-primary mb-3">
                             <ion-icon name="book" class="fs-4"></ion-icon>
                         </div>
-                        <h2 class="fw-bold mb-0">2 / 5</h2>
+                        <h2 class="fw-bold mb-0">@completedModules / @totalModules</h2>
                         <small class="text-muted text-uppercase fw-bold" style="font-size: 10px; letter-spacing: 1px;">Modul Selesai</small>
                     </div>
                 </div>
@@ -173,7 +201,7 @@
                         <div class="stat-icon bg-soft-danger mb-3">
                             <ion-icon name="alert-circle" class="fs-4"></ion-icon>
                         </div>
-                        <h2 class="fw-bold mb-0">0</h2>
+                        <h2 class="fw-bold mb-0">@totalReports</h2>
                         <small class="text-muted text-uppercase fw-bold" style="font-size: 10px; letter-spacing: 1px;">Laporan Aktif</small>
                     </div>
                 </div>
@@ -186,68 +214,91 @@
                         <h6 class="fw-bold m-0">Trend Prestasi Kesedaran</h6>
                         <small class="text-muted">Berdasarkan markah kuiz bulanan</small>
                     </div>
-                    <div class="dropdown">
-                        <button class="btn btn-sm btn-light border dropdown-toggle" type="button">
-                            <ion-icon name="calendar-outline" class="align-middle me-1"></ion-icon> 30 Hari Terakhir
-                        </button>
-                    </div>
                 </div>
 
                 <div class="chart-container px-3">
-                    <div class="bar" style="height: 40%; background: #cce0ff;"></div>
-                    <div class="bar" style="height: 65%; background: #80b3ff;"></div>
-                    <div class="bar" style="height: 45%; background: #cce0ff;"></div>
-                    <div class="bar" style="height: 85%; background: #3385ff;"></div>
-                    <div class="bar" style="height: 100%; background: #006aff;"></div>
-                    <div class="bar" style="height: 75%; background: #80b3ff;"></div>
+                    @if (chartValues.Any())
+                    {
+                        foreach (var val in chartValues.Take(6))
+                        {
+                            string bgColor = val >= 80 ? "#006aff" : (val >= 50 ? "#3385ff" : "#cce0ff");
+                            string inlineStyle = $"height: {val}%; background: {bgColor};";
+                            <div class="bar" style="@inlineStyle" title="Skor: @(val)%"></div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="text-muted h-100 d-flex align-items-center">Tiada rekod kuiz ditemui.</div>
+                    }
                 </div>
                 <div class="d-flex justify-content-between mt-3 text-muted" style="font-size: 11px;">
-                    <span>Minggu 1</span>
-                    <span>Minggu 2</span>
-                    <span>Minggu 3</span>
-                    <span>Minggu 4</span>
+                    @foreach (var lbl in chartLabels.Take(6))
+                    {
+                        <span class="text-truncate" style="max-width: 60px;">@lbl</span>
+                    }
                 </div>
             </div>
         </div>
 
         <!-- RIGHT COLUMN -->
         <div class="col-lg-4">
-
             <!-- Activity Log -->
             <div class="card p-4 shadow-sm bg-white mb-4">
                 <h6 class="fw-bold mb-4 d-flex align-items-center">
                     <ion-icon name="time-outline" class="me-2 text-primary"></ion-icon> Log Aktiviti
                 </h6>
                 <div class="timeline">
-                    <div class="timeline-item">
-                        <div class="timeline-dot"></div>
-                        <p class="small fw-bold mb-0">Modul 2 Selesai</p>
-                        <small class="text-muted">Diberi pada 12 Jan 2025 • 09:15 AM</small>
-                    </div>
-                    <div class="timeline-item">
-                        <div class="timeline-dot" style="border-color: #ffc107;"></div>
-                        <p class="small fw-bold mb-0">Tukar Kata Laluan</p>
-                        <small class="text-muted">11 Jan 2025 • 04:30 PM</small>
-                    </div>
-                    <div class="timeline-item mb-0">
-                        <div class="timeline-dot" style="border-color: #28a745;"></div>
-                        <p class="small fw-bold mb-0">Pendaftaran Berjaya</p>
-                        <small class="text-muted">10 Jan 2025 • 10:00 AM</small>
-                    </div>
+                    @if (recentActivities.Any())
+                    {
+                        foreach (var act in recentActivities.Take(3))
+                        {
+                            <div class="timeline-item">
+                                <div class="timeline-dot"></div>
+                                <p class="small fw-bold mb-0">@act.Title</p>
+                                <small class="text-muted">@act.CreatedAt.ToString("dd MMM yyyy")</small>
+                            </div>
+                        }
+                    }
                 </div>
-                <button class="btn btn-light btn-sm w-100 mt-4 rounded-pill fw-bold text-muted py-2">Lihat Semua Aktiviti</button>
+                <a href="@Url.Action("Index", "Activity")" class="btn btn-light btn-sm w-100 mt-2 rounded-pill fw-bold text-muted py-2 text-decoration-none">Lihat Semua Aktiviti</a>
             </div>
 
             <!-- Info Box -->
-            <div class="card p-4 shadow-sm bg-dark text-white border-0">
+            <div class="card p-4 shadow-sm bg-dark text-white border-0 mb-4">
                 <h6 class="fw-bold mb-3 d-flex align-items-center text-warning">
                     <ion-icon name="shield-half-outline" class="me-2"></ion-icon> Info Keselamatan
                 </h6>
-                <p class="small opacity-75 mb-4">
-                    Peringatan: Pihak bank tidak akan sesekali meminta kata laluan anda melalui SMS atau panggilan telefon.
-                </p>
-                <hr class="opacity-25 mb-3">
-                <a href="#" class="text-warning text-decoration-none small fw-bold">Ketahu lebih lanjut →</a>
+                @if (latestAlerts.Any())
+                {
+                    var topAlert = latestAlerts.First();
+                    <p class="small opacity-75 mb-4"><b>AMARAN:</b> @topAlert.Title</p>
+                    <hr class="opacity-25 mb-3">
+                    <a href="/Dashboard/SecurityAlert/@topAlert.Id" class="text-warning text-decoration-none small fw-bold">Ketahu lebih lanjut →</a>
+                }
+            </div>
+
+            <!-- ==========================================
+                 KAD LENCANA BARU (CONNECT DENGAN DB)
+                 ========================================== -->
+            <div class="card p-4 shadow-sm bg-white border-0">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h6 class="fw-bold m-0 d-flex align-items-center">
+                        <ion-icon name="ribbon-outline" class="me-2 text-primary"></ion-icon> Pencapaian Lencana
+                    </h6>
+                    <span class="badge bg-primary rounded-pill">@badgeCount</span>
+                </div>
+
+                <div class="d-flex flex-wrap gap-2 mb-4">
+                    @for (int i = 0; i < 5; i++)
+                    {
+                        <div class="badge-slot @(i < badgeCount ? "badge-earned" : "")">
+                            <ion-icon name="@(i < badgeCount ? "shield-checkmark" : "lock-closed")"></ion-icon>
+                        </div>
+                    }
+                </div>
+
+                <p class="extra-small text-muted mb-3">Selesaikan modul dengan markah 100% untuk mengumpul lencana pakar siber.</p>
+                <a href="@Url.Action("Lencana", "Dashboard")" class="btn btn-outline-primary btn-sm w-100 rounded-pill fw-bold py-2">Lihat Galeri Lencana</a>
             </div>
 
         </div>

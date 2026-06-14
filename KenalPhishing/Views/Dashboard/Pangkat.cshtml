@@ -1,0 +1,65 @@
+﻿@{
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+    ViewBag.Title = "Pangkat Saya";
+    int xp = ViewBag.CurrentXP ?? 0;
+}
+<div class="container py-4" style="font-family: 'Baloo 2', cursive;">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold text-primary"><ion-icon name="trophy"></ion-icon> Pangkat Siber</h2>
+        <a href="@Url.Action("Progress", "Dashboard")" class="btn btn-outline-dark rounded-pill px-4">Kembali</a>
+    </div>
+
+    <div class="card shadow-sm border-0 rounded-4 p-4 mb-4 bg-primary text-white text-center">
+        <h4>XP Terkumpul Anda: <b>@xp XP</b></h4>
+        <p class="mb-0 small">Kumpul lebih banyak XP dengan menjawab kuiz dan menyelesaikan modul!</p>
+    </div>
+
+    <div class="row g-4">
+        <!-- Prajurit (0-99 XP) -->
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm rounded-4 p-4 text-center @(xp >= 0 ? "border-primary border-3" : "opacity-50")">
+                <ion-icon name="star-outline" class="display-3 text-secondary mb-2"></ion-icon>
+                <h5 class="fw-bold">Prajurit Muda</h5>
+                <p class="small text-muted">0 XP</p>
+                @if (xp >= 0)
+                {<span class="badge bg-success rounded-pill">Unlocked</span>}
+            </div>
+        </div>
+        <!-- Koperal (100-199 XP) -->
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm rounded-4 p-4 text-center @(xp >= 100 ? "border-primary border-3" : "opacity-50")">
+                <ion-icon name="star-half-outline" class="display-3 text-info mb-2"></ion-icon>
+                <h5 class="fw-bold">Koperal Siber</h5>
+                <p class="small text-muted">100 XP</p>
+                @if (xp >= 100)
+                {<span class="badge bg-success rounded-pill">Unlocked</span> }
+                else
+                { <ion-icon name="lock-closed"></ion-icon>}
+            </div>
+        </div>
+        <!-- Sarjan (200-499 XP) -->
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm rounded-4 p-4 text-center @(xp >= 200 ? "border-primary border-3" : "opacity-50")">
+                <ion-icon name="star" class="display-3 text-warning mb-2"></ion-icon>
+                <h5 class="fw-bold">Sarjan Elit</h5>
+                <p class="small text-muted">200 XP</p>
+                @if (xp >= 200)
+                {<span class="badge bg-success rounded-pill">Unlocked</span> }
+                else
+                { <ion-icon name="lock-closed"></ion-icon>}
+            </div>
+        </div>
+        <!-- Jeneral (500+ XP) -->
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm rounded-4 p-4 text-center @(xp >= 500 ? "border-primary border-3" : "opacity-50")">
+                <ion-icon name="shield-checkmark" class="display-3 text-danger mb-2"></ion-icon>
+                <h5 class="fw-bold">Jeneral Siber</h5>
+                <p class="small text-muted">500 XP</p>
+                @if (xp >= 500)
+                {<span class="badge bg-success rounded-pill">Unlocked</span> }
+                else
+                { <ion-icon name="lock-closed"></ion-icon>}
+            </div>
+        </div>
+    </div>
+</div>

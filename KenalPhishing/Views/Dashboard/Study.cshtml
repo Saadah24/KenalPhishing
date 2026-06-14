@@ -1,9 +1,8 @@
-﻿@model KenalPhihsing.Models.ModulePage
+﻿@model KenalPhishing.Models.ModulePage
 
 @{
     Layout = "~/Views/Shared/_DashboardLayout.cshtml";
 
-    // Tarik data dari Model (Database)
     string cat = Model.Module.Category;
     string modCode = Model.Module.ModuleCode;
     string themeClass = "theme-" + cat.ToLower();
@@ -17,12 +16,293 @@
 @section Styles {
     <link href="~/Content/Study.css" rel="stylesheet" type="text/css" />
     <link href="~/Content/Dashboard.css" rel="stylesheet" type="text/css" />
+    <style>
+        /* Container for the fake mobile phone */
+        .phone-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+        }
+
+        .phone-shell {
+            width: 320px;
+            height: 520px;
+            border: 12px solid #222;
+            border-radius: 36px;
+            background: #f4f4f5;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            display: flex;
+            flex-direction: column;
+        }
+
+            .phone-shell::-webkit-scrollbar {
+                display: none;
+            }
+
+        /* Social Media Notification Design (Lockscreen Style) */
+        .notification-screen {
+            background: url('https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=3270&auto=format&fit=crop') no-repeat center center;
+            background-size: cover;
+            flex-grow: 1;
+            padding: 40px 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .lock-clock {
+            color: white;
+            text-align: center;
+            margin-bottom: 20px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .social-notif {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 12px;
+            display: flex;
+            gap: 12px;
+            align-items: start;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            animation: slideDown 0.5s ease-out;
+        }
+
+        .notif-icon {
+            width: 35px;
+            height: 35px;
+            border-radius: 8px;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .notif-content {
+            flex: 1;
+        }
+
+        .notif-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2px;
+        }
+
+        .notif-title {
+            font-weight: 700;
+            font-size: 12px;
+            color: #1a1a1a;
+        }
+
+        .notif-time {
+            font-size: 10px;
+            color: #666;
+        }
+
+        .notif-body {
+            font-size: 11px;
+            color: #333;
+            line-height: 1.3;
+        }
+
+        /* WhatsApp & SMS Layout */
+        .wa-header {
+            background: #075E54;
+            color: white;
+            padding: 12px 15px;
+            font-size: 14px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .wa-body {
+            background: #e5ddd5;
+            flex-grow: 1;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+
+        .wa-bubble {
+            background: #fff;
+            border-radius: 8px;
+            padding: 10px;
+            font-size: 13px;
+            max-width: 85%;
+            box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+            position: relative;
+            margin-bottom: 10px;
+        }
+
+            .wa-bubble.received {
+                background: #fff;
+                align-self: flex-start;
+            }
+
+        .sms-header {
+            background: #f4f4f5;
+            border-bottom: 1px solid #e4e4e7;
+            padding: 12px;
+            text-align: center;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .sms-body {
+            background: #ffffff;
+            flex-grow: 1;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sms-bubble {
+            background: #e4e4e7;
+            color: #000;
+            padding: 10px 14px;
+            border-radius: 16px;
+            font-size: 13px;
+            max-width: 85%;
+            margin-bottom: 10px;
+            align-self: flex-start;
+        }
+
+        /* E-Wallet Layout */
+        .ew-header {
+            background: #1e3a8a;
+            color: white;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .ew-balance-card {
+            background: #3b82f6;
+            border-radius: 12px;
+            padding: 15px;
+            margin: -15px 15px 15px 15px;
+            color: white;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        .ew-body {
+            background: #f8fafc;
+            flex-grow: 1;
+            padding: 15px;
+        }
+
+        /* Antivirus Layout */
+        .av-body {
+            background: #7f1d1d;
+            color: white;
+            flex-grow: 1;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .av-icon {
+            font-size: 4rem;
+            color: #fca5a5;
+            animation: pulse 1.5s infinite;
+        }
+
+        /* Interactive Email Fake Browser Styles */
+        .email-preview {
+            background: #fff;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .email-header {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            background: #f8f9fa;
+        }
+
+        .email-body {
+            padding: 20px;
+            font-size: 14px;
+        }
+
+        @@keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.1);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        @@keyframes slideDown {
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .transition-all {
+            transition: all 0.3s ease;
+        }
+
+        .tracking-wide {
+            letter-spacing: 1px;
+            font-size: 0.75rem;
+        }
+
+        .bg-success-gradient {
+            background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
+            color: #ffffff !important;
+        }
+
+        .bg-danger-gradient {
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%) !important;
+            color: #ffffff !important;
+        }
+
+        .advice-danger {
+            background-color: #fef2f2;
+            border-color: #fca5a5 !important;
+        }
+
+        .advice-success {
+            background-color: #f0fdf4;
+            border-color: #86efac !important;
+        }
+
+        .advice-warning {
+            background-color: #fffbeb;
+            border-color: #fcd34d !important;
+        }
+    </style>
 }
 
 <div class="study-container py-4 @themeClass">
-    <div class="study-paper shadow-lg mx-auto overflow-hidden" style="max-width: 900px; border-radius: 20px;">
+    <div class="study-paper shadow-lg mx-auto overflow-hidden" style="max-width: 900px; border-radius: 20px; background-color: #fff;">
 
-        <!-- 1. HEADER DINAMIK -->
         <div class="p-5 text-center" style="background-color: var(--theme-soft)">
             <div class="mb-3">
                 <ion-icon name="@Model.Module.Icon" class="display-1" style="color: var(--theme-primary)"></ion-icon>
@@ -33,233 +313,253 @@
             </p>
         </div>
 
-        <!-- 2. KANDUNGAN DINAMIK BERDASARKAN JENIS HALAMAN (PAGE TYPE) -->
         <div class="study-body p-5" style="min-height:450px; color: var(--theme-text)">
 
             <h3 class="fw-bold mb-4">@Model.PageTitle</h3>
 
             @if (Model.PageType == "Content")
             {
-                <!-- Teks Biasa -->
                 <div class="fs-5 mb-4">
                     @Html.Raw(Model.BodyContent)
                 </div>
             }
             else if (Model.PageType == "Simulation")
             {
-                <style>
-                    .fake-browser {
-                        border-radius: 15px;
-                        overflow: hidden;
-                        background: #fff;
-                        border: 1px solid #ddd;
-                    }
-
-                    .browser-top {
-                        background: #f1f1f1;
-                        padding: 10px 15px;
-                        display: flex;
-                        align-items: center;
-                        border-bottom: 1px solid #ddd;
-                    }
-
-                    .url-bar {
-                        background: #fff;
-                        border: 1px solid #ccc;
-                        border-radius: 20px;
-                        flex-grow: 1;
-                        margin-left: 15px;
-                        padding: 2px 15px;
-                        font-size: 0.8rem;
-                        display: flex;
-                        align-items: center;
-                    }
-
-                    .trap-link:hover {
-                        background-color: #fff3f3;
-                        cursor: pointer;
-                    }
-                </style>
-
                 <div class="row g-4">
-                    <div class="col-lg-8">
-                        <div class="fake-browser shadow-lg">
-                            <!-- Browser Header -->
-                            <div class="browser-top">
-                                <div class="d-flex gap-1">
-                                    <span style="width:10px;height:10px;background:#ff5f56;border-radius:50%"></span>
-                                    <span style="width:10px;height:10px;background:#ffbd2e;border-radius:50%"></span>
-                                    <span style="width:10px;height:10px;background:#27c93f;border-radius:50%"></span>
-                                </div>
-                                <div class="url-bar">
-                                    <ion-icon name="lock-closed" class="me-2 text-success"></ion-icon>
-                                    <span id="browserUrl">@Model.SimPhishLink</span>
-                                </div>
-                            </div>
-
-                            <!-- KANDUNGAN MENGIKUT JENIS (SIMTYPE) -->
-                            <div class="p-4" style="min-height: 400px; background: #f8fafc;">
-
-                                @if (Model.SimType == "Financial")
-                                {
-                                    <!-- UI BANK -->
-                                    <div class="text-center mb-4">
-                                        <div class="bg-warning p-3 d-inline-block rounded-circle mb-2"><ion-icon name="business" class="fs-1"></ion-icon></div>
-                                        <h4 class="fw-bold">Selamat Datang ke Perbankan Dalam Talian</h4>
-                                    </div>
-                                    <div class="card p-4 mx-auto border-0 shadow-sm" style="max-width: 350px;">
-                                        <label class="small fw-bold">ID Pengguna</label>
-                                        <input type="text" class="form-control mb-3" value="Azman_88" readonly>
-                                        <label class="small fw-bold">Adakah ini frasa keselamatan anda? <span class="text-danger trap-link" onclick="foundRedFlag()">"KucingGemuk"</span></label>
-                                        <button class="btn btn-warning w-100 mt-3 fw-bold" onclick="foundRedFlag()">Ya, Teruskan</button>
-                                    </div>
-                                }
-                                else if (Model.SimType == "Social")
-                                {
-                                    <!-- UI MEDIA SOSIAL -->
-                                    <div class="mx-auto border p-4 bg-white" style="max-width: 350px; border-radius: 20px;">
-                                        <h2 class="text-center mb-4" style="font-family: 'Billabong', cursive;">Instagrarn</h2>
-                                        <div class="alert alert-danger small p-2">Akaun anda akan dipadam dalam masa 24 jam. Sila log masuk untuk pengesahan.</div>
-                                        <input type="text" class="form-control mb-2" placeholder="Phone, username, or email">
-                                        <input type="password" class="form-control mb-3" placeholder="Password">
-                                        <button class="btn btn-primary w-100 fw-bold" onclick="foundRedFlag()">Log In</button>
-                                    </div>
-                                }
-                                else if (Model.SimType == "Government")
-                                {
-                                    <!-- UI KERAJAAN -->
-                                    <div class="bg-primary text-white p-3 rounded-top-4">
-                                        <h5 class="mb-0 fw-bold text-center">PORTAL SUBSIDI MADANI</h5>
-                                    </div>
-                                    <div class="bg-white p-4 text-center border">
-                                        <h6 class="text-muted">Baki Bantuan Anda:</h6>
-                                        <h2 class="fw-bold text-success">RM 850.00</h2>
-                                        <hr>
-                                        <p class="small">Klik butang di bawah untuk pindahan wang ke akaun bank anda:</p>
-                                        <button class="btn btn-success rounded-pill px-5 shadow-sm trap-link" onclick="foundRedFlag()">TEBUS SEKARANG</button>
-                                    </div>
-                                }
-                                else
-                                {
-                                    <!-- DEFAULT / WEBMAIL -->
-                                    <div class="email-mockup bg-white shadow-sm border p-4 rounded-3">
-                                        <div class="d-flex border-bottom pb-2 mb-3">
-                                            <div class="bg-danger text-white rounded-circle me-3 d-flex align-items-center justify-content-center" style="width:40px; height:40px;">!</div>
+                    <div class="col-lg-8 d-flex justify-content-center">
+                        @if (Model.SimType == "SMS" || Model.SimType == "WhatsApp" || Model.SimType == "EWallet" || Model.SimType == "GovSMS" || Model.SimType == "Social")
+                        {
+                            <div class="phone-container">
+                                <div class="phone-shell shadow-lg">
+                                    @if (Model.SimType == "WhatsApp")
+                                    {
+                                        <div class="wa-header">
+                                            <ion-icon name="logo-whatsapp" class="fs-4 text-success"></ion-icon>
                                             <div>
-                                                <h6 class="mb-0 fw-bold">@Model.SimSender</h6>
-                                                <small class="text-muted">Subjek: @Model.SimSubject</small>
+                                                <div class="small">@Model.SimSender</div>
+                                                <span style="font-size: 10px; font-weight: normal; color: #a5f3fc;">Atas Talian</span>
                                             </div>
                                         </div>
-                                        <p>@Model.SimBody</p>
-                                        <div class="text-center mt-4">
-                                            <a href="javascript:void(0)" class="text-primary text-decoration-underline trap-link" onclick="foundRedFlag()">@Model.SimPhishLink</a>
+                                        <div class="wa-body">
+                                            <div class="wa-bubble received">
+                                                <p class="mb-2">@Model.SimBody</p>
+                                                <a href="javascript:void(0)" class="text-primary fw-bold trap-link text-decoration-underline">@Model.SimPhishLink</a>
+                                            </div>
                                         </div>
-                                    </div>
-                                }
+                                    }
+                                    else if (Model.SimType == "Social")
+                                    {
+                                        var senderLower = Model.SimSender.ToLower();
+                                        var iconName = senderLower.Contains("facebook") || senderLower.Contains("fb") ? "logo-facebook" :
+                                                       senderLower.Contains("instagram") || senderLower.Contains("ig") ? "logo-instagram" : "notifications";
+                                        var iconColor = senderLower.Contains("facebook") || senderLower.Contains("fb") ? "#1877F2" :
+                                                        senderLower.Contains("instagram") || senderLower.Contains("ig") ? "#E1306C" : "#1a1a1a";
 
+                                        <div class="notification-screen">
+                                            <div class="lock-clock">
+                                                <h1 class="fw-bold mb-0">12:45</h1>
+                                                <p class="small">Khamis, 12 Jun</p>
+                                            </div>
+                                            <div class="social-notif">
+                                                <div class="notif-icon" style="color: @iconColor">
+                                                    <ion-icon name="@iconName"></ion-icon>
+                                                </div>
+                                                <div class="notif-content">
+                                                    <div class="notif-header">
+                                                        <span class="notif-title">@Model.SimSender</span>
+                                                        <span class="notif-time">Baru saja</span>
+                                                    </div>
+                                                    <div class="notif-body">
+                                                        <strong>@Model.SimSubject</strong><br>@Model.SimBody
+                                                        <div class="mt-2 text-center">
+                                                            <a href="javascript:void(0)" class="text-primary fw-bold trap-link text-decoration-underline" style="display:inline-block; font-size:11px;">@Model.SimPhishLink</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                    else if (Model.SimType == "SMS")
+                                    {
+                                        <div class="sms-header">
+                                            <ion-icon name="person-circle-outline" class="fs-4 align-middle me-1"></ion-icon>
+                                            <span>@Model.SimSender</span>
+                                        </div>
+                                        <div class="sms-body">
+                                            <div class="sms-bubble">
+                                                <p class="mb-2">@Model.SimBody</p>
+                                                <a href="javascript:void(0)" class="text-primary fw-bold trap-link text-decoration-underline">@Model.SimPhishLink</a>
+                                            </div>
+                                        </div>
+                                    }
+                                    else if (Model.SimType == "GovSMS")
+                                    {
+                                        <div class="sms-header">
+                                            <ion-icon name="shield-checkmark-outline" class="fs-4 text-primary align-middle me-1"></ion-icon>
+                                            <span>@Model.SimSender (Mesej Rasmi)</span>
+                                        </div>
+                                        <div class="sms-body">
+                                            <div class="sms-bubble" style="background-color: #eff6ff; border-left: 4px solid #1d4ed8;">
+                                                <span class="badge bg-primary mb-2">@Model.SimSubject</span>
+                                                <p class="mb-2 small">@Model.SimBody</p>
+                                                <a href="javascript:void(0)" class="text-primary fw-bold trap-link text-decoration-underline">@Model.SimPhishLink</a>
+                                            </div>
+                                        </div>
+                                    }
+                                    else if (Model.SimType == "EWallet")
+                                    {
+                                        <div class="ew-header">
+                                            <h6 class="fw-bold mb-0">@Model.SimSender</h6>
+                                        </div>
+                                        <div class="ew-balance-card text-start">
+                                            <div class="small text-white-50">Baki E-Wallet</div>
+                                            <h3 class="fw-bold mb-0">RM 320.50</h3>
+                                        </div>
+                                        <div class="ew-body">
+                                            <div class="card p-3 shadow-sm border-0 mb-3 text-start">
+                                                <h6 class="fw-bold text-danger">@Model.SimSubject</h6>
+                                                <p class="small text-muted mb-3">@Model.SimBody</p>
+                                                <button class="btn btn-primary btn-sm w-100 fw-bold trap-link">@Model.SimPhishLink</button>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
                             </div>
-                        </div>
+                        }
+                        else
+                        {
+                            <div class="fake-browser shadow-lg w-100">
+                                <div class="browser-top">
+                                    <div class="d-flex gap-1">
+                                        <span style="width:10px;height:10px;background:#ff5f56;border-radius:50%"></span>
+                                        <span style="width:10px;height:10px;background:#ffbd2e;border-radius:50%"></span>
+                                        <span style="width:10px;height:10px;background:#27c93f;border-radius:50%"></span>
+                                    </div>
+                                    <div class="url-bar">
+                                        <ion-icon name="lock-closed" class="me-2 text-success"></ion-icon>
+                                        <span id="browserUrl">@(Model.SimType == "Financial" ? "https://mail.rasmi-secure.com/inbox" : Model.SimPhishLink)</span>
+                                    </div>
+                                </div>
+                                <div class="p-4" style="min-height: 400px; background: #f8fafc;">
+                                    @if (Model.SimType == "Financial")
+                                    {
+                                        <!-- Step 1: Fake Webmail -->
+                                        <div id="step1-email" class="email-preview rounded-3 shadow-sm border overflow-hidden">
+                                            <div class="email-header d-flex align-items-center">
+                                                <div class="bg-primary text-white rounded-circle me-3 d-flex align-items-center justify-content-center" style="width:45px; height:45px;">
+                                                    <ion-icon name="mail-outline" class="fs-4"></ion-icon>
+                                                </div>
+                                                <div>
+                                                    <h6 class="mb-0 fw-bold">Daripada: @Model.SimSender</h6>
+                                                    <small class="text-muted">Subjek: @Model.SimSubject</small>
+                                                </div>
+                                            </div>
+                                            <div class="email-body bg-white text-dark text-start" style="min-height: 250px;">
+                                                <p>Pelanggan yang dihormati,</p>
+                                                <p style="white-space: pre-line;">@Model.SimBody</p>
+                                                <div class="text-center my-4">
+                                                    <!-- Butang interaktif klik ke Fake Login -->
+                                                    <button id="btnShowBankStep2" type="button" class="btn btn-outline-primary fw-bold px-4">Klik di sini untuk semak akaun</button>                                                  <br><small class="text-muted mt-2 d-block">Pautan: @Model.SimPhishLink</small>
+                                                </div>
+                                                <p>Terima kasih,<br>@Model.SimSender Support</p>
+                                            </div>
+                                        </div>
+
+                                        <!-- Step 2: Fake Login Page -->
+                                        <div id="step2-login" style="display: none; animation: slideDown 0.3s ease-out;">
+                                            <div class="text-center mb-4">
+                                                <div class="bg-warning p-3 d-inline-block rounded-circle mb-2 shadow-sm"><ion-icon name="business" class="fs-1 text-dark"></ion-icon></div>
+                                                <h4 class="fw-bold">@Model.SimSender</h4>
+                                            </div>
+                                            <div class="card p-4 mx-auto border-0 shadow-sm rounded-4" style="max-width: 380px; text-align: left;">
+                                                <div class="alert alert-info py-2 small mb-4 text-center">
+                                                    Sila pastikan frasa keselamatan anda adalah betul sebelum log masuk.
+                                                </div>
+                                                <label class="small fw-bold text-muted mb-1">ID Pengguna</label>
+                                                <input type="text" class="form-control mb-3 bg-light" value="pengguna_sasaran" readonly>
+
+                                                <label class="small fw-bold text-muted mb-1">Frasa Keselamatan Anda:</label>
+                                                <div class="text-center p-2 border rounded bg-light mb-3">
+                                                    <span class="text-danger fw-bold fs-5">"@Model.SimSubject"</span>
+                                                </div>
+
+                                                <label class="small fw-bold text-muted mb-1">Kata Laluan</label>
+                                                <input type="password" class="form-control mb-4" placeholder="Masukkan kata laluan" readonly value="••••••••">
+
+                                                <!-- Butang ini adalah perangkap (trap-link) -->
+                                                <button class="btn btn-warning w-100 py-2 fw-bold trap-link shadow-sm">Log Masuk Sekarang</button>
+                                            </div>
+                                        </div>
+                                    }
+                                    else if (Model.SimType == "Antivirus")
+                                    {
+                                        <div class="av-body rounded-4 shadow-sm">
+                                            <ion-icon name="shield-alert-outline" class="av-icon mb-3"></ion-icon>
+                                            <h4 class="fw-bold text-white mb-2">@Model.SimSender</h4>
+                                            <h6 class="text-warning fw-bold mb-3">Subjek: @Model.SimSubject</h6>
+                                            <p class="small mb-4 text-white-50">@Model.SimBody</p>
+                                            <button class="btn btn-danger w-100 fw-bold trap-link py-3"><ion-icon name="sync-outline" class="me-2"></ion-icon>@Model.SimPhishLink</button>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="email-mockup bg-white shadow-sm border p-4 rounded-3 text-start">
+                                            <div class="d-flex border-bottom pb-2 mb-3">
+                                                <div class="bg-danger text-white rounded-circle me-3 d-flex align-items-center justify-content-center" style="width:40px; height:40px; font-weight: bold;">!</div>
+                                                <div>
+                                                    <h6 class="mb-0 fw-bold">@Model.SimSender</h6>
+                                                    <small class="text-muted">Subjek: @Model.SimSubject</small>
+                                                </div>
+                                            </div>
+                                            <p class="text-muted" style="white-space: pre-line;">@Model.SimBody</p>
+                                            <div class="text-center mt-4"><a href="javascript:void(0)" class="text-primary text-decoration-underline trap-link fw-bold">@Model.SimPhishLink</a></div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        }
                     </div>
 
-                    <!-- PANEL ANALISIS (KANAN) -->
                     <div class="col-lg-4">
-                        <div class="card p-4 rounded-4 shadow-sm border-0 h-100 bg-white">
-                            <h5 class="fw-bold mb-4 text-danger"><ion-icon name="warning-outline" class="me-2"></ion-icon>Kesan Red Flag</h5>
-                            <p class="small text-muted">Berdasarkan jenis simulasi ini (<b>@Model.SimType</b>), lalui tetikus anda pada elemen yang mencurigakan.</p>
+                        <div class="card p-4 rounded-4 shadow-sm border-0 h-100 bg-white text-start">
+                            <h5 class="fw-bold mb-4 text-danger"><ion-icon name="warning-outline" class="me-2"></ion-icon>Analisis Risiko</h5>
+                            <p class="small text-muted">Berdasarkan jenis simulasi ini, klik pada pautan yang mencurigakan di sebelah untuk kesan perangkap.</p>
 
-                            <div id="successMsg" class="alert alert-success d-none shadow-sm">
-                                <h6 class="fw-bold"><ion-icon name="checkmark-circle"></ion-icon> Hebat!</h6>
+                            <div id="successMsg" class="alert alert-success d-none shadow-sm mt-3">
+                                <h6 class="fw-bold"><ion-icon name="checkmark-circle" class="align-middle me-1"></ion-icon> Red Flag Ditemui!</h6>
                                 <p class="small mb-0">@Model.SimClues</p>
                             </div>
 
-                            <div class="mt-auto">
-                                <button class="btn btn-outline-danger w-100 rounded-pill mb-2" onclick="alert('Ini adalah pancingan data (Phishing)! Perhatikan URL dan kandungannya.')">Lapor Scam</button>
+                            <div class="mt-auto pt-3">
+                                <p class="small fw-bold mb-2 text-center text-dark">Apa tindakan anda?</p>
+                                <button id="btnPhishing" class="btn btn-danger w-100 rounded-pill mb-2 py-2 shadow-sm"><ion-icon name="shield-checkmark-outline" class="me-1 align-middle"></ion-icon> Lapor Ini Scam!</button>
+                                <button id="btnSafe" class="btn btn-light border w-100 rounded-pill text-muted py-2"><ion-icon name="open-outline" class="me-1 align-middle"></ion-icon> Teruskan (Anggap Selamat)</button>
                             </div>
                         </div>
                     </div>
                 </div>
-
-                <script>
-                    function foundRedFlag() {
-                        document.getElementById('successMsg').classList.remove('d-none');
-                        // Tambahkan efek visual pada URL bar
-                        document.querySelector('.url-bar').style.backgroundColor = '#fee2e2';
-                        document.querySelector('.url-bar span').style.color = '#dc2626';
-                    }
-                </script>
             }
             else if (Model.PageType == "Quiz")
             {
-                <h3 class="fw-bold mb-4 text-primary">
-                    <ion-icon name="help-circle-outline" class="align-middle me-2"></ion-icon> Uji Minda
-                </h3>
-
-                <!-- Soalan -->
+                <h3 class="fw-bold mb-4 text-primary"><ion-icon name="help-circle-outline" class="align-middle me-2"></ion-icon> Uji Minda</h3>
                 <p class="fs-5 fw-bold mb-4">@Model.QuizQuestion</p>
 
-                <!-- Pilihan Jawapan -->
                 <div class="quiz-options d-grid gap-3">
                     @if (!string.IsNullOrEmpty(Model.OptionA))
-                    {
-                        <button class="btn btn-outline-primary text-start p-3 rounded-4 shadow-sm option-btn" onclick="checkAnswer('A', this)">
-                            <b>A.</b> @Model.OptionA
-                        </button>
-                    }
+                    {<button class="btn btn-outline-primary text-start p-3 rounded-4 shadow-sm option-btn" data-option="A"><b>A.</b> @Model.OptionA</button>}
                     @if (!string.IsNullOrEmpty(Model.OptionB))
-                    {
-                        <button class="btn btn-outline-primary text-start p-3 rounded-4 shadow-sm option-btn" onclick="checkAnswer('B', this)">
-                            <b>B.</b> @Model.OptionB
-                        </button>
-                    }
+                    {<button class="btn btn-outline-primary text-start p-3 rounded-4 shadow-sm option-btn" data-option="B"><b>B.</b> @Model.OptionB</button>}
                     @if (!string.IsNullOrEmpty(Model.OptionC))
-                    {
-                        <button class="btn btn-outline-primary text-start p-3 rounded-4 shadow-sm option-btn" onclick="checkAnswer('C', this)">
-                            <b>C.</b> @Model.OptionC
-                        </button>
-                    }
+                    {<button class="btn btn-outline-primary text-start p-3 rounded-4 shadow-sm option-btn" data-option="C"><b>C.</b> @Model.OptionC</button>}
                     @if (!string.IsNullOrEmpty(Model.OptionD))
-                    {
-                        <button class="btn btn-outline-primary text-start p-3 rounded-4 shadow-sm option-btn" onclick="checkAnswer('D', this)">
-                            <b>D.</b> @Model.OptionD
-                        </button>
-                    }
+                    {<button class="btn btn-outline-primary text-start p-3 rounded-4 shadow-sm option-btn" data-option="D"><b>D.</b> @Model.OptionD</button>}
                 </div>
 
-                <!-- Mesej Maklum Balas -->
                 <div id="quizFeedback" class="mt-4 p-3 rounded-4 d-none fw-bold shadow-sm text-center"></div>
-
-                <script>
-        function checkAnswer(selected, element) {
-            var correctAnswer = '@Model.CorrectAnswer'; // Ambil jawapan betul dari database
-            var feedback = document.getElementById('quizFeedback');
-            var buttons = document.querySelectorAll('.option-btn');
-
-            // Disable semua butang selepas pilih
-            buttons.forEach(btn => btn.classList.add('disabled'));
-
-            feedback.classList.remove('d-none', 'alert-success', 'alert-danger');
-
-            if (selected === correctAnswer) {
-                element.classList.replace('btn-outline-primary', 'btn-success');
-                feedback.innerHTML = "🎉 Tahniah! Jawapan anda BETUL.";
-                feedback.className = "mt-4 p-3 rounded-4 fw-bold shadow-sm text-center alert alert-success";
-            } else {
-                element.classList.replace('btn-outline-primary', 'btn-danger');
-                feedback.innerHTML = "❌ Maaf, jawapan anda SALAH. Cuba lagi!";
-                feedback.className = "mt-4 p-3 rounded-4 fw-bold shadow-sm text-center alert alert-danger";
-
-                // Tunjukkan jawapan yang betul juga
-                setTimeout(() => {
-                    alert("Jawapan yang betul adalah pilihan " + correctAnswer);
-                }, 500);
-            }
-        }
-                </script>
             }
 
         </div>
 
-        <!-- 3. FOOTER NAVIGASI DINAMIK -->
         <div class="p-4 border-top d-flex justify-content-between align-items-center bg-light">
             @if (currentPage > 1)
             {
@@ -277,20 +577,463 @@
             <div class="d-flex gap-2">
                 @if (currentPage < totalPages)
                 {
-                    <a href="@Url.Action("Study", "Dashboard", new { id = Model.ModuleId, page = currentPage + 1 })"
-                       class="btn text-white rounded-pill px-5 fw-bold shadow-sm" style="background: var(--theme-primary)">
+                    <a id="btnNextPage" href="@Url.Action("Study", "Dashboard", new { id = Model.ModuleId, page = currentPage + 1 })"
+                       class="btn btn-primary text-white rounded-pill px-5 fw-bold shadow-sm" style="background-color: #0d6efd; border-color: #0d6efd;">
                         Seterusnya <ion-icon name="arrow-forward-outline" class="align-middle ms-1"></ion-icon>
                     </a>
                 }
                 else
                 {
-                    <a href="@Url.Action("Modules", "Dashboard")"
-                       class="btn btn-success rounded-pill px-5 fw-bold shadow-sm">
+                    <button type="button" id="btnTamatModul" class="btn btn-success rounded-pill px-5 fw-bold shadow-sm" data-bs-toggle="modal" data-bs-target="#tamatModal">
                         <ion-icon name="trophy-outline" class="align-middle me-1"></ion-icon> Tamat Modul
-                    </a>
+                    </button>
                 }
             </div>
         </div>
 
     </div>
 </div>
+
+<div class="modal fade" id="eduModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+            <div id="mHeader" class="p-4 text-center position-relative transition-all">
+                <ion-icon id="mIcon" name="checkmark-circle" class="display-1 mb-2"></ion-icon>
+                <h2 id="mTitle" class="fw-bold mb-0" style="letter-spacing: -0.5px;"></h2>
+            </div>
+            <div class="modal-body p-4 bg-white text-dark">
+                <div class="text-center mb-4">
+                    <span id="mSubtitle" class="badge text-uppercase tracking-wide mb-3 px-3 py-2 rounded-pill">Status Simulasi</span>
+                    <div id="mText" class="fs-6 text-start text-muted"></div>
+                </div>
+                <div id="mAdviceBox" class="p-3 mb-4 rounded-3 d-flex gap-3 align-items-start border">
+                    <ion-icon name="bulb" class="fs-3 text-warning mt-1"></ion-icon>
+                    <div><h6 class="fw-bold mb-1">Pengajaran Utama</h6><p id="mAdviceText" class="small mb-0 text-muted"></p></div>
+                </div>
+                <div class="d-grid gap-2 mt-2">
+                    <button id="btnPrimary" class="btn py-3 fw-bold rounded-pill shadow-sm transition-all"><ion-icon id="btnPrimaryIcon" name="arrow-forward-outline" class="align-middle me-1"></ion-icon><span id="btnPrimaryText">Teruskan</span></button>
+                    <button id="btnSecondary" class="btn btn-light py-2 fw-bold rounded-pill text-muted border"><ion-icon name="refresh-outline" class="align-middle me-1"></ion-icon> Ulang Simulasi</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="tamatModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+            <div class="p-4 text-center text-white" style="background-color: #ffb703;">
+                <ion-icon name="ribbon-outline" style="font-size: 70px; margin-bottom: 10px;"></ion-icon>
+                <h2 class="fw-bold mb-0">Modul Selesai!</h2>
+            </div>
+            <div class="modal-body p-4 bg-white text-dark">
+                <h5 class="fw-bold text-center mb-4">Ringkasan Prestasi Anda</h5>
+
+                <div class="d-flex justify-content-between align-items-center border rounded-3 p-3 mb-2">
+                    <div>
+                        <ion-icon name="shield-checkmark-outline" class="me-2 align-middle text-muted"></ion-icon>
+                        <span class="small fw-bold">Simulasi Phishing</span>
+                    </div>
+                    <span id="finalSimStatus" class="badge bg-secondary px-3 py-2 rounded-pill">Tiada</span>
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center border rounded-3 p-3 mb-4">
+                    <div>
+                        <ion-icon name="help-circle-outline" class="me-2 align-middle text-muted"></ion-icon>
+                        <span class="small fw-bold">Skor Kuiz Minda</span>
+                    </div>
+                    <span id="finalQuizStatus" class="badge bg-secondary px-3 py-2 rounded-pill">0/0</span>
+                </div>
+
+                <div class="p-3 mb-4 rounded-3 text-center" style="background-color: #fffbeb; border: 1px dashed #fcd34d;">
+                    <ion-icon name="gift-outline" class="fs-3 text-warning mb-2"></ion-icon>
+                    <p class="small fw-bold text-dark mb-0">
+                        Anda kini boleh memuat turun <span style="color:#d97706;">Sijil Digital</span> & <span style="color:#d97706;">Lencana (Badges)</span> di papan pemuka!
+                    </p>
+                </div>
+                <div class="d-grid mt-2">
+                    <a href="@Url.Action("Modules", "Dashboard")" class="btn py-3 fw-bold rounded-pill text-white shadow-sm" style="background-color: #1f2937;">Kembali ke Dashboard</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="quizModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+            <div class="p-4 text-center text-white" style="background-color: #3b82f6;">
+                <ion-icon name="information-circle-outline" style="font-size: 60px;"></ion-icon>
+                <h4 class="fw-bold mb-0 mt-2">Makluman</h4>
+            </div>
+            <div class="modal-body p-4 bg-white text-dark text-center">
+                <p class="fs-6 mb-4" id="quizModalText">Jawapan yang betul adalah pilihan X</p>
+                <button type="button" class="btn btn-primary rounded-pill px-4 fw-bold shadow-sm w-100" data-bs-dismiss="modal">Faham</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+
+
+
+        // Wrap everything inside an IIFE (Immediately Invoked Function Expression)
+        (function () {
+            var moduleKey = "ModProgress_" + "@Model.ModuleId";
+            var currentPageNum = parseInt("@currentPage");
+
+            var storedData = sessionStorage.getItem(moduleKey);
+            var modData = storedData ? JSON.parse(storedData) : {
+                quizScore: 0,
+                quizTotal: 0,
+                simResult: "Tiada",
+                answeredPages: []
+            };
+
+            if (currentPageNum === 1) {
+                modData = { quizScore: 0, quizTotal: 0, simResult: "Tiada", answeredPages: [] };
+                sessionStorage.setItem(moduleKey, JSON.stringify(modData));
+            }
+
+            document.addEventListener('DOMContentLoaded', function() {
+                var eduModalElement = document.getElementById('eduModal');
+                if (eduModalElement) document.body.appendChild(eduModalElement);
+
+                var tamatModalElement = document.getElementById('tamatModal');
+                if (tamatModalElement) document.body.appendChild(tamatModalElement);
+
+                var quizModalElement = document.getElementById('quizModal');
+                if (quizModalElement) document.body.appendChild(quizModalElement);
+
+                // Butang Interaktif Perbankan (Email -> Fake Login)
+                var btnBank = document.getElementById('btnShowBankStep2');
+                if (btnBank) {
+                    btnBank.addEventListener('click', function () {
+                        var step1 = document.getElementById('step1-email');
+                        var step2 = document.getElementById('step2-login');
+                        var urlSpan = document.getElementById('browserUrl');
+
+                        if (step1 && step2) {
+                            step1.style.display = 'none';
+                            step2.style.display = 'block';
+                            if (urlSpan) urlSpan.innerText = "@Html.Raw(Model.SimPhishLink)";
+                        }
+                    });
+                }
+
+                // TRAP LINK HANDLER
+                var trapLinks = document.querySelectorAll('.trap-link');
+                for (var i = 0; i < trapLinks.length; i++) {
+                    (function(link) {
+                        link.addEventListener('click', function() {
+                            link.setAttribute("style", "border: 2px dashed #dc2626; background-color: #fee2e2; color: #dc2626; padding: 2px 6px; border-radius: 5px;");
+                            foundRedFlag();
+                        });
+                    })(trapLinks[i]);
+                }
+
+                // QUIZ HANDLER
+                var optionBtns = document.querySelectorAll('.option-btn');
+                for (var j = 0; j < optionBtns.length; j++) {
+                    (function(btn) {
+                        btn.addEventListener('click', function() {
+                            var opt = btn.getAttribute('data-option') || '';
+                            var isCorrect = checkAnswerLogic(opt);
+                            if (isCorrect) {
+                                btn.classList.remove('btn-outline-primary');
+                                btn.classList.add('btn-success');
+                            } else {
+                                btn.classList.remove('btn-outline-primary');
+                                btn.classList.add('btn-danger');
+                            }
+                        });
+                    })(optionBtns[j]);
+                }
+
+                var btnPhishing = document.getElementById('btnPhishing');
+                if (btnPhishing) {
+                    btnPhishing.addEventListener('click', function() {
+                        finalDecision('phishing');
+                    });
+                }
+
+                var btnSafe = document.getElementById('btnSafe');
+                if (btnSafe) {
+                    btnSafe.addEventListener('click', function() {
+                        finalDecision('safe');
+                    });
+                }
+
+                var btnPrimary = document.getElementById('btnPrimary');
+                if (btnPrimary) {
+                    btnPrimary.addEventListener('click', closeModalAndProceed);
+                }
+
+                var btnSecondary = document.getElementById('btnSecondary');
+                if (btnSecondary) {
+                    btnSecondary.addEventListener('click', resetSimulation);
+                }
+
+                var btnTamatModul = document.getElementById('btnTamatModul');
+                if (btnTamatModul) {
+                    btnTamatModul.addEventListener('click', function() {
+                        var simSpan = document.getElementById('finalSimStatus');
+                        var quizSpan = document.getElementById('finalQuizStatus');
+
+                        // Paparkan status pada modal sebelum tutup
+                        if (simSpan) {
+                            simSpan.innerText = modData.simResult;
+                            if (modData.simResult === "BERJAYA") simSpan.className = "badge bg-success px-3 py-2 rounded-pill";
+                            else if (modData.simResult === "GAGAL") simSpan.className = "badge bg-danger px-3 py-2 rounded-pill";
+                        }
+
+                        if (quizSpan) {
+                            quizSpan.innerText = modData.quizScore + " / " + modData.quizTotal;
+                            if (modData.quizTotal > 0 && modData.quizScore === modData.quizTotal) {
+                                quizSpan.className = "badge bg-success px-3 py-2 rounded-pill";
+                            } else if (modData.quizTotal > 0) {
+                                quizSpan.className = "badge bg-warning text-dark px-3 py-2 rounded-pill";
+                            }
+                        }
+
+                        // DATA UNTUK DIHANTAR KE DATABASE
+                        var postData = {
+                            ModuleId: parseInt("@Model.ModuleId"),
+                            SimResult: modData.simResult,
+                            QuizScore: modData.quizScore,
+                            QuizTotal: modData.quizTotal
+                        };
+
+                        // HANTAR DATA MENGGUNAKAN AJAX (FETCH)
+                        fetch('/Dashboard/SaveModuleProgress', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(postData)
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                console.log("Data berjaya disimpan ke database.");
+                                // Padam data sementara dalam session browser
+                                sessionStorage.removeItem(moduleKey);
+                            } else {
+                                alert("Ralat menyimpan data: " + data.message);
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                        });
+                    });
+                }
+            });
+
+            function showModal() {
+                var eduModalElement = document.getElementById('eduModal');
+                var w = Object.getOwnPropertyDescriptor(window, 'bootstrap');
+                if (w && w.value && eduModalElement) {
+                    var m = w.value.Modal.getInstance(eduModalElement);
+                    if (!m) m = new w.value.Modal(eduModalElement);
+                    m.show();
+                }
+            }
+
+            function hideModal() {
+                var eduModalElement = document.getElementById('eduModal');
+                var w = Object.getOwnPropertyDescriptor(window, 'bootstrap');
+                if (w && w.value && eduModalElement) {
+                    var m = w.value.Modal.getInstance(eduModalElement);
+                    if (m) m.hide();
+                }
+            }
+
+            function foundRedFlag() {
+                var msg = document.getElementById('successMsg');
+                if (msg) msg.classList.remove('d-none');
+                var urlBar = document.querySelector('.url-bar');
+                if (urlBar) urlBar.setAttribute('style', 'background-color: #fee2e2; border: 1px solid #dc2626;');
+                var urlText = document.querySelector('.url-bar span');
+                if (urlText) urlText.setAttribute('style', 'color: #dc2626;');
+            }
+
+            function finalDecision(type = '') {
+                if (!modData.answeredPages.includes(currentPageNum)) {
+                    modData.simResult = (type === 'phishing') ? 'BERJAYA' : 'GAGAL';
+                    modData.answeredPages.push(currentPageNum);
+                    sessionStorage.setItem(moduleKey, JSON.stringify(modData));
+                }
+
+                if (type === 'phishing') {
+                    showProfessionalResult('success', 'Tahniah! Keputusan Tepat.', 'Hebat!', 'Anda berjaya mengesan taktik pancingan data (phishing) ini.', 'Scammer selalunya menggunakan taktik desakan atau tawaran palsu.', 'Seterusnya');
+                } else {
+                    showProfessionalResult('danger', 'Anda Terjerat!', 'Perhatian', 'Anda telah mengesahkan simulasi ini sebagai laman web yang selamat.', 'Jangan mudah percaya hanya pada rupa visual dan logo rasmi.', 'Cuba Semula');
+                }
+            }
+
+            function showProfessionalResult(status = '', title = '', subtitle = '', mainText = '', adviceText = '', btnText = '') {
+                var h = document.getElementById('mHeader'),
+                    advBox = document.getElementById('mAdviceBox'),
+                    btnP = document.getElementById('btnPrimary'),
+                    t = document.getElementById('mTitle'),
+                    sub = document.getElementById('mSubtitle'),
+                    txt = document.getElementById('mText'),
+                    advTxt = document.getElementById('mAdviceText'),
+                    btnPText = document.getElementById('btnPrimaryText'),
+                    btnS = document.getElementById('btnSecondary'),
+                    icon = document.getElementById('mIcon'),
+                    btnPIcon = document.getElementById('btnPrimaryIcon');
+
+                if (!h || !advBox || !btnP || !t || !sub || !txt || !advTxt || !btnPText || !btnS || !icon || !btnPIcon) return;
+
+                h.className = "p-4 text-center position-relative transition-all";
+                advBox.className = "p-3 mb-4 rounded-3 d-flex gap-3 align-items-start border";
+                btnP.className = "btn py-3 fw-bold rounded-pill shadow-sm transition-all";
+                t.innerText = title;
+                sub.innerText = subtitle;
+                txt.innerHTML = "<b>Situasi:</b><br/>" + mainText;
+                advTxt.innerHTML = adviceText;
+                btnPText.innerText = btnText;
+
+                if (status === 'success') {
+                    h.classList.add('bg-success-gradient');
+                    icon.setAttribute("name", "shield-checkmark");
+                    sub.className = "badge text-uppercase tracking-wide mb-3 px-3 py-2 rounded-pill bg-success text-white";
+                    advBox.classList.add('advice-success');
+                    btnP.classList.add('btn-success');
+                    btnPIcon.setAttribute("name", "arrow-forward-outline");
+                    btnS.classList.add('d-none');
+                } else if (status === 'danger') {
+                    h.classList.add('bg-danger-gradient');
+                    icon.setAttribute("name", "close-circle");
+                    sub.className = "badge text-uppercase tracking-wide mb-3 px-3 py-2 rounded-pill bg-danger text-white";
+                    advBox.classList.add('advice-danger');
+                    btnP.classList.add('btn-danger');
+                    btnPIcon.setAttribute("name", "refresh-outline");
+                    btnS.classList.remove('d-none');
+                }
+                showModal();
+            }
+
+            function closeModalAndProceed() {
+                var btnPText = document.getElementById('btnPrimaryText');
+                if (!btnPText) return;
+                if (btnPText.innerText === 'Seterusnya') {
+                    var nextBtn = document.getElementById('btnNextPage');
+                    var hrefVal = nextBtn ? nextBtn.getAttribute('href') : null;
+
+                    if (hrefVal) {
+                        window.location.href = hrefVal;
+                    } else {
+                        hideModal();
+                    }
+                } else {
+                    resetSimulation();
+                }
+            }
+
+            function resetSimulation() {
+                hideModal();
+                var msg = document.getElementById('successMsg');
+                if (msg) msg.classList.add('d-none');
+
+                // Reset perbankan interaktif kalau ada
+                var step1 = document.getElementById('step1-email');
+                var step2 = document.getElementById('step2-login');
+                var urlSpan = document.getElementById('browserUrl');
+                if(step1 && step2) {
+                    step1.style.display = 'block';
+                    step2.style.display = 'none';
+                    if(urlSpan) urlSpan.innerText = "https://mail.rasmi-secure.com/inbox";
+                }
+            }
+
+           function checkAnswerLogic(selected = '') {
+                var correctAnswer = '@Model.CorrectAnswer';
+                // Ambil maklum balas penjelasan daripada model
+                var explanation = `@Html.Raw(Model.QuizFeedback)`;
+                var feedback = document.getElementById('quizFeedback');
+                var buttons = document.querySelectorAll('.option-btn');
+
+                var isCorrect = (selected === correctAnswer);
+
+                // Simpan progress (Logic asal anda)
+                if (!modData.answeredPages.includes(currentPageNum)) {
+                    modData.quizTotal += 1;
+                    if (isCorrect) modData.quizScore += 1;
+                    modData.answeredPages.push(currentPageNum);
+                    sessionStorage.setItem(moduleKey, JSON.stringify(modData));
+                }
+
+                // Disable butang selepas klik
+                for (var i = 0; i < buttons.length; i++) {
+                    buttons[i].classList.add('disabled');
+                    buttons[i].setAttribute('style', 'pointer-events: none;');
+                }
+
+                if (feedback) {
+                    feedback.classList.remove('d-none', 'alert-success', 'alert-danger');
+
+                    // Kemaskini alert kecil di halaman
+                    if (isCorrect) {
+                        feedback.innerHTML = "Tahniah! Jawapan anda BETUL.";
+                        feedback.className = "mt-4 p-3 rounded-4 fw-bold shadow-sm text-center alert alert-success";
+                    } else {
+                        feedback.innerHTML = "Maaf, jawapan anda SALAH.";
+                        feedback.className = "mt-4 p-3 rounded-4 fw-bold shadow-sm text-center alert alert-danger";
+                    }
+
+                    // Paparkan Modal dengan Penjelasan (Feedback)
+                    setTimeout(function () {
+                        var quizModalEl = document.getElementById('quizModal');
+                        var quizModalTextEl = document.getElementById('quizModalText');
+
+                        // PENYELESAIAN TS18047: Pastikan quizModalEl wujud sebelum guna
+                        if (quizModalEl && quizModalTextEl) {
+
+                            // Ambil header dan beritahu compiler ia adalah HTMLElement
+                            var quizModalHeader = quizModalEl.querySelector('.modal-content > div:first-child');
+                            let modalContent = "";
+
+                            if (isCorrect) {
+                                // PENYELESAIAN TS2339: Guna 'instanceof HTMLElement' supaya 'style' boleh diakses
+                                if (quizModalHeader instanceof HTMLElement) {
+                                    quizModalHeader.style.backgroundColor = "#10b981";
+                                }
+                                modalContent = `
+                        <div class="text-success fw-bold mb-2">
+                            <ion-icon name="checkmark-circle" class="me-1"></ion-icon> JAWAPAN TEPAT!
+                        </div>
+                        <div class="text-muted text-start small border-top pt-2">
+                            ${explanation}
+                        </div>`;
+                                    } else {
+                                        if (quizModalHeader instanceof HTMLElement) {
+                                            quizModalHeader.style.backgroundColor = "#ef4444";
+                                        }
+                                        modalContent = `
+                        <div class="text-danger fw-bold mb-1">
+                            <ion-icon name="close-circle" class="me-1"></ion-icon> JAWAPAN SALAH
+                        </div>
+                        <div class="mb-3">Jawapan yang betul: <b>Pilihan ${correctAnswer}</b></div>
+                        <div class="text-muted text-start small border-top pt-2">
+                            <b>Kenapa?</b><br/>${explanation}
+                        </div>`;
+                                    }
+
+                                    quizModalTextEl.innerHTML = modalContent;
+
+                                    var w = Object.getOwnPropertyDescriptor(window, 'bootstrap');
+                                    if (w && w.value) {
+                                        var m = w.value.Modal.getInstance(quizModalEl) || new w.value.Modal(quizModalEl);
+                                        m.show();
+                                    }
+                                }
+                            }, 400);
+                }
+                return isCorrect;
+            }
+
+        })();
+    </script>
+}

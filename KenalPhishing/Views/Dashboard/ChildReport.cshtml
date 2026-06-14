@@ -39,7 +39,7 @@
 <div class="container-fluid py-4">
     @if (ViewBag.NoChild == true)
     {
-        <!-- KEADAAN 1: TIADA ANAK TERPAUT (Empty State Professional) -->
+        <!-- KEADAAN 1: TIADA ANAK TERPAUT -->
         <div class="row justify-content-center">
             <div class="col-lg-7">
                 <div class="empty-state-card shadow-sm">
@@ -63,7 +63,7 @@
     }
     else
     {
-        <!-- KEADAAN 2: ANAK SUDAH TERPAUT (Laporan Penuh) -->
+        <!-- KEADAAN 2: ANAK SUDAH TERPAUT -->
         <div class="d-flex justify-content-between align-items-center mb-5">
             <div>
                 <h2 class="fw-bold">Pantauan Ibu Bapa</h2>
@@ -86,11 +86,11 @@
                     <hr class="opacity-50">
                     <div class="d-flex justify-content-around mt-4">
                         <div>
-                            <h5 class="fw-bold mb-0 text-primary">3</h5>
+                            <h5 class="fw-bold mb-0 text-primary">@ViewBag.CompletedModulesCount</h5>
                             <p class="extra-small text-muted text-uppercase fw-bold">Modul Siap</p>
                         </div>
                         <div>
-                            <h5 class="fw-bold mb-0 text-success">@ViewBag.ChildLastQuiz%</h5>
+                            <h5 class="fw-bold mb-0 text-success">@ViewBag.ChildAvgScore%</h5>
                             <p class="extra-small text-muted text-uppercase fw-bold">Purata Skor</p>
                         </div>
                     </div>
@@ -99,39 +99,45 @@
 
             <!-- STATISTIK PEMBELAJARAN ANAK -->
             <div class="col-lg-8">
-                <div class="bg-white p-4 rounded-4 shadow-sm h-100 border-0">
+                <div class="bg-white p-4 rounded-4 shadow-sm h-100 border-0 d-flex flex-column">
                     <h6 class="fw-bold mb-4 d-flex align-items-center gap-2">
-                        <ion-icon name="bar-chart-outline" class="text-primary"></ion-icon> Kemajuan Modul Interaktif
+                        <ion-icon name="bar-chart-outline" class="text-primary"></ion-icon> Kemajuan Modul (2 Terkini)
                     </h6>
 
-                    <div class="mb-4 p-3 border rounded-4 bg-light bg-opacity-50">
-                        <div class="d-flex justify-content-between mb-2">
-                            <span class="small fw-bold">Misi Wira Siber: Melawan Phishing Bot</span>
-                            <span class="badge bg-success rounded-pill px-3">100% Selesai</span>
-                        </div>
-                        <div class="progress rounded-pill" style="height: 10px;">
-                            <div class="progress-bar bg-success" style="width: 100%"></div>
-                        </div>
+                    <div class="flex-grow-1">
+                        @if (ViewBag.ProgressList != null && ((List<KenalPhishing.Models.UserProgress>)ViewBag.ProgressList).Any())
+                        {
+                            foreach (var prog in ViewBag.ProgressList as List<KenalPhishing.Models.UserProgress>)
+                            {
+                                double scorePct = (prog.QuizTotal > 0) ? ((double)prog.QuizScore / prog.QuizTotal * 100) : 0;
+                                string inlineProgressStyle = $"width: {scorePct}%;";
+
+                                <div class="mb-4 p-3 border rounded-4 bg-light bg-opacity-50">
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span class="small fw-bold">@prog.Module.Title</span>
+                                        <span class="badge @(scorePct >= 80 ? "bg-success" : "bg-warning text-dark") rounded-pill px-3">
+                                            @(scorePct >= 80 ? "Lulus" : "Perlu Ulangan") (@Math.Round(scorePct)%)
+                                        </span>
+                                    </div>
+                                    <div class="progress rounded-pill" style="height: 10px;">
+                                        <div class="progress-bar @(scorePct >= 80 ? "bg-success" : "bg-warning")" style="@inlineProgressStyle"></div>
+                                    </div>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="text-center py-5">
+                                <p class="text-muted">Anak anda belum memulakan sebarang modul.</p>
+                            </div>
+                        }
                     </div>
 
-                    <div class="mb-4 p-3 border rounded-4 bg-light bg-opacity-50">
-                        <div class="d-flex justify-content-between mb-2">
-                            <span class="small fw-bold">Stranger Danger: Keselamatan Media Sosial</span>
-                            <span class="small text-primary fw-bold">@ViewBag.ChildProgress% Sedang Belajar</span>
-                        </div>
-                        <div class="progress rounded-pill" style="height: 10px;">
-                            <div class="progress-bar bg-info" style="@(string.Format("width: {0}%;", ViewBag.ChildProgress ?? 0))"></div>
-                        </div>
-                    </div>
-
-                    <div class="p-3 border rounded-4 bg-light">
-                        <h6 class="small fw-bold mb-3 d-flex align-items-center gap-2">
-                            <ion-icon name="ribbon-outline" class="text-warning"></ion-icon> Lencana Terkini Diterima:
-                        </h6>
-                        <div class="d-flex gap-2">
-                            <span class="badge bg-dark rounded-pill px-3">Cyber Hero 2025</span>
-                            <span class="badge bg-warning text-dark rounded-pill px-3">Phishing Spotter</span>
-                        </div>
+                    <!-- BUTANG KE HALAMAN DEDIKASI -->
+                    <div class="mt-3">
+                        <a href="@Url.Action("FullChildActivity", "Dashboard")" class="btn btn-light btn-sm w-100 rounded-pill fw-bold text-primary py-2 border">
+                            Lihat Semua Kemajuan & Lencana →
+                        </a>
                     </div>
                 </div>
             </div>
@@ -140,29 +146,40 @@
         <!-- AKTIVITI TERKINI ANAK (Table) -->
         <div class="mt-4">
             <div class="bg-white p-4 rounded-4 shadow-sm border-0">
-                <h6 class="fw-bold mb-4 d-flex align-items-center gap-2">
-                    <ion-icon name="list-outline" class="text-primary"></ion-icon> Log Aktiviti Anak
-                </h6>
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h6 class="fw-bold m-0 d-flex align-items-center gap-2">
+                        <ion-icon name="list-outline" class="text-primary"></ion-icon> Log Aktiviti Terkini
+                    </h6>
+                    <a href="@Url.Action("FullChildActivity", "Dashboard")" class="small fw-bold text-decoration-none">Lihat Semua</a>
+                </div>
+
                 <div class="table-responsive">
                     <table class="table table-hover small">
                         <thead class="table-light">
                             <tr>
                                 <th class="border-0">Tarikh</th>
                                 <th class="border-0">Aktiviti</th>
-                                <th class="border-0">Status</th>
+                                <th class="border-0">Butiran</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>12 Jan 2025</td>
-                                <td>Menamatkan Kuiz "Asas Internet Selamat"</td>
-                                <td><span class="text-success fw-bold">Lulus (85%)</span></td>
-                            </tr>
-                            <tr>
-                                <td>11 Jan 2025</td>
-                                <td>Memulakan Simulasi "Stranger Danger"</td>
-                                <td><span class="text-warning fw-bold">Masih Berjalan</span></td>
-                            </tr>
+                            @if (ViewBag.ChildActivities != null && ((List<KenalPhishing.Models.UserActivity>)ViewBag.ChildActivities).Any())
+                            {
+                                foreach (var act in ViewBag.ChildActivities as List<KenalPhishing.Models.UserActivity>)
+                                {
+                                    <tr>
+                                        <td>@act.CreatedAt.ToString("dd MMM yyyy")</td>
+                                        <td class="fw-bold">@act.Title</td>
+                                        <td><span class="text-muted">@act.Description</span></td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="3" class="text-center text-muted py-4">Tiada rekod aktiviti ditemui.</td>
+                                </tr>
+                            }
                         </tbody>
                     </table>
                 </div>

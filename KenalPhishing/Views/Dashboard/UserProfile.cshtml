@@ -87,16 +87,42 @@
                 </div>
 
                 <div class="col-12 mt-2">
-                    <div class="d-flex gap-3">
-                        <div class="text-center p-3 border rounded-4 bg-light bg-opacity-50" style="width: 100px;">
-                            <ion-icon name="ribbon" class="text-warning fs-1"></ion-icon>
-                            <small class="d-block fw-bold mt-1">Wira</small>
+                    <label class="text-muted small fw-bold text-uppercase d-block mb-3">Koleksi Lencana @category</label>
+                    <div class="d-flex flex-wrap gap-3">
+
+                        @{
+                            int badgesCount = ViewBag.BadgesCount ?? 0;
+                            // Tentukan nama lencana mengikut kategori
+                            string badge1 = "Wira"; string badge2 = "Kebal"; string badge3 = "Pakar";
+
+                            if (category == "Child") { badge1 = "Wira Muda"; badge2 = "Perisai"; badge3 = "Siber Master"; }
+                            else if (category == "Elder") { badge1 = "Warga Bijak"; badge2 = "Waspada"; badge3 = "Pelindung"; }
+                            else { badge1 = "Pro-Siber"; badge2 = "Anti-Phish"; badge3 = "Elite"; }
+                        }
+
+                        <!-- Lencana 1 -->
+                        <div class="text-center p-3 border rounded-4 @(badgesCount >= 1 ? "bg-primary bg-opacity-10 border-primary" : "bg-light opacity-50")" style="width: 110px; transition: 0.3s;">
+                            <ion-icon name="ribbon" class="@(badgesCount >= 1 ? "text-warning" : "text-muted")" style="font-size: 2.5rem;"></ion-icon>
+                            <small class="d-block fw-bold mt-1 @(badgesCount >= 1 ? "text-primary" : "text-muted")">@badge1</small>
                         </div>
-                        <div class="text-center p-3 border rounded-4 bg-light bg-opacity-50" style="width: 100px;">
-                            <ion-icon name="shield-checkmark" class="text-primary fs-1"></ion-icon>
-                            <small class="d-block fw-bold mt-1">Kebal</small>
+
+                        <!-- Lencana 2 -->
+                        <div class="text-center p-3 border rounded-4 @(badgesCount >= 2 ? "bg-primary bg-opacity-10 border-primary" : "bg-light opacity-50")" style="width: 110px; transition: 0.3s;">
+                            <ion-icon name="shield-checkmark" class="@(badgesCount >= 2 ? "text-primary" : "text-muted")" style="font-size: 2.5rem;"></ion-icon>
+                            <small class="d-block fw-bold mt-1 @(badgesCount >= 2 ? "text-primary" : "text-muted")">@badge2</small>
                         </div>
+
+                        <!-- Lencana 3 -->
+                        <div class="text-center p-3 border rounded-4 @(badgesCount >= 3 ? "bg-primary bg-opacity-10 border-primary" : "bg-light opacity-50")" style="width: 110px; transition: 0.3s;">
+                            <ion-icon name="trophy" class="@(badgesCount >= 3 ? "text-warning" : "text-muted")" style="font-size: 2.5rem;"></ion-icon>
+                            <small class="d-block fw-bold mt-1 @(badgesCount >= 3 ? "text-primary" : "text-muted")">@badge3</small>
+                        </div>
+
                     </div>
+                    @if (badgesCount == 0)
+                    {
+                        <p class="extra-small text-muted mt-3 italic">* Selesaikan modul dengan markah 100% untuk mengaktifkan lencana.</p>
+                    }
                 </div>
 
                 @if (Session["IsParent"] != null && (bool)Session["IsParent"] == true)

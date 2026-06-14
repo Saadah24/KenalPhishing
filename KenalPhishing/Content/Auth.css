@@ -4,35 +4,69 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #000;
+    /* Soft, professional deep slate gradient */
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
     padding: 40px 20px;
 }
 
 .auth-card {
-    background-color: #d1d1d1;
-    color: #000;
+    background-color: #ffffff; /* Clean white card for premium readability */
+    color: #1e293b; /* Softer, highly readable charcoal text */
     width: 100%;
     max-width: 500px;
     padding: 2.5rem;
-    border-radius: 2.5rem;
+    border-radius: 1.5rem;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1) !important;
 }
 
 /* Form Elements */
+.form-label {
+    font-weight: 600;
+    color: #334155;
+    font-size: 0.875rem;
+    margin-bottom: 0.5rem;
+}
+
+.input-with-icon {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+    .input-with-icon ion-icon {
+        position: absolute;
+        left: 1rem;
+        color: #64748b;
+        font-size: 1.2rem;
+        pointer-events: none;
+    }
+
+    .input-with-icon .auth-input {
+        padding-left: 2.8rem;
+    }
+
 .auth-input {
     width: 100%;
-    background-color: #000 !important;
-    color: #fff !important;
-    border: none;
+    background-color: #f8fafc !important;
+    color: #0f172a !important;
+    border: 1.5px solid #e2e8f0;
     padding: 0.8rem 1.2rem;
     border-radius: 0.8rem;
     outline: none;
+    transition: all 0.2s ease;
 }
+
+    .auth-input:focus {
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+        background-color: #ffffff !important;
+    }
 
 /* Category Grid Selection */
 .category-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
+    gap: 12px;
 }
 
 .cat-option {
@@ -44,8 +78,8 @@
     }
 
 .cat-card {
-    background-color: #fff;
-    border: 2px solid transparent;
+    background-color: #f8fafc;
+    border: 1.5px solid #e2e8f0;
     border-radius: 1rem;
     padding: 15px 5px;
     text-align: center;
@@ -58,59 +92,81 @@
     .cat-card ion-icon {
         font-size: 1.8rem;
         margin-bottom: 5px;
-        color: #555;
+        color: #64748b;
     }
 
 .cat-name {
     font-size: 0.75rem;
     font-weight: bold;
     display: block;
+    color: #1e293b;
 }
 
 .cat-age {
     font-size: 0.65rem;
-    color: #666;
+    color: #64748b;
 }
 
 /* Hover & Selected States */
 .cat-option:hover .cat-card {
-    background-color: #f0f0f0;
+    background-color: #f1f5f9;
+    border-color: #cbd5e1;
 }
 
 /* When the radio button is checked, change the card style */
 .cat-option input:checked + .cat-card {
-    border-color: #000;
-    background-color: #000;
-    color: #fff;
+    border-color: #2563eb;
+    background-color: #eff6ff;
 }
 
-    .cat-option input:checked + .cat-card ion-icon,
+    .cat-option input:checked + .cat-card .cat-name {
+        color: #1e40af;
+    }
+
+    .cat-option input:checked + .cat-card ion-icon {
+        color: #2563eb; /* Professional active color */
+    }
+
     .cat-option input:checked + .cat-card .cat-age {
-        color: #f7b731; /* Golden yellow icon when selected */
+        color: #3b82f6;
     }
 
 /* Buttons */
 .btn-auth {
-    background-color: #000;
-    color: #fff;
+    background-color: #2563eb;
+    color: #ffffff;
     padding: 0.9rem;
     border-radius: 50px;
     font-weight: bold;
     border: none;
-    transition: 0.3s;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);
 }
 
     .btn-auth:hover {
-        background-color: #333;
-        transform: translateY(-2px);
+        background-color: #1d4ed8;
+        transform: translateY(-1px);
+        box-shadow: 0 6px 12px -2px rgba(37, 99, 235, 0.3);
     }
 
 .auth-link {
-    color: #000;
-    font-weight: bold;
+    color: #2563eb;
+    font-weight: 600;
+    text-decoration: none;
+    transition: color 0.2s ease;
 }
 
+    .auth-link:hover {
+        color: #1d4ed8;
+        text-decoration: underline;
+    }
+
 .close-btn {
-    color: #000;
+    color: #94a3b8;
     font-size: 1.5rem;
+    transition: color 0.2s ease;
 }
+
+    .close-btn:hover {
+        color: #475569;
+    }

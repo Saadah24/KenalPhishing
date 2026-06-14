@@ -1,0 +1,110 @@
+﻿@model IEnumerable<KenalPhishing.Models.UserActivity>
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewBag.Title = "Log Aktiviti Portal";
+}
+
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold">Log Aktiviti Portal</h2>
+            <p class="text-muted">Senarai lengkap semua tindakan pengguna di dalam sistem.</p>
+        </div>
+        <button class="btn btn-outline-dark rounded-pill px-4" onclick="window.print()">
+            <ion-icon name="print-outline" class="me-2 align-middle"></ion-icon> Cetak Laporan
+        </button>
+    </div>
+
+    <!-- Carian Pantas -->
+    <div class="card border-0 shadow-sm rounded-4 p-3 mb-4">
+        <div class="input-group">
+            <span class="input-group-text bg-light border-0"><ion-icon name="search-outline"></ion-icon></span>
+            <input type="text" id="logSearch" class="form-control border-0 bg-light" placeholder="Cari nama pengguna atau tajuk aktiviti...">
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="bg-dark text-white">
+                    <tr>
+                        <th class="ps-4" style="width: 50px;">#</th>
+                        <th>Tarikh & Masa</th>
+                        <th>Pengguna</th>
+                        <th>Jenis</th>
+                        <th>Tindakan / Tajuk</th>
+                        <th>Keterangan</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{ int i = 1; }
+                    @foreach (var act in Model)
+                    {
+                        var badgeColor = act.ActivityType == "Module" ? "success" :
+                                         (act.ActivityType == "Scam" ? "danger" : "primary");
+
+                        <tr>
+                            <td class="ps-4 text-muted">@i.</td>
+                            <td class="text-muted small">
+                                @act.CreatedAt.ToString("dd MMM yyyy, hh:mm tt")
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="avatar-sm bg-light rounded-circle d-flex align-items-center justify-content-center me-2" style="width:30px; height:30px;">
+                                        <ion-icon name="person-outline"></ion-icon>
+                                    </div>
+                                    <span class="fw-bold">@(act.User?.FullName ?? "Sistem")</span>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="badge bg-@badgeColor bg-opacity-10 text-@badgeColor px-3 rounded-pill">
+                                    @act.ActivityType
+                                </span>
+                            </td>
+                            <td class="fw-bold">@act.Title</td>
+                            <td class="text-muted small">@act.Description</td>
+                        </tr>
+                        i++;
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    /**
+     * @@ts-nocheck
+     */
+    document.addEventListener("DOMContentLoaded", function () {
+        var searchInput = document.getElementById('logSearch');
+
+        // 1. Semak jika elemen wujud dan ia adalah Input
+        if (searchInput instanceof HTMLInputElement) {
+
+            // 2. PENYELESAIAN: Lock rujukan kepada 'const' supaya skop di dalam
+            //    fungsi (closure) tahu ia tidak akan null (Selesaikan TS18047)
+            const safeInput = searchInput;
+
+            safeInput.addEventListener('keyup', function () {
+
+                // 3. Gunakan safeInput (Selesaikan TS2339)
+                var value = safeInput.value.toLowerCase();
+                var rows = document.querySelectorAll('tbody tr');
+
+                rows.forEach(function (row) {
+                    // 4. Pastikan baris adalah HTMLElement untuk akses .style
+                    if (row instanceof HTMLElement) {
+                        var text = row.textContent ? row.textContent.toLowerCase() : "";
+
+                        if (text.indexOf(value) > -1) {
+                            row.style.display = "";
+                        } else {
+                            row.style.display = "none";
+                        }
+                    }
+                });
+            });
+        }
+    });
+</script>

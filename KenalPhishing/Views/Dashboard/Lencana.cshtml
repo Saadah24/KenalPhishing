@@ -1,0 +1,47 @@
+﻿@model IEnumerable<KenalPhishing.Models.UserProgress>
+@{
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+    ViewBag.Title = "Koleksi Lencana";
+}
+<div class="container py-4" style="font-family: 'Baloo 2', cursive;">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold text-warning"><ion-icon name="medal"></ion-icon> Koleksi Lencana</h2>
+        <a href="@Url.Action("Progress", "Dashboard")" class="btn btn-outline-dark rounded-pill px-4">Kembali</a>
+    </div>
+
+    <div class="alert alert-info rounded-4 border-0 shadow-sm">
+        <ion-icon name="information-circle"></ion-icon> <b>Cara Dapatkan Lencana:</b> Selesaikan setiap modul dengan menjawab semua soalan dengan <b>betul (100%)</b> dan mengesan taktik simulasi phishing!
+    </div>
+
+    <div class="row g-4 mt-2">
+        @{
+            string[] badgeNames = { "Pemburu Scam", "Pakar Privasi", "Perisai Kuat", "Ejen Sahih", "Mata Helang", "Wira Anti-Klik" };
+            string[] icons = { "bug", "eye-off", "key", "checkmark-circle", "search", "stop-circle" };
+
+            for (int i = 0; i < 6; i++)
+            {
+                // Andaikan kita ada 6 modul, kita padankan lencana mengikut jumlah yang pengguna ada.
+                // Jika user dah dapat 3 lencana (contoh), maka 3 index pertama 'unlocked'.
+                int earnedCount = Model.Count(p => p.QuizScore == p.QuizTotal && p.SimResult == "BERJAYA");
+                bool isUnlocked = i < earnedCount;
+
+                <div class="col-md-4">
+                    <div class="card border-0 shadow-sm rounded-4 p-4 text-center @(isUnlocked ? "" : "opacity-50 bg-light")">
+                        <div class="p-3 rounded-circle mx-auto mb-3 @(isUnlocked ? "bg-warning" : "bg-secondary text-white")" style="width:80px;height:80px; display:flex; align-items:center; justify-content:center;">
+                            <ion-icon name="@icons[i]" class="display-4 @(isUnlocked ? "text-dark" : "text-white")"></ion-icon>
+                        </div>
+                        <h5 class="fw-bold">@badgeNames[i]</h5>
+                        @if (isUnlocked)
+                        {
+                            <span class="badge bg-success rounded-pill px-3">Unlocked</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-dark rounded-pill px-3"><ion-icon name="lock-closed"></ion-icon> Locked</span>
+                        }
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div>

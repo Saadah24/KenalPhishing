@@ -1,7 +1,7 @@
 ﻿using System.Web;
 using System.Web.Mvc;
 
-namespace KenalPhihsing
+namespace KenalPhishing
 {
     public class FilterConfig
     {

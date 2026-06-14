@@ -1,4 +1,4 @@
-﻿@model IEnumerable<KenalPhihsing.Models.ScamReport>
+﻿@model IEnumerable<KenalPhishing.Models.ScamReport>
 @{
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
     ViewBag.Title = "Urus Laporan Scam";
@@ -7,8 +7,9 @@
 <div class="container-fluid py-4">
     <h3 class="fw-bold mb-4">Pengurusan Laporan Scam</h3>
 
-    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
-        <div class="table-responsive">
+    <!-- BAHAGIAN 1: JADUAL -->
+    <div class="card border-0 shadow-sm rounded-4">
+        <div class="table-responsive p-2">
             <table class="table table-hover align-middle mb-0">
                 <thead class="bg-light text-secondary">
                     <tr>
@@ -16,7 +17,7 @@
                         <th>Kategori</th>
                         <th>Maklumat Scammer</th>
                         <th>Butiran Kes</th>
-                        <th>Status</th> <!-- Kolum Status dikembalikan -->
+                        <th>Status</th>
                         <th class="text-end pe-4">Tindakan</th>
                     </tr>
                 </thead>
@@ -26,52 +27,17 @@
                         <tr>
                             <td class="ps-4 small">@item.DateReported.ToString("dd/MM/yyyy")</td>
                             <td><span class="badge rounded-pill bg-info bg-opacity-10 text-dark">@item.Category</span></td>
-                            <td class="small text-danger">@item.ScammerInfo</td>
+                            <td class="small text-danger fw-bold">@item.ScammerInfo</td>
 
-                            <!-- KOLUM BUTIRAN -->
                             <td>
-                                <button type="button" class="btn btn-sm btn-light border" data-bs-toggle="modal" data-bs-target="#modal-@item.Id">
+                                <!-- Butang untuk buka modal -->
+                                <button type="button" class="btn btn-sm btn-light border"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#modal-@item.Id">
                                     <ion-icon name="eye-outline" class="align-middle"></ion-icon> Lihat
                                 </button>
-
-                                <!-- MODAL BUTIRAN -->
-                                <div class="modal fade text-start" id="modal-@item.Id" tabindex="-1" aria-hidden="true">
-                                    <div class="modal-dialog modal-dialog-centered">
-                                        <div class="modal-content border-0 rounded-4 shadow">
-                                            <div class="modal-header border-0 pb-0">
-                                                <h5 class="fw-bold">Butiran Laporan #@item.Id</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                            </div>
-                                            <div class="modal-body p-4">
-                                                <div class="mb-3">
-                                                    <label class="small text-muted d-block">Pemberi Maklumat (User ID):</label>
-                                                    <span class="fw-bold">@item.UserId</span>
-                                                </div>
-                                                <div class="mb-3">
-                                                    <label class="small text-muted d-block">Maklumat Scammer:</label>
-                                                    <span class="text-danger fw-bold">@item.ScammerInfo (@item.Category)</span>
-                                                </div>
-                                                <hr class="text-muted opacity-25">
-                                                <div class="mb-0">
-                                                    <label class="small text-muted d-block">Kronologi / Perihal Kes:</label>
-                                                    <p class="bg-light p-3 rounded-3 mt-2" style="white-space: pre-line; color: #333; font-size: 0.9rem;">
-                                                        @item.Description
-                                                    </p>
-                                                </div>
-                                            </div>
-                                            <div class="modal-footer border-0">
-                                                <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Tutup</button>
-                                                @if (item.Status == "Verified")
-                                                {
-                                                    <a href="@Url.Action("PromoteToAlert", "Admin", new { id = item.Id })" class="btn btn-primary rounded-pill px-4">Terbit Buletin</a>
-                                                }
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
                             </td>
 
-                            <!-- KOLUM STATUS -->
                             <td>
                                 @if (item.Status == "Pending")
                                 {<span class="badge bg-warning text-dark">Menunggu</span> }
@@ -81,7 +47,6 @@
                                 { <span class="badge bg-danger">Ditolak</span>}
                             </td>
 
-                            <!-- KOLUM TINDAKAN -->
                             <td class="text-end pe-4">
                                 @if (item.Status == "Pending")
                                 {
@@ -92,15 +57,25 @@
                                         <button type="submit" name="status" value="Rejected" class="btn btn-sm btn-outline-danger rounded-pill px-3 ms-1">Tolak</button>
                                     }
                                 }
-                                else if (item.Status == "Verified")
-                                {
-                                    <a href="@Url.Action("PromoteToAlert", "Admin", new { id = item.Id })" class="btn btn-sm btn-primary rounded-pill px-3 shadow-sm">
-                                        <ion-icon name="megaphone-outline" class="align-middle me-1"></ion-icon> Terbit Buletin
-                                    </a>
-                                }
                                 else
                                 {
-                                    <small class="text-muted">Tiada tindakan</small>
+                                    <div class="d-flex justify-content-end gap-2">
+                                        @if (item.Status == "Verified")
+                                        {
+                                            <a href="@Url.Action("PromoteToAlert", "Admin", new { id = item.Id })" class="btn btn-sm btn-primary rounded-pill px-3">
+                                                <ion-icon name="megaphone-outline" class="me-1"></ion-icon> Terbit Buletin
+                                            </a>
+                                        }
+
+                                        @using (Html.BeginForm("UpdateStatus", "Admin", FormMethod.Post, new { @class = "d-inline" }))
+                                        {
+                                            <input type="hidden" name="id" value="@item.Id" />
+                                            <input type="hidden" name="status" value="Pending" />
+                                            <button type="submit" class="btn btn-sm btn-outline-secondary rounded-pill px-3" onclick="return confirm('Kembalikan laporan ini ke status Menunggu?')">
+                                                Batal
+                                            </button>
+                                        }
+                                    </div>
                                 }
                             </td>
                         </tr>
@@ -110,3 +85,53 @@
         </div>
     </div>
 </div>
+
+<!-- BAHAGIAN 2: MODAL -->
+@foreach (var item in Model)
+{
+    <div class="modal fade" id="modal-@item.Id" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 rounded-4 shadow-lg">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="fw-bold">Butiran Laporan #@item.Id</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4 text-start">
+                    <div class="mb-3">
+                        <label class="small text-muted d-block">Status Semasa:</label>
+                        <span class="badge @(item.Status == "Verified" ? "bg-success" : item.Status == "Pending" ? "bg-warning" : "bg-danger")">
+                            @item.Status
+                        </span>
+                    </div>
+                    <div class="mb-3 p-3 bg-light rounded-3">
+                        <label class="small text-muted d-block fw-bold mb-1">Maklumat Scammer:</label>
+                        <span class="text-danger fw-bold">@item.ScammerInfo</span>
+                        <span class="badge bg-dark ms-2">@item.Category</span>
+                    </div>
+                    <div class="mb-0">
+                        <label class="small text-muted d-block fw-bold">Kronologi / Perihal Kes:</label>
+                        <div class="bg-light p-3 rounded-3 mt-2" style="white-space: pre-line; color: #333; font-size: 0.95rem; border-left: 4px solid #dee2e6;">
+                            @item.Description
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Tutup</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<!-- BAHAGIAN 3: SKRIP PEMBETULAN MODAL -->
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Pindahkan semua modal ke dalam tag <body> untuk elak ralat backdrop kelabu
+            var modals = document.querySelectorAll('.modal');
+            modals.forEach(function (modal) {
+                document.body.appendChild(modal);
+            });
+        });
+    </script>
+}

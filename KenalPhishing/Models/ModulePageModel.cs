@@ -4,7 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
-namespace KenalPhihsing.Models
+namespace KenalPhishing.Models
 {
     public class ModulePageModel
     {

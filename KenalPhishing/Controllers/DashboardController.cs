@@ -1,63 +1,279 @@
-﻿using KenalPhihsing.Data;
-using KenalPhihsing.Models;
+﻿using KenalPhishing.Data;
+using KenalPhishing.Models;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data.Entity;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
-namespace KenalPhihsing.Controllers
+namespace KenalPhishing.Controllers
 {
     public class DashboardController : Controller
     {
-
         private ApplicationDbContext db = new ApplicationDbContext();
 
         // GET: Dashboard
         public ActionResult Index()
         {
-            // Security Check: If session is empty, go to login
+            // 1. SEMAKAN KESELAMATAN
             if (Session["UserID"] == null)
             {
                 return RedirectToAction("Login", "Account");
             }
 
-            // Get category from session
+            int userId = Convert.ToInt32(Session["UserID"]);
             string category = Session["UserCategory"]?.ToString();
             ViewBag.UserCategory = category;
 
-            // Return the Index view (the one that contains your @Html.Partial logic)
+            // 2. TARIK TETAPAN SISTEM
+            var settings = db.SystemSettings.FirstOrDefault();
+
+            if (settings != null && settings.IsMaintenanceMode)
+            {
+                if (Session["UserRole"]?.ToString() != "Admin")
+                    return View("MaintenanceMode");
+            }
+
+            ViewBag.GlobalAnnouncement = settings?.GlobalAnnouncement;
+            ViewBag.MinScore = (category == "Child") ? settings?.ScoreChild :
+                               (category == "Elder") ? settings?.ScoreElder :
+                               settings?.ScoreAdult;
+
+            // ==============================================================
+            // 3. LOGIK MENGIKUT KATEGORI (DIOPTIMUMKAN KE 3 ITEM)
+            // ==============================================================
+
+            if (category == "Adult")
+            {
+                var progresses = db.UserProgresses.Include(p => p.Module).Where(p => p.UserId == userId).ToList();
+
+                ViewBag.CompletedModules = progresses.Select(p => p.ModuleId).Distinct().Count();
+                ViewBag.TotalModules = db.Modules.Count(m => m.Category == "Adult");
+
+                int totalScore = progresses.Sum(p => p.QuizScore);
+                int totalQuestions = progresses.Sum(p => p.QuizTotal);
+                ViewBag.AvgScore = totalQuestions > 0 ? Math.Round(((double)totalScore / totalQuestions) * 100) : 0;
+
+                // --- LOGIK LENCANA (BADGES) ---
+                // Kira berapa banyak modul yang dijawab dengan skor sempurna (100%)
+                ViewBag.Badges = progresses.Count(p => p.QuizScore == p.QuizTotal && p.QuizTotal > 0);
+
+                // Hadkan kepada 3 item supaya Dashboard "Clean"
+                ViewBag.LatestAlerts = db.SecurityAlerts.OrderByDescending(a => a.DatePublished).Take(3).ToList();
+
+                var myReports = db.ScamReports.Where(r => r.UserId == userId).ToList();
+                ViewBag.TotalReports = myReports.Count;
+
+                // Hadkan Log Aktiviti kepada 3 item sahaja
+                ViewBag.RecentActivities = db.UserActivities
+                                             .Where(a => a.UserId == userId)
+                                             .OrderByDescending(a => a.CreatedAt)
+                                             .Take(3)
+                                             .ToList();
+
+                var chartData = progresses.Where(p => p.Module != null).GroupBy(p => p.Module.Title)
+                    .Select(g => new {
+                        Label = g.Key.Length > 15 ? g.Key.Substring(0, 15) + "..." : g.Key,
+                        Score = g.Average(x => x.QuizTotal > 0 ? ((double)x.QuizScore / x.QuizTotal) * 100 : 0)
+                    }).ToList();
+
+                ViewBag.ChartLabels = chartData.Select(c => c.Label).ToList();
+                ViewBag.ChartValues = chartData.Select(c => Math.Round(c.Score)).ToList();
+            }
+            else if (category == "Child")
+            {
+                var progress = db.UserProgresses.Where(p => p.UserId == userId).ToList();
+                int completedCount = progress.Select(p => p.ModuleId).Distinct().Count();
+                int totalScore = progress.Sum(p => p.QuizScore);
+
+                int currentXP = (completedCount * 50) + (totalScore * 10);
+                ViewBag.CurrentXP = currentXP;
+                ViewBag.NextRankXP = 1000;
+                ViewBag.LevelName = currentXP < 300 ? "Prajurit Muda" : (currentXP < 700 ? "Wira Muda" : "Sarjan Elit");
+                ViewBag.Badges = progress.Count(p => p.QuizScore == p.QuizTotal && p.QuizTotal > 0);
+
+                ViewBag.ChildModules = db.Modules.Where(m => m.Category == "Child").ToList();
+                ViewBag.CompletedModuleIds = progress.Select(p => p.ModuleId).Distinct().ToList();
+
+                // Hadkan Leaderboard kepada 2-3 orang sahaja di Dashboard
+                ViewBag.Leaderboard = db.Users.Where(u => u.Category == "Child").OrderByDescending(u => u.Id).Take(3).ToList();
+            }
+            else if (category == "Elder")
+            {
+                // 1. Tarik semua rekod kemajuan pengguna (Warga Emas)
+                var userProgress = db.UserProgresses.Include(p => p.Module).Where(p => p.UserId == userId).ToList();
+
+                // 2. Kira jumlah modul yang telah disiapkan (Unik)
+                int completedModulesCount = userProgress.Select(p => p.ModuleId).Distinct().Count();
+                ViewBag.ModulesFinished = completedModulesCount;
+
+                // 3. Sijil dikira berdasarkan jumlah modul yang tamat (1 modul = 1 sijil)
+                ViewBag.Certificates = completedModulesCount;
+
+                // 4. LOGIK LENCANA: Kira berapa banyak modul yang dijawab dengan skor sempurna (100%)
+                ViewBag.Badges = userProgress.Count(p => p.QuizScore == p.QuizTotal && p.QuizTotal > 0);
+
+                // 5. Kira Purata Markah Keseluruhan (Untuk bar kemajuan besar 0-100%)
+                double avg = userProgress.Any()
+                    ? userProgress.Average(p => (p.QuizTotal > 0 ? (double)p.QuizScore / p.QuizTotal * 100 : 0))
+                    : 0;
+                ViewBag.AvgScore = (int)Math.Round(avg);
+
+                // 6. Tarik senarai modul khusus Elder (Hadkan kepada 4 supaya Dashboard "Clean")
+                ViewBag.ElderModules = db.Modules
+                                        .Where(m => m.Category == "Elder")
+                                        .OrderBy(m => m.Id)
+                                        .Take(4)
+                                        .ToList();
+            }
+
             return View();
         }
 
+        // 1. CARI DAN GANTIKAN kaedah Progress() yang sedia ada:
         public ActionResult Progress()
         {
             if (Session["UserID"] == null) return RedirectToAction("Login", "Account");
 
-            string category = Session["UserCategory"]?.ToString() ?? "Adult";
-            ViewBag.Category = category;
-            ViewBag.UserName = Session["UserName"];
+            int userId = Convert.ToInt32(Session["UserID"]);
+            var user = db.Users.Find(userId);
+            string category = user.Category ?? "Adult";
 
-            // Data Simulasi - Gantikan dengan query DB sebenar nanti
+            ViewBag.Category = category;
+            ViewBag.UserName = user.FullName;
+
+            var userProgress = db.UserProgresses.Include(p => p.Module).Where(p => p.UserId == userId).ToList();
+            int completedModules = userProgress.Select(p => p.ModuleId).Distinct().Count();
+
+            int totalScore = userProgress.Sum(p => p.QuizScore);
+            int totalQuestions = userProgress.Sum(p => p.QuizTotal);
+            double avgScore = totalQuestions > 0 ? ((double)totalScore / totalQuestions) * 100 : 0;
+
+            ViewBag.AvgScore = Math.Round(avgScore);
+
             if (category == "Child")
             {
-                ViewBag.Level = "Kapten Siber";
-                ViewBag.Stars = 45;
-                ViewBag.RankColor = "#00d2ff";
+                // PENGIRAAN XP & PANGKAT KANAK-KANAK
+                // Katakan: 1 Modul Siap = 50 XP, Skor Betul = 10 XP setiap 1
+                int totalXP = (completedModules * 50) + (totalScore * 10);
+                ViewBag.CurrentXP = totalXP;
+
+                // Logik Pangkat (Praktikal)
+                if (totalXP < 100) { ViewBag.LevelName = "Prajurit Muda"; ViewBag.NextRankXP = 100; }
+                else if (totalXP < 200) { ViewBag.LevelName = "Koperal Siber"; ViewBag.NextRankXP = 200; }
+                else if (totalXP < 500) { ViewBag.LevelName = "Sarjan Elit"; ViewBag.NextRankXP = 500; }
+                else { ViewBag.LevelName = "Jeneral Siber"; ViewBag.NextRankXP = totalXP; }
+
+                // Logik Lencana: Hanya dapat jika markah 100% dan Simulasi 'BERJAYA'
+                int earnedBadges = userProgress.Count(p => p.QuizScore == p.QuizTotal && p.SimResult == "BERJAYA");
+                ViewBag.Badges = earnedBadges;
+
+                // Logik Ranking: Kira di tangga ke berapa pengguna ini berbanding Child lain (berdasarkan markah/XP)
+                var allChildUsers = db.Users.Where(u => u.Category == "Child").ToList();
+                // Simulasi rank rawak untuk contoh jika database kosong (Anda boleh buat db query sum XP nanti)
+                ViewBag.Rank = new Random().Next(1, 20);
             }
             else if (category == "Elder")
             {
-                ViewBag.SafetyStatus = "Selamat";
-                ViewBag.ModulesFinished = 3;
+                ViewBag.ModulesFinished = completedModules;
+                ViewBag.Certificates = completedModules; // Anggap setiap modul = 1 sijil
             }
-            else
+            else // Adult
             {
-                ViewBag.AvgScore = 82;
-                ViewBag.WeakTopic = "Penipuan SMS";
+                ViewBag.TotalStudyTime = completedModules * 25;
+
+                var radarData = userProgress.Where(p => p.Module != null).GroupBy(p => p.Module.Title)
+                    .Select(g => new {
+                        Label = g.Key.Length > 15 ? g.Key.Substring(0, 15) + "..." : g.Key,
+                        Score = g.Average(x => x.QuizTotal > 0 ? ((double)x.QuizScore / x.QuizTotal) * 100 : 0)
+                    }).ToList();
+                if (!radarData.Any()) radarData.Add(new { Label = "Belum Ada Data", Score = 0.0 });
+
+                ViewBag.RadarLabels = radarData.Select(r => r.Label).ToList();
+                ViewBag.RadarValues = radarData.Select(r => Math.Round(r.Score)).ToList();
+
+                var trendLabels = new List<string>(); var trendValues = new List<double>();
+                for (int i = 5; i >= 0; i--)
+                {
+                    var targetMonth = DateTime.Now.AddMonths(-i);
+                    trendLabels.Add(targetMonth.ToString("MMM"));
+                    var monthData = userProgress.Where(p => p.CompletedAt.HasValue && p.CompletedAt.Value.Month == targetMonth.Month && p.CompletedAt.Value.Year == targetMonth.Year).ToList();
+                    trendValues.Add(monthData.Any() ? Math.Round(monthData.Average(x => x.QuizTotal > 0 ? ((double)x.QuizScore / x.QuizTotal) * 100 : 0)) : 0);
+                }
+                ViewBag.LineLabels = trendLabels; ViewBag.LineValues = trendValues;
             }
 
+            var completedCerts = userProgress.Where(p => p.Module != null).GroupBy(p => p.ModuleId)
+                .Select(g => g.OrderByDescending(x => x.CompletedAt).FirstOrDefault()).ToList();
+            ViewBag.CompletedCerts = completedCerts;
+
             return View();
+        }
+
+        // ==========================================
+        // MUKA SURAT BAHARU UNTUK KANAK-KANAK
+        // ==========================================
+        public ActionResult Pangkat()
+        {
+            if (Session["UserID"] == null) return RedirectToAction("Login", "Account");
+            int userId = Convert.ToInt32(Session["UserID"]);
+
+            // Kiraan XP (Sama macam di atas)
+            var userProgress = db.UserProgresses.Where(p => p.UserId == userId).ToList();
+            int completedModules = userProgress.Select(p => p.ModuleId).Distinct().Count();
+            int totalScore = userProgress.Sum(p => p.QuizScore);
+            ViewBag.CurrentXP = (completedModules * 50) + (totalScore * 10);
+
+            return View();
+        }
+
+        public ActionResult Lencana()
+        {
+            if (Session["UserID"] == null) return RedirectToAction("Login", "Account");
+            int userId = Convert.ToInt32(Session["UserID"]);
+
+            // Hantar data progress supaya View boleh tentukan mana lencana di'unlock'
+            var userProgress = db.UserProgresses.Include(p => p.Module).Where(p => p.UserId == userId).ToList();
+            return View(userProgress);
+        }
+
+        public ActionResult Ranking()
+        {
+            if (Session["UserID"] == null) return RedirectToAction("Login", "Account");
+
+            // Ambil senarai murid dari jadual User yang berstatus Child
+            var children = db.Users.Where(u => u.Category == "Child").ToList();
+            ViewBag.CurrentUserId = Convert.ToInt32(Session["UserID"]);
+
+            return View(children);
+        }
+
+        // 2. TAMBAH FUNGSI BAHARU INI UNTUK EKSPORT CSV
+        public ActionResult ExportProgressCsv()
+        {
+            if (Session["UserID"] == null) return RedirectToAction("Login", "Account");
+            int userId = Convert.ToInt32(Session["UserID"]);
+
+            var progresses = db.UserProgresses.Include(p => p.Module)
+                               .Where(p => p.UserId == userId)
+                               .OrderByDescending(p => p.CompletedAt).ToList();
+
+            var sb = new System.Text.StringBuilder();
+            // Header CSV
+            sb.AppendLine("Modul,Skor Kuiz,Jumlah Soalan,Keputusan Simulasi,Tarikh Selesai");
+
+            foreach (var p in progresses)
+            {
+                string title = p.Module?.Title?.Replace(",", "") ?? "Modul Tidak Diketahui";
+                string dateStr = p.CompletedAt.HasValue ? p.CompletedAt.Value.ToString("dd MMM yyyy HH:mm") : "Tiada Rekod";
+                sb.AppendLine($"{title},{p.QuizScore},{p.QuizTotal},{p.SimResult},{dateStr}");
+            }
+
+            byte[] buffer = System.Text.Encoding.UTF8.GetBytes(sb.ToString());
+            return File(buffer, "text/csv", "Laporan_Prestasi_Phishing.csv");
         }
 
         public ActionResult Modules()
@@ -79,24 +295,131 @@ namespace KenalPhihsing.Controllers
             return View(modulesList);
         }
 
-        public ActionResult Study(int id, int page = 1)
+        [HttpPost]
+        public ActionResult SaveModuleProgress(int ModuleId, string SimResult, int QuizScore, int QuizTotal)
         {
-            // 1. Ambil data halaman (page) sekarang
-            // Kita guna .Include(m => m.Module) supaya data Icon & Title Modul boleh dibaca di View
+            try
+            {
+                // 1. Ambil User ID sebenar daripada Session
+                if (Session["UserID"] == null)
+                {
+                    return Json(new { success = false, message = "Sesi tamat. Sila log masuk semula." });
+                }
+
+                int currentUserId = Convert.ToInt32(Session["UserID"]);
+
+                // 2. Simpan rekod kemajuan ke dalam database
+                var progress = new UserProgress
+                {
+                    UserId = currentUserId,
+                    ModuleId = ModuleId,
+                    SimResult = SimResult ?? "Tiada",
+                    QuizScore = QuizScore,
+                    QuizTotal = QuizTotal,
+                    CompletedAt = DateTime.Now
+                };
+
+                db.UserProgresses.Add(progress);
+
+                // 3. Tambahan: Rekod aktiviti untuk dipaparkan di Dashboard (Feed)
+                var module = db.Modules.Find(ModuleId);
+                var activity = new UserActivity
+                {
+                    UserId = currentUserId,
+                    ActivityType = "Module",
+                    Title = "Selesai Modul: " + (module?.Title ?? "Phishing"),
+                    Description = $"Skor Kuiz: {QuizScore}/{QuizTotal}, Simulasi: {SimResult}",
+                    CreatedAt = DateTime.Now,
+                    ActionUrl = "/Dashboard/Certificates"
+                };
+                db.UserActivities.Add(activity);
+
+                db.SaveChanges();
+
+                return Json(new { success = true, message = "Kemajuan anda telah disimpan. Sijil kini tersedia!" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        // ===============================================
+        // FIX APPLIED HERE: Added int? id and null check
+        // ===============================================
+        public ActionResult Study(int? id, int page = 1)
+        {
+            // 1. SEMAKAN KESELAMATAN: Elak aplikasi crash jika URL tiada ID
+            if (!id.HasValue)
+            {
+                return RedirectToAction("Modules");
+            }
+
+            // 2. Ambil data halaman (page) sekarang
             var currentPage = db.ModulePages
                                 .Include(m => m.Module)
-                                .FirstOrDefault(p => p.ModuleId == id && p.PageNumber == page);
+                                .FirstOrDefault(p => p.ModuleId == id.Value && p.PageNumber == page);
 
             if (currentPage == null) return RedirectToAction("Modules");
 
-            // 2. KIRA JUMLAH HALAMAN (INI PENTING!)
-            // Kita kira ada berapa banyak baris dalam database yang mempunyai ModuleId yang sama
-            int totalPages = db.ModulePages.Count(p => p.ModuleId == id);
+            // 3. KIRA JUMLAH HALAMAN (INI PENTING!)
+            int totalPages = db.ModulePages.Count(p => p.ModuleId == id.Value);
 
-            // 3. Hantar nilai ke View melalui ViewBag
+            // 4. Hantar nilai ke View melalui ViewBag
             ViewBag.TotalPages = totalPages;
 
             return View(currentPage);
+        }
+
+        [HttpPost]
+        public JsonResult CompleteModule(int moduleId, bool simResult, bool quizResult)
+        {
+            if (Session["UserID"] == null) return Json(new { success = false });
+
+            int userId = Convert.ToInt32(Session["UserID"]);
+            string connString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
+
+            using (SqlConnection conn = new SqlConnection(connString))
+            {
+                conn.Open();
+
+                // 1. Ambil Nama Modul
+                string moduleTitle = "Modul";
+                using (SqlCommand cmd = new SqlCommand("SELECT Title FROM Modules WHERE Id = @mid", conn))
+                {
+                    cmd.Parameters.AddWithValue("@mid", moduleId);
+                    moduleTitle = cmd.ExecuteScalar()?.ToString();
+                }
+
+                // 2. Rekod ke Jadual UserActivities (Untuk Feed Dashboard)
+                string activitySql = @"INSERT INTO UserActivities (UserId, ActivityType, Title, Description, CreatedAt, ActionUrl) 
+                               VALUES (@uid, 'Simulasi', @title, @desc, GETDATE(), @url)";
+
+                using (SqlCommand cmd = new SqlCommand(activitySql, conn))
+                {
+                    cmd.Parameters.AddWithValue("@uid", userId);
+                    cmd.Parameters.AddWithValue("@title", "Selesai " + moduleTitle);
+                    cmd.Parameters.AddWithValue("@desc", simResult ? "Tahniah! Anda berjaya mengesan ancaman scam." : "Anda telah tamat simulasi ini.");
+                    cmd.Parameters.AddWithValue("@url", "/Dashboard/Study/" + moduleId + "?page=1");
+                    cmd.ExecuteNonQuery();
+                }
+
+                // 3. Kemaskini UserStats (Untuk Ringkasan Pencapaian 0/0 Modul)
+                string statsSql = @"
+            IF EXISTS (SELECT 1 FROM UserStats WHERE UserId = @uid)
+                UPDATE UserStats SET CompletedModules = CompletedModules + 1 WHERE UserId = @uid
+            ELSE
+                INSERT INTO UserStats (UserId, CompletedCertificates, TotalCertificates, CompletedModules, TotalModules)
+                VALUES (@uid, 0, 5, 1, 10)";
+
+                using (SqlCommand cmd = new SqlCommand(statsSql, conn))
+                {
+                    cmd.Parameters.AddWithValue("@uid", userId);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+
+            return Json(new { success = true });
         }
 
         public ActionResult UserProfile()
@@ -106,109 +429,112 @@ namespace KenalPhihsing.Controllers
                 return RedirectToAction("Login", "Account");
             }
 
-            // 1. Get the current user's ID
             int userId = Convert.ToInt32(Session["UserID"]);
-
-            // 2. Fetch the user's REAL data from the database
             var user = db.Users.Find(userId);
 
             if (user != null)
             {
-                // 3. Send the database values to the View
                 ViewBag.FullName = user.FullName;
                 ViewBag.Email = user.Email;
                 ViewBag.Category = user.Category;
-
-                // This will now show whatever is saved in your DB table column
                 ViewBag.Phone = user.Phone ?? "Tiada Maklumat";
+
+                // TARIK DATA LENCANA (Contoh: Skor 100% = 1 Lencana)
+                var userProgress = db.UserProgresses.Where(p => p.UserId == userId).ToList();
+                ViewBag.BadgesCount = userProgress.Count(p => p.QuizScore == p.QuizTotal && p.QuizTotal > 0);
+
+                // Simpan dalam list untuk kegunaan View jika perlu butiran modul
+                ViewBag.EarnedModules = userProgress.Where(p => p.QuizScore == p.QuizTotal).Select(p => p.Module.Title).ToList();
             }
 
             return View();
         }
 
-
-        public ActionResult Simulation()
-        {
-            if (Session["UserID"] == null)
-            {
-                return RedirectToAction("Login", "Account");
-            }
-            return View();
-        }
-
-        // 1. Show the Quiz
-        public ActionResult Quiz()
-        {
-            return View();
-        }
-
-        // 2. Process the Answer
-        [HttpPost]
-        public ActionResult SubmitQuiz(string q1)
-        {
-            // The correct answer is 'C'
-            if (q1 == "C")
-            {
-                return RedirectToAction("QuizCorrect");
-            }
-            else
-            {
-                return RedirectToAction("QuizWrong");
-            }
-        }
-
-        // 3. The Correct Page
-        public ActionResult QuizCorrect()
-        {
-            return View();
-        }
-
-        // 4. The Wrong Page
-        public ActionResult QuizWrong()
-        {
-            return View();
-        }
-
+        // 3. CARI DAN GANTIKAN kaedah Certificates()
         public ActionResult Certificates()
         {
             if (Session["UserID"] == null) return RedirectToAction("Login", "Account");
-            return View();
+
+            int userId = Convert.ToInt32(Session["UserID"]);
+            string category = Session["UserCategory"]?.ToString() ?? "Adult";
+
+            var allModules = db.Modules.Where(m => m.Category == category).ToList();
+            var userProgress = db.UserProgresses.Where(p => p.UserId == userId).ToList();
+
+            // Sediakan ViewModel untuk Sijil
+            var certList = allModules.Select(m => {
+                var progress = userProgress.Where(p => p.ModuleId == m.Id).OrderByDescending(p => p.CompletedAt).FirstOrDefault();
+                return new CertificateViewModel
+                {
+                    ModuleId = m.Id,
+                    ModuleTitle = m.Title,
+                    IsCompleted = progress != null,
+                    CompletedDate = progress?.CompletedAt,
+                    Score = progress != null && progress.QuizTotal > 0
+                            ? (int)Math.Round(((double)progress.QuizScore / progress.QuizTotal) * 100)
+                            : 0
+                };
+            }).ToList();
+
+            return View(certList);
         }
 
-        public ActionResult CertificateDetail()
+
+        public ActionResult CertificateDetail(int? id)
         {
             if (Session["UserID"] == null) return RedirectToAction("Login", "Account");
+            if (!id.HasValue) return RedirectToAction("Certificates");
 
-            // Data simulasi untuk sijil
-            ViewBag.StudentName = Session["UserName"] ?? "Rabiatul";
-            ViewBag.Module = "Asas Phishing";
-            ViewBag.Date = "11 Januari 2025";
-            ViewBag.Score = "100%";
+            int userId = Convert.ToInt32(Session["UserID"]);
+            var user = db.Users.Find(userId);
+
+            // 1. Ambil data sijil semasa
+            var progress = db.UserProgresses.Include(p => p.Module)
+                             .Where(p => p.UserId == userId && p.ModuleId == id.Value)
+                             .OrderByDescending(p => p.CompletedAt)
+                             .FirstOrDefault();
+
+            if (progress == null) return RedirectToAction("Certificates");
+
+            ViewBag.StudentName = user.FullName;
+            ViewBag.Module = progress.Module.Title;
+            ViewBag.Date = progress.CompletedAt?.ToString("dd MMMM yyyy") ?? DateTime.Now.ToString("dd MMMM yyyy");
+            int score = progress.QuizTotal > 0 ? (int)Math.Round((double)progress.QuizScore / progress.QuizTotal * 100) : 0;
+            ViewBag.Score = score + "%";
+
+            // ============================================================
+            // 2. LOGIK LANJUTKAN PEMBELAJARAN (CONNECT DATABASE)
+            // ============================================================
+            string category = user.Category ?? "Adult";
+
+            // Ambil ID semua modul yang SUDAH disiapkan
+            var completedModuleIds = db.UserProgresses
+                                       .Where(p => p.UserId == userId)
+                                       .Select(p => p.ModuleId)
+                                       .ToList();
+
+            // Cari modul dalam kategori yang sama yang BELUM disiapkan
+            var nextModules = db.Modules
+                                .Where(m => m.Category == category && !completedModuleIds.Contains(m.Id))
+                                .Take(2) // Ambil 2 cadangan modul
+                                .ToList();
+
+            ViewBag.RecommendedModules = nextModules;
 
             return View();
         }
 
-        public ActionResult Activity()
-        {
-            if (Session["UserID"] == null)
-            {
-                return RedirectToAction("Login", "Account");
-            }
-            return View();
-        }
 
-        // Papar Borang Lapor Scam
+
         public ActionResult ReportScam()
         {
             return View();
         }
 
-        // Simpan Laporan ke Database
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult SubmitReport(ScamReport report)
         {
-            // 1. Semak Session menggunakan ejaan yang betul "UserID"
             if (Session["UserID"] == null)
             {
                 return RedirectToAction("Login", "Account");
@@ -218,8 +544,6 @@ namespace KenalPhihsing.Controllers
             {
                 report.DateReported = DateTime.Now;
                 report.Status = "Pending";
-
-                // 2. Tukar string kepada int dengan selamat
                 report.UserId = Convert.ToInt32(Session["UserID"]);
 
                 db.ScamReports.Add(report);
@@ -234,7 +558,6 @@ namespace KenalPhihsing.Controllers
 
         public ActionResult CommunityAlerts()
         {
-            // Hanya ambil laporan yang sudah DISAHKAN (Verified)
             var verifiedScams = db.ScamReports
                                   .Where(r => r.Status == "Verified")
                                   .OrderByDescending(r => r.DateReported)
@@ -242,49 +565,95 @@ namespace KenalPhihsing.Controllers
             return View(verifiedScams);
         }
 
-
-
-
         public ActionResult ActivitySelection()
         {
             if (Session["UserID"] == null) return RedirectToAction("Login", "Account");
 
-            ViewBag.ModuleTitle = "Pengenalan Kepada Phishing"; // Tajuk modul semasa
+            ViewBag.ModuleTitle = "Pengenalan Kepada Phishing";
             return View();
         }
 
         public ActionResult ChildReport()
         {
-            // 1. Get the ChildEmail stored in the Parent's session
-            string childEmail = Session["ChildEmail"]?.ToString();
+            if (Session["UserID"] == null) return RedirectToAction("Login", "Account");
 
-            // IF NO CHILD EMAIL: Just return the view but set a flag
-            if (string.IsNullOrEmpty(childEmail))
+            int parentId = Convert.ToInt32(Session["UserID"]);
+
+            // 1. Cari data parent untuk dapatkan ID anak yang dipautkan
+            var parent = db.Users.Find(parentId);
+
+            if (parent == null || parent.LinkedChildId == null)
             {
                 ViewBag.NoChild = true;
                 return View();
             }
 
-            // 2. Fetch the Child's data from the database
-            var childUser = db.Users.FirstOrDefault(u => u.Email == childEmail);
+            // 2. Dapatkan data profil anak
+            int childId = parent.LinkedChildId.Value;
+            var child = db.Users.Find(childId);
 
-            if (childUser != null)
+            if (child == null)
             {
-                ViewBag.NoChild = false;
-                ViewBag.ChildName = childUser.FullName;
-                ViewBag.ChildEmail = childUser.Email;
-                ViewBag.ChildLastQuiz = 85;
-                ViewBag.ChildProgress = 65;
-            }
-            else
-            {
-                // If email exists in session but user deleted from DB
                 ViewBag.NoChild = true;
+                return View();
             }
+
+            ViewBag.NoChild = false;
+            ViewBag.ChildName = child.FullName;
+            ViewBag.ChildEmail = child.Email;
+
+            // 1. Ambil SEMUA data untuk kira purata
+            var allProgress = db.UserProgresses.Include(p => p.Module).Where(p => p.UserId == childId).ToList();
+
+            // 2. HADKAN paparan di Dashboard kepada 3 TERBARU sahaja
+            ViewBag.ProgressList = allProgress.OrderByDescending(p => p.CompletedAt).Take(2).ToList();
+
+            int completedModules = allProgress.Select(p => p.ModuleId).Distinct().Count();
+            double avgScore = allProgress.Any() ? allProgress.Average(p => (p.QuizTotal > 0 ? (double)p.QuizScore / p.QuizTotal * 100 : 0)) : 0;
+
+            ViewBag.CompletedModulesCount = completedModules;
+            ViewBag.ChildAvgScore = Math.Round(avgScore);
+
+            // 3. HADKAN Log Aktiviti kepada 3 TERBARU sahaja
+            ViewBag.ChildActivities = db.UserActivities
+                                       .Where(a => a.UserId == childId)
+                                       .OrderByDescending(a => a.CreatedAt)
+                                       .Take(2)
+                                       .ToList();
 
             return View();
         }
 
+        // HALAMAN DEDIKASI: LIHAT SEMUA AKTIVITI ANAK
+        public ActionResult FullChildActivity()
+        {
+            if (Session["UserID"] == null) return RedirectToAction("Login", "Account");
+
+            int parentId = Convert.ToInt32(Session["UserID"]);
+            var parent = db.Users.Find(parentId);
+
+            if (parent == null || parent.LinkedChildId == null) return RedirectToAction("ChildReport");
+
+            int childId = parent.LinkedChildId.Value;
+            var child = db.Users.Find(childId);
+
+            ViewBag.ChildName = child.FullName;
+
+            // Ambil sejarah penuh kemajuan modul
+            var fullProgress = db.UserProgresses.Include(p => p.Module)
+                                 .Where(p => p.UserId == childId)
+                                 .OrderByDescending(p => p.CompletedAt).ToList();
+
+            // Ambil sejarah penuh log aktiviti
+            var fullActivities = db.UserActivities
+                                   .Where(a => a.UserId == childId)
+                                   .OrderByDescending(a => a.CreatedAt).ToList();
+
+            ViewBag.FullProgress = fullProgress;
+            ViewBag.FullActivities = fullActivities;
+
+            return View();
+        }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -293,18 +662,16 @@ namespace KenalPhihsing.Controllers
             if (string.IsNullOrEmpty(ChildEmail))
             {
                 TempData["ErrorMessage"] = "Sila masukkan e-mel akaun anak.";
-                TempData["ActiveTab"] = "link-child"; // Helps us reopen the right tab
+                TempData["ActiveTab"] = "link-child";
                 return RedirectToAction("Settings", "Dashboard");
             }
 
-            // CHECK IF THE CHILD EMAIL EXISTS IN THE DATABASE AND IS A "CHILD"
             var childAccount = db.Users.FirstOrDefault(u => u.Email == ChildEmail && u.Category == "Child");
 
             if (childAccount == null)
             {
-                // THIS IS THE NEW ERROR MESSAGE
                 TempData["ErrorMessage"] = "E-mel tidak sah. Sila pastikan anak anda telah mendaftar menggunakan akaun berstatus 'Kanak-Kanak'.";
-                TempData["ActiveTab"] = "link-child"; // Helps us reopen the right tab
+                TempData["ActiveTab"] = "link-child";
                 return RedirectToAction("Settings", "Dashboard");
             }
 
@@ -334,13 +701,11 @@ namespace KenalPhihsing.Controllers
             {
                 var alert = db.SecurityAlerts.Find(id);
                 if (alert == null) return HttpNotFound();
-                return View("AlertDetail", alert); // Pergi ke Detail View
+                return View("AlertDetail", alert);
             }
 
-            // Untuk Senarai Radar
             var allAlerts = db.SecurityAlerts.OrderByDescending(a => a.DatePublished).ToList();
 
-            // Tarik data laporan komuniti yang dah verified
             ViewBag.VerifiedReports = db.ScamReports
                                         .Where(r => r.Status == "Verified")
                                         .OrderByDescending(r => r.DateReported)
@@ -349,21 +714,16 @@ namespace KenalPhihsing.Controllers
             return View(allAlerts);
         }
 
-        // ==========================================
-        // 1. PAPARKAN HALAMAN TETAPAN (GET)
-        // ==========================================
         public ActionResult Settings()
         {
             if (Session["UserID"] == null) return RedirectToAction("Login", "Account");
 
             int userId = Convert.ToInt32(Session["UserID"]);
-
-            // Tarik data paling tepat dari Database (bukan Session)
             var user = db.Users.Find(userId);
 
             if (user == null) return HttpNotFound();
 
-            return View(user); // Hantar objek 'user' ke View
+            return View(user);
         }
 
         [HttpPost]
@@ -377,7 +737,6 @@ namespace KenalPhihsing.Controllers
 
             if (user != null)
             {
-                // 1. Handle Image
                 if (ProfileImage != null && ProfileImage.ContentLength > 0)
                 {
                     string folderPath = Server.MapPath("~/Uploads/Profiles/");
@@ -391,28 +750,22 @@ namespace KenalPhihsing.Controllers
                     Session["UserProfilePic"] = fileName;
                 }
 
-                // 2. Update Info (Guna Trim untuk elak ralat ruang kosong)
                 user.FullName = FullName.Trim();
                 user.Phone = Phone?.Trim();
 
-                // Hanya kemaskini email jika parameter Email tidak null
                 if (!string.IsNullOrEmpty(Email))
                 {
                     user.Email = Email.Trim();
                     Session["UserEmail"] = user.Email;
                 }
 
-                // 3. PAKSA DATABASE SIMPAN
                 db.Entry(user).State = EntityState.Modified;
                 db.SaveChanges();
 
-                // Update Session untuk paparan di sidebar
                 Session["UserName"] = user.FullName;
-
                 TempData["SuccessMessage"] = "Profil berjaya dikemaskini ke dalam pangkalan data!";
             }
 
-            // Kembali ke halaman asal (Profil atau Tetapan)
             return Redirect(Request.UrlReferrer.ToString());
         }
 
@@ -427,7 +780,6 @@ namespace KenalPhihsing.Controllers
 
             if (user != null)
             {
-                // Gunakan .Trim() untuk pastikan tiada 'space' yang tidak sengaja
                 if (user.Password.Trim() != CurrentPassword.Trim())
                 {
                     TempData["ErrorMessage"] = "KATA LALUAN SEMASA SALAH. Sila masukkan kata laluan lama yang betul.";
@@ -453,9 +805,6 @@ namespace KenalPhihsing.Controllers
             return RedirectToAction("Settings");
         }
 
-        // ==========================================
-        // 4. PADAM AKAUN (POST)
-        // ==========================================
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteAccount()
@@ -477,5 +826,7 @@ namespace KenalPhihsing.Controllers
             }
             return RedirectToAction("Settings");
         }
+
+
     }
 }

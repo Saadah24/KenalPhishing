@@ -1,23 +1,25 @@
 ﻿@{
     ViewBag.Title = "Utama";
+
+    
 }
 
 <div class="container py-5">
-    <!-- Hero Section (Kekal Sama) -->
+    <!-- Hero Section -->
     <section class="hero-section row align-items-center mb-5 pb-lg-5 py-xl">
         <div class="col-lg-6 hero-text-container">
-            <h1 class="display-3 fw-bold hero-title">Selamat Datang <br> ke KenalPhishing</h1>
+            <h1 class="display-3 fw-bold hero-title mb-3">Selamat Datang <br> ke KenalPhishing</h1>
             <p class="h4 text-secondary-custom mb-4">Kenal Sebelum Tertipu</p>
             <p class="mb-4 text-light-grey fs-5">
                 Belajar Mengenal Pasti Penipuan Phishing Sebelum Terlambat. <br>
                 Lindungi diri dan keluarga dari ancaman siber terkini.
             </p>
-            <a href="#modul" class="btn btn-hero">Sertai Sekarang <ion-icon name="arrow-forward-outline" class="align-middle ms-2"></ion-icon></a>
+            <a href="#modul" class="btn btn-hero">Sertai Sekarang <ion-icon name="arrow-forward-outline" class="align-middle ms-2" style="pointer-events: none;"></ion-icon></a>
         </div>
         <div class="col-lg-6 mt-5 mt-lg-0">
-            <div class="hero-visual-box shadow-lg">
+            <div class="hero-visual-box shadow-sm">
                 <div class="monitor-frame">
-                    <ion-icon name="shield-checkmark-outline" class="hero-main-icon"></ion-icon>
+                    <ion-icon name="shield-checkmark-outline" class="hero-main-icon" style="pointer-events: none;"></ion-icon>
                 </div>
             </div>
         </div>
@@ -25,17 +27,15 @@
 
     <hr class="section-divider">
 
-    <!-- Stats Section (Kekal Sama) -->
-
- 
+    <!-- Stats Section -->
     <section class="stats-section row align-items-center my-5 py-xxl">
         <div class="col-lg-5 text-center">
             <div class="stats-visual-container">
-                <ion-icon name="alert-circle-outline" class="stats-alert-icon"></ion-icon>
+                <ion-icon name="alert-circle-outline" class="stats-alert-icon" style="pointer-events: none;"></ion-icon>
             </div>
         </div>
         <div class="col-lg-7 ps-lg-5 mt-4 mt-lg-0">
-            <h2 class="display-4 fw-bold stat-highlight">RM2.7 BILION LESAP</h2>
+            <h2 class="display-4 fw-bold stat-highlight mb-3">RM2.7 BILION LESAP</h2>
             <h4 class="text-secondary-custom mb-4">Rakyat Malaysia Kini Sasaran Utama</h4>
             <p class="lead text-light-grey">
                 "Jangan biarkan diri anda menjadi statistik seterusnya. Dalam tempoh 11 bulan pertama tahun 2025, kerugian akibat jenayah siber di Malaysia telah mencatatkan angka rekod tertinggi."
@@ -45,33 +45,42 @@
 
     <hr class="section-divider">
 
-    <!-- Modules Section: SEKARANG DIUBAH KE EXPLORE -->
+    <!-- Modules Section -->
     <section id="modul" class="text-center my-5 py-xxl">
-        <h2 class="display-5 fw-bold mb-5 section-title">Modul Pembelajaran</h2>
-        <div class="row g-4">
+        <h2 class="display-5 fw-bold mb-2 section-title text-dark">Modul Pembelajaran</h2>
+        <p class="text-muted-custom mb-5">Pilih kategori yang paling sesuai dengan profil anda untuk memulakan latihan terspesifikasi.</p>
+        <div class="row g-4 text-start">
             <!-- Warga Emas -->
             <div class="col-md-4">
-                <div class="module-card card-elder h-100">
-                    <ion-icon name="people-outline" class="module-icon"></ion-icon>
-                    <h4 class="fw-bold mb-4">Warga Emas</h4>
-                    <!-- Pautan ke Explore dengan kategori -->
-                    <a href="@Url.Action("Explore", "Learning", new { category = "Elder" })" class="btn btn-black-path">Lihat Modul</a>
+                <div class="module-card card-elder h-100 d-flex flex-column justify-content-between">
+                    <div>
+                        <ion-icon name="people-outline" class="module-icon" style="pointer-events: none;"></ion-icon>
+                        <h4 class="fw-bold mb-3">Warga Emas</h4>
+                        <p class="small text-muted-custom mb-4 leading-relaxed">Teks saiz besar, penerangan langkah demi langkah, dan tip melindung wang persaraan anda daripada penipuan panggilan & SMS.</p>
+                    </div>
+                    <a href="@Url.Action("Explore", "Learning", new { category = "Elder" })" class="btn btn-black-path align-self-start mt-4">Lihat Modul</a>
                 </div>
             </div>
             <!-- Dewasa -->
             <div class="col-md-4">
-                <div class="module-card card-adult h-100">
-                    <ion-icon name="briefcase-outline" class="module-icon"></ion-icon>
-                    <h4 class="fw-bold mb-4">Dewasa</h4>
-                    <a href="@Url.Action("Explore", "Learning", new { category = "Adult" })" class="btn btn-black-path">Lihat Modul</a>
+                <div class="module-card card-adult h-100 d-flex flex-column justify-content-between">
+                    <div>
+                        <ion-icon name="briefcase-outline" class="module-icon" style="pointer-events: none;"></ion-icon>
+                        <h4 class="fw-bold mb-3">Dewasa</h4>
+                        <p class="small text-muted-custom mb-4 leading-relaxed">Simulasi emel tempat kerja yang realistik, amalan terbaik keselamatan korporat, serta kesilapan transaksi bank harian.</p>
+                    </div>
+                    <a href="@Url.Action("Explore", "Learning", new { category = "Adult" })" class="btn btn-black-path align-self-start mt-4">Lihat Modul</a>
                 </div>
             </div>
             <!-- Kanak-Kanak -->
             <div class="col-md-4">
-                <div class="module-card card-kid h-100">
-                    <ion-icon name="game-controller-outline" class="module-icon"></ion-icon>
-                    <h4 class="fw-bold mb-4">Kanak-Kanak</h4>
-                    <a href="@Url.Action("Explore", "Learning", new { category = "Child" })" class="btn btn-black-path">Lihat Modul</a>
+                <div class="module-card card-kid h-100 d-flex flex-column justify-content-between">
+                    <div>
+                        <ion-icon name="game-controller-outline" class="module-icon" style="pointer-events: none;"></ion-icon>
+                        <h4 class="fw-bold mb-3">Pelajar Sekolah</h4>
+                        <p class="small text-muted-custom mb-4 leading-relaxed">Pembelajaran berkonsepkan visual yang ceria, kuiz bergambar, serta tip keselamatan am semasa menggunakan media sosial.</p>
+                    </div>
+                    <a href="@Url.Action("Explore", "Learning", new { category = "Child" })" class="btn btn-black-path align-self-start mt-4">Lihat Modul</a>
                 </div>
             </div>
         </div>
@@ -79,33 +88,36 @@
 
     <hr class="section-divider">
 
-    <!-- Why Us (Kekal Sama) -->
+    <!-- Why Us -->
     <section class="why-us-section row my-5 py-5 align-items-stretch">
         <div class="col-lg-4 mb-4 mb-lg-0">
-            <div class="why-us-summary">
-                <h2 class="fw-bold">Kenapa Belajar Dengan Kami?</h2>
+            <div class="why-us-summary d-flex flex-column justify-content-center">
+                <h2 class="fw-bold mb-3">Kenapa Belajar Dengan Kami?</h2>
+                <p class="text-muted-custom mb-0">Platform interaktif yang direka khusus untuk membina benteng pertahanan digital rakyat Malaysia.</p>
             </div>
         </div>
         <div class="col-lg-8 ps-lg-5">
-            <p class="text-center text-secondary-custom mb-5 small">Platform interaktif yang direka khusus untuk membasmi penipuan siber.</p>
-            <div class="row g-4 text-start">
+            <div class="row g-4 text-start h-100 align-items-center">
                 <div class="col-md-4 text-center">
                     <div class="feature-icon-container">
-                        <ion-icon name="phone-portrait-outline"></ion-icon>
+                        <ion-icon name="phone-portrait-outline" style="pointer-events: none;"></ion-icon>
                     </div>
-                    <p class="small text-secondary-custom"><strong>Simulasi:</strong> Alami situasi phishing sebenar.</p>
+                    <p class="small text-dark mt-3 mb-1"><strong>Simulasi Realistik</strong></p>
+                    <p class="small text-muted-custom">Alami situasi phishing sebenar secara interaktif tanpa risiko.</p>
                 </div>
                 <div class="col-md-4 text-center">
                     <div class="feature-icon-container">
-                        <ion-icon name="language-outline"></ion-icon>
+                        <ion-icon name="language-outline" style="pointer-events: none;"></ion-icon>
                     </div>
-                    <p class="small text-secondary-custom"><strong>Bahasa:</strong> Kandungan dalam Bahasa Melayu.</p>
+                    <p class="small text-dark mt-3 mb-1"><strong>Bahasa Melayu</strong></p>
+                    <p class="small text-muted-custom">Penerangan dipermudahkan sepenuhnya dalam Bahasa Melayu.</p>
                 </div>
                 <div class="col-md-4 text-center">
                     <div class="feature-icon-container">
-                        <ion-icon name="ribbon-outline"></ion-icon>
+                        <ion-icon name="ribbon-outline" style="pointer-events: none;"></ion-icon>
                     </div>
-                    <p class="small text-secondary-custom"><strong>Sijil:</strong> Pengiktirafan rasmi tamat modul.</p>
+                    <p class="small text-dark mt-3 mb-1"><strong>Sijil Kehadiran</strong></p>
+                    <p class="small text-muted-custom">Dapatkan pengiktirafan sejurus anda tamat modul latihan.</p>
                 </div>
             </div>
         </div>

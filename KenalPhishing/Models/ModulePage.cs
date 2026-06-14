@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace KenalPhihsing.Models
+namespace KenalPhishing.Models
 {
     public class ModulePage
     {
@@ -30,6 +30,7 @@ namespace KenalPhihsing.Models
         public string OptionC { get; set; }
         public string OptionD { get; set; }
         public string CorrectAnswer { get; set; } // Simpan "A", "B", "C", atau "D"
+        public string QuizFeedback { get; set; }
 
         public virtual Module Module { get; set; }
     }

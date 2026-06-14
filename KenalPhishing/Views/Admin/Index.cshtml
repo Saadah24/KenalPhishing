@@ -1,6 +1,15 @@
-﻿@{
+﻿@using KenalPhishing.Models
+@{
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
     ViewBag.Title = "Dashboard Pentadbir";
+
+    // 1. Tangkap data dinamik dari Controller
+    int totalUsers = ViewBag.TotalUsers ?? 0;
+    int totalModules = ViewBag.TotalModules ?? 0;
+    int totalReports = ViewBag.TotalScamReports ?? 0;
+    int pendingReports = ViewBag.PendingReports ?? 0;
+    int totalCerts = ViewBag.TotalCertificates ?? 0;
+    var recentActivities = ViewBag.RecentActivities as List<UserActivity> ?? new List<UserActivity>();
 }
 
 @section Styles {
@@ -39,6 +48,8 @@
         .activity-item {
             transition: background 0.2s;
             cursor: pointer;
+            text-decoration: none !important;
+            color: inherit;
         }
 
             .activity-item:hover {
@@ -61,102 +72,156 @@
         </div>
     </div>
 
-    <!-- Statistik Ringkas (Enhanced with Icons & Trends) -->
+    <!-- Statistik Ringkas (DATA DINAMIK) -->
     <div class="row g-4 mb-5">
         <div class="col-md-3">
             <div class="p-4 bg-dark text-white rounded-4 shadow-sm stat-card">
                 <ion-icon name="people" class="stat-icon"></ion-icon>
                 <h6 class="small text-uppercase opacity-50">Jumlah Pelajar</h6>
-                <h2 class="fw-bold mb-1">1,240</h2>
-                <span class="extra-small trend-up">+5.2% bulan ini</span>
+                <h2 class="fw-bold mb-1">@totalUsers.ToString("N0")</h2>
+                <span class="extra-small trend-up">Akaun Berdaftar</span>
             </div>
         </div>
         <div class="col-md-3">
             <div class="p-4 bg-primary text-white rounded-4 shadow-sm stat-card">
                 <ion-icon name="book" class="stat-icon"></ion-icon>
                 <h6 class="small text-uppercase opacity-50">Modul Aktif</h6>
-                <h2 class="fw-bold mb-1">12</h2>
-                <span class="extra-small opacity-75">3 dikemaskini hari ini</span>
+                <h2 class="fw-bold mb-1">@totalModules</h2>
+                <span class="extra-small opacity-75">Tersedia dalam portal</span>
             </div>
         </div>
         <div class="col-md-3">
             <div class="p-4 bg-warning text-dark rounded-4 shadow-sm stat-card">
                 <ion-icon name="alert-circle" class="stat-icon"></ion-icon>
                 <h6 class="small text-uppercase opacity-50 text-dark">Laporan Scam</h6>
-                <h2 class="fw-bold mb-1">45</h2>
-                <span class="extra-small fw-bold text-danger">8 Belum Disemak</span>
+                <h2 class="fw-bold mb-1">@totalReports</h2>
+                <span class="extra-small fw-bold text-danger">@pendingReports Belum Disemak</span>
             </div>
         </div>
         <div class="col-md-3">
             <div class="p-4 bg-success text-white rounded-4 shadow-sm stat-card">
                 <ion-icon name="ribbon" class="stat-icon"></ion-icon>
                 <h6 class="small text-uppercase opacity-50">Sijil Dikeluarkan</h6>
-                <h2 class="fw-bold mb-1">890</h2>
-                <span class="extra-small opacity-75">98% kadar kelulusan</span>
+                <h2 class="fw-bold mb-1">@totalCerts</h2>
+                <span class="extra-small opacity-75">Tamat Modul</span>
             </div>
         </div>
     </div>
 
     <div class="row g-4">
-        <!-- MONITORING: User Registration Trend -->
+        <!-- MONITORING: Taburan Kategori Pelajar (DATA DINAMIK) -->
         <div class="col-lg-8">
             <div class="card p-4 rounded-4 border-0 shadow-sm h-100">
                 <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h5 class="fw-bold m-0">Trend Pendaftaran Pelajar</h5>
+                    <h5 class="fw-bold m-0">Taburan Kategori Pelajar</h5>
                     <div class="d-flex gap-2">
-                        <select class="form-select form-select-sm w-auto border-0 bg-light">
-                            <option>7 Hari Terakhir</option>
-                            <option>30 Hari Terakhir</option>
-                        </select>
-                        <button class="btn btn-light btn-sm rounded-circle"><ion-icon name="download-outline"></ion-icon></button>
+                        <button class="btn btn-light btn-sm rounded-circle"><ion-icon name="sync-outline"></ion-icon></button>
                     </div>
                 </div>
-                <!-- Placeholder for Chart.js Integration -->
-                <div style="height: 280px; background: #fcfdfe; border-radius: 20px;" class="d-flex flex-column align-items-center justify-content-center border border-dashed">
-                    <ion-icon name="stats-chart" class="fs-1 text-primary opacity-25 mb-2"></ion-icon>
-                    <p class="text-muted small">Visualisasi Data (Chart.js)</p>
-                    <span class="extra-small text-uppercase ls-1 opacity-50">Menunggu Integrasi API</span>
+                <!-- Canvas untuk Chart.js -->
+                <div style="height: 280px;">
+                    <canvas id="adminRegistrationChart"></canvas>
                 </div>
             </div>
         </div>
 
-        <!-- LIVE FEED: Recent Portal Activity -->
+        <!-- LIVE FEED: Aktiviti Terkini Portal -->
         <div class="col-lg-4">
             <div class="card p-4 rounded-4 border-0 shadow-sm h-100">
                 <h5 class="fw-bold mb-4">Aktiviti Terkini Portal</h5>
                 <div class="activity-feed">
-                    <div class="d-flex gap-3 mb-3 pb-3 border-bottom activity-item p-2 rounded-3">
-                        <div class="bg-primary bg-opacity-10 p-2 rounded-circle text-primary d-flex align-items-center shadow-sm" style="height:40px; width:40px;">
-                            <ion-icon name="person-add" class="mx-auto"></ion-icon>
-                        </div>
-                        <div>
-                            <p class="small mb-0"><b>User99</b> baru mendaftar (Warga Emas)</p>
-                            <span class="extra-small text-muted">2 minit lepas</span>
-                        </div>
-                    </div>
-                    <div class="d-flex gap-3 mb-3 pb-3 border-bottom activity-item p-2 rounded-3">
-                        <div class="bg-success bg-opacity-10 p-2 rounded-circle text-success d-flex align-items-center shadow-sm" style="height:40px; width:40px;">
-                            <ion-icon name="checkmark-done" class="mx-auto"></ion-icon>
-                        </div>
-                        <div>
-                            <p class="small mb-0"><b>Ali1</b> tamat Kuiz Phishing</p>
-                            <span class="extra-small text-muted">15 minit lepas</span>
-                        </div>
-                    </div>
-                    <div class="d-flex gap-3 mb-3 pb-3 border-bottom activity-item p-2 rounded-3">
-                        <div class="bg-danger bg-opacity-10 p-2 rounded-circle text-danger d-flex align-items-center shadow-sm" style="height:40px; width:40px;">
-                            <ion-icon name="alert-circle" class="mx-auto"></ion-icon>
-                        </div>
-                        <div>
-                            <p class="small mb-0"><b>Abu</b> melaporkan Scam baru</p>
-                            <span class="extra-small text-muted">1 jam lepas</span>
-                        </div>
-                    </div>
+                    @if (recentActivities.Any())
+                    {
+                        foreach (var act in recentActivities)
+                        {
+                            var color = act.ActivityType == "Module" ? "success" : (act.ActivityType == "Scam" ? "danger" : "primary");
+                            var icon = act.ActivityType == "Module" ? "book" : (act.ActivityType == "Scam" ? "alert-circle" : "person-add");
+
+                            <div class="d-flex gap-3 mb-3 pb-3 border-bottom activity-item p-2 rounded-3">
+                                <div class="bg-@color bg-opacity-10 p-2 rounded-circle text-@color d-flex align-items-center shadow-sm" style="height:40px; width:40px;">
+                                    <ion-icon name="@icon" class="mx-auto"></ion-icon>
+                                </div>
+                                <div>
+                                    <p class="small mb-0 text-dark"><b>@(act.User?.FullName ?? "Pengguna")</b> @act.Title</p>
+                                    <span class="extra-small text-muted">@act.CreatedAt.ToString("dd MMM, HH:mm")</span>
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <p class="text-muted text-center py-4">Tiada aktiviti terbaru.</p>
+                    }
                 </div>
+
+                <!-- Butang untuk ke halaman penuh -->
                 <div class="mt-auto pt-3">
-                    <a href="#" class="btn btn-outline-primary btn-sm w-100 rounded-pill py-2 fw-bold">Lihat Semua Log</a>
+                    <a href="@Url.Action("PortalActivity", "Admin")" class="btn btn-primary btn-sm w-100 rounded-pill py-2 fw-bold shadow-sm">
+                        Lihat Semua Log Aktiviti
+                    </a>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        /**
+         * @@ts-nocheck
+         */
+        document.addEventListener("DOMContentLoaded", function () {
+            var canvas = document.getElementById('adminRegistrationChart');
+
+            // 1. Pastikan canvas adalah elemen HTML yang sah
+            if (canvas instanceof HTMLCanvasElement) {
+                var ctx = canvas.getContext('2d');
+
+                // 2. Ambil data dari ViewBag secara selamat
+                var labelsJson = '@Html.Raw(Json.Encode(ViewBag.ChartLabels ?? new string[0]))';
+                var valuesJson = '@Html.Raw(Json.Encode(ViewBag.ChartValues ?? new int[0]))';
+
+                var labels = JSON.parse(labelsJson);
+                var values = JSON.parse(valuesJson);
+
+                // 3. PENYELESAIAN TS7015: Gunakan Object(window) untuk akses Chart
+                var globalWin = Object(window);
+                var ChartJS = globalWin.Chart;
+
+                if (ctx && ChartJS && labels.length > 0) {
+                    new ChartJS(ctx, {
+                        type: 'doughnut',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                data: values,
+                                backgroundColor: ['#0d6efd', '#198754', '#ffc107', '#dc3545'],
+                                borderWidth: 0,
+                                hoverOffset: 10
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    position: 'bottom',
+                                    labels: { padding: 20, usePointStyle: true }
+                                }
+                            },
+                            cutout: '70%'
+                        }
+                    });
+                }
+                else if (labels.length === 0) {
+                    // 4. PENYELESAIAN TS18047: Sahkan parentElement wujud sebelum guna
+                    var parent = canvas.parentElement;
+                    if (parent instanceof HTMLElement) {
+                        parent.innerHTML = '<div class="text-center py-5 text-muted"><p>Tiada data untuk dipaparkan.</p></div>';
+                    }
+                }
+            }
+        });
+    </script>
+}

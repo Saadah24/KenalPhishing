@@ -1,11 +1,11 @@
-﻿@{
+﻿@model KenalPhishing.Models.SystemSetting
+@{
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
     ViewBag.Title = "Konfigurasi Sistem";
 }
 
 @section Styles {
     <link href="~/Content/Admin.css" rel="stylesheet" type="text/css" />
-    <link href="~/Content/Dashboard.css" rel="stylesheet" type="text/css" />
     <style>
         .config-card {
             transition: all 0.3s ease;
@@ -30,6 +30,10 @@
             justify-content: center;
             border-radius: 10px;
         }
+
+        .extra-small {
+            font-size: 11px;
+        }
     </style>
 }
 
@@ -48,6 +52,7 @@
     @using (Html.BeginForm("UpdateSystemSettings", "Admin", FormMethod.Post))
     {
         @Html.AntiForgeryToken()
+        @Html.HiddenFor(m => m.Id)
 
         <div class="row g-4">
             <!-- LEFT: Platform Operations -->
@@ -66,13 +71,14 @@
                             <span class="extra-small text-muted">Halang akses pelajar semasa kemas kini sistem.</span>
                         </div>
                         <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" name="IsMaintenanceMode" role="switch">
+                            @* Checkbox logic *@
+                            <input class="form-check-input" type="checkbox" name="IsMaintenanceMode" value="true" role="switch" @(Model.IsMaintenanceMode ? "checked" : "")>
                         </div>
                     </div>
 
                     <div class="mb-3">
                         <label class="small fw-bold text-muted mb-2">Pengumuman Global Dashboard</label>
-                        <textarea name="GlobalAnnouncement" class="form-control bg-light border-0 p-3 small" rows="3" placeholder="Server akan diselenggara pada jam 12:00 AM malam ini. Sila simpan kemajuan anda."></textarea>
+                        @Html.TextAreaFor(m => m.GlobalAnnouncement, new { @class = "form-control bg-light border-0 p-3 small", rows = "3", placeholder = "Masukkan mesej pengumuman..." })
                         <div class="form-text extra-small mt-2">Mesej ini akan muncul pada bar notifikasi semua pengguna.</div>
                     </div>
                 </div>
@@ -94,21 +100,21 @@
                         <div class="col-md-4">
                             <label class="extra-small fw-bold text-uppercase ls-1">Kanak-kanak</label>
                             <div class="input-group mt-1">
-                                <input type="number" name="ScoreChild" class="form-control bg-light border-0 p-3" value="70">
+                                @Html.TextBoxFor(m => m.ScoreChild, new { @type = "number", @class = "form-control bg-light border-0 p-3" })
                                 <span class="input-group-text bg-light border-0">%</span>
                             </div>
                         </div>
                         <div class="col-md-4">
                             <label class="extra-small fw-bold text-uppercase ls-1">Dewasa</label>
                             <div class="input-group mt-1">
-                                <input type="number" name="ScoreAdult" class="form-control bg-light border-0 p-3" value="85">
+                                @Html.TextBoxFor(m => m.ScoreAdult, new { @type = "number", @class = "form-control bg-light border-0 p-3" })
                                 <span class="input-group-text bg-light border-0">%</span>
                             </div>
                         </div>
                         <div class="col-md-4">
                             <label class="extra-small fw-bold text-uppercase ls-1">Warga Emas</label>
                             <div class="input-group mt-1">
-                                <input type="number" name="ScoreElder" class="form-control bg-light border-0 p-3" value="80">
+                                @Html.TextBoxFor(m => m.ScoreElder, new { @type = "number", @class = "form-control bg-light border-0 p-3" })
                                 <span class="input-group-text bg-light border-0">%</span>
                             </div>
                         </div>
@@ -137,17 +143,17 @@
                         <div class="col-md-4">
                             <label class="small fw-bold text-muted mb-2">Had Percubaan Kuiz</label>
                             <select name="QuizAttempts" class="form-select border-0 bg-light p-3">
-                                <option value="3">3 Percubaan</option>
-                                <option value="5">5 Percubaan</option>
-                                <option value="0">Tanpa Had (Latihan)</option>
+                                <option value="3" @(Model.QuizAttempts == 3 ? "selected" : "")>3 Percubaan</option>
+                                <option value="5" @(Model.QuizAttempts == 5 ? "selected" : "")>5 Percubaan</option>
+                                <option value="0" @(Model.QuizAttempts == 0 ? "selected" : "")>Tanpa Had (Latihan)</option>
                             </select>
                         </div>
                         <div class="col-md-4">
                             <label class="small fw-bold text-muted mb-2">Sesi Log Keluar Automatik (Idle)</label>
                             <select name="SessionTimeout" class="form-select border-0 bg-light p-3">
-                                <option value="30">30 Minit</option>
-                                <option value="60">1 Jam</option>
-                                <option value="0">Tutup (Sentiasa Aktif)</option>
+                                <option value="30" @(Model.SessionTimeout == 30 ? "selected" : "")>30 Minit</option>
+                                <option value="60" @(Model.SessionTimeout == 60 ? "selected" : "")>1 Jam</option>
+                                <option value="0" @(Model.SessionTimeout == 0 ? "selected" : "")>Tutup (Sentiasa Aktif)</option>
                             </select>
                         </div>
                         <div class="col-md-4">
@@ -161,18 +167,25 @@
         </div>
     }
 
-    <!-- Audit Hint (Professional Touch) -->
+    <!-- Audit Hint -->
     <div class="mt-5 text-center">
         <p class="extra-small text-muted">
             <ion-icon name="time-outline" class="align-middle"></ion-icon>
-            Kemas kini terakhir oleh <b>Super Admin</b> pada 15 Jan 2025, 10:30 AM
+            Kemas kini terakhir oleh <b>@(Model.UpdatedBy ?? "System")</b> pada @(Model.LastUpdated.HasValue ? Model.LastUpdated.Value.ToString("dd MMM yyyy, hh:mm tt") : "Tiada Data")
         </p>
     </div>
 </div>
 
 @if (TempData["SuccessMessage"] != null)
 {
-    <script>
-        alert("@TempData["SuccessMessage"]");
-    </script>
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+        <div class="toast show align-items-center text-white bg-success border-0" role="alert">
+            <div class="d-flex">
+                <div class="toast-body">
+                    @TempData["SuccessMessage"]
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+            </div>
+        </div>
+    </div>
 }

@@ -2,6 +2,11 @@
     // 1. Ambil kategori dari session untuk tentukan tema
     string category = Session["UserCategory"]?.ToString() ?? "Adult";
     string themeClass = "theme-" + category.ToLower();
+
+
+    var action = ViewContext.RouteData.Values["action"]?.ToString();
+    var controller = ViewContext.RouteData.Values["controller"]?.ToString();
+
 }
 
 <!DOCTYPE html>
@@ -19,7 +24,77 @@
 
     <link href="~/Content/Site.css" rel="stylesheet" type="text/css" />
 
- 
+    <style>
+      
+        /* --- SIDEBAR GLOBAL RESET --- */
+        /* 1. Buang kesan hover kelabu pada semua link */
+        .sidebar .nav-link:hover {
+            background-color: transparent !important;
+            color: inherit !important;
+            opacity: 0.8;
+        }
+
+        .sidebar .nav-link {
+            color: #444 !important;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 15px;
+            border-radius: 10px;
+            transition: all 0.2s;
+        }
+
+        /* --- WARNA HIGHLIGHT MENGIKUT TEMA --- */
+
+        /* Tema ADULT: Biru Standard */
+        body.theme-adult .sidebar .nav-link.active {
+            background-color: #0d6efd !important;
+            color: #fff !important;
+        }
+
+        /* Tema CHILD: Biru Muda / Cyan (Padankan dengan gambar Misi) */
+        body.theme-child .sidebar .nav-link.active {
+            background-color: #00b4ff !important;
+            color: #fff !important;
+        }
+
+        /* Tema ELDER: Biru Gelap / Navy (Padankan dengan card Elder) */
+        body.theme-elder .sidebar .nav-link.active {
+            background-color: #1a1a2e !important;
+            color: #fff !important;
+        }
+
+        /* Pastikan ikon di dalam link active juga putih */
+        .sidebar .nav-link.active ion-icon {
+            color: #fff !important;
+        }
+
+        /* --- BUTANG LOG KELUAR (CONSISTENT BLACK & WHITE) --- */
+        .btn-logout {
+            background-color: #1a1a1a !important; /* Hitam Solid */
+            color: #ffffff !important; /* Teks Putih */
+            border: none !important;
+            padding: 12px !important;
+            border-radius: 12px !important;
+            font-weight: 700 !important;
+            text-decoration: none !important;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+            .btn-logout:hover {
+                background-color: #444444 !important;
+                color: #ffffff !important;
+            }
+
+            .btn-logout ion-icon {
+                color: #ffffff !important;
+            }
+    </style>
+
     @RenderSection("Styles", required: false)
 </head>
 
@@ -34,32 +109,33 @@
 
             <ul class="nav flex-column px-3 mt-3">
                 <li class="nav-item mb-2">
-                    <a href="@Url.Action("Index", "Dashboard")" class="nav-link @(ViewContext.RouteData.Values["action"].ToString() == "Index" ? "active" : "")">
-                        <ion-icon name="grid-outline"></ion-icon> <span>Ringkasan</span>
+                    <a href="@Url.Action("Index", "Dashboard")" class="nav-link @(controller == "Dashboard" && action == "Index" ? "active" : "")">
+                        <ion-icon name="grid-outline"></ion-icon>
+                        <span>Ringkasan</span>
                     </a>
                 </li>
                 <li class="nav-item mb-2">
-                    <a href="@Url.Action("Modules", "Dashboard")" class="nav-link @(ViewContext.RouteData.Values["action"].ToString() == "Modules" || ViewContext.RouteData.Values["action"].ToString() == "Study" ? "active" : "")">
+                    <a href="@Url.Action("Modules", "Dashboard")" class="nav-link @(controller == "Dashboard" && (action == "Modules" || action == "Study") ? "active" : "")">
                         <ion-icon name="book-outline"></ion-icon> <span>Modul Belajar</span>
                     </a>
                 </li>
                 <li class="nav-item mb-2">
-                    <a href="@Url.Action("Activity", "Dashboard")" class="nav-link @(ViewContext.RouteData.Values["action"].ToString() == "Activity" ? "active" : "")">
-                        <ion-icon name="time-outline"></ion-icon> <span>Aktiviti Terkini</span>
+                    <a href="@Url.Action("Index", "Activity")" class="nav-link @(controller == "Activity" ? "active" : "")">
+                        <ion-icon name="time-outline"></ion-icon>
+                        <span>Aktiviti Terkini</span>
                     </a>
                 </li>
 
                 <li class="nav-item mb-2">
-                    <a href="@Url.Action("Progress", "Dashboard")" class="nav-link @(ViewContext.RouteData.Values["action"].ToString() == "Progress" ? "active" : "")">
+                    <a href="@Url.Action("Progress", "Dashboard")" class="nav-link @(controller == "Dashboard" && action == "Progress" ? "active" : "")">
                         <ion-icon name="bar-chart-outline"></ion-icon> <span>Laporan Saya</span>
                     </a>
                 </li>
 
-                <!-- MENU KHAS: HANYA UNTUK ADULT -->
                 @if (category == "Adult")
                 {
                     <li class="nav-item mb-2">
-                        <a href="@Url.Action("ChildReport", "Dashboard")" class="nav-link @(ViewContext.RouteData.Values["action"].ToString() == "ChildReport" ? "active" : "")">
+                        <a href="@Url.Action("ChildReport", "Dashboard")" class="nav-link @(controller == "Dashboard" && action == "ChildReport" ? "active" : "")">
                             <ion-icon name="people-outline"></ion-icon> <span>Laporan Anak</span>
                         </a>
                     </li>
@@ -70,27 +146,28 @@
                 </li>
 
                 <li class="nav-item mb-2">
-                    <a href="@Url.Action("ReportScam", "Dashboard")" class="nav-link @(ViewContext.RouteData.Values["action"].ToString() == "ReportScam" ? "active" : "")">
+                    <a href="@Url.Action("ReportScam", "Dashboard")" class="nav-link @(controller == "Dashboard" && action == "ReportScam" ? "active" : "")">
                         <ion-icon name="alert-circle-outline" class="text-danger"></ion-icon> <span class="text-danger fw-bold">Lapor Scam</span>
                     </a>
                 </li>
 
                 <li class="nav-item mb-2">
-                    <a href="@Url.Action("SecurityAlert", "Dashboard")" class="nav-link @(ViewContext.RouteData.Values["action"].ToString() == "SecurityAlert" ? "active" : "")">
+                    <a href="@Url.Action("SecurityAlert", "Dashboard")" class="nav-link @(controller == "Dashboard" && (action == "SecurityAlert" || action == "AlertDetail") ? "active" : "")">
                         <ion-icon name="shield-half-outline"></ion-icon> <span>Radar Ancaman</span>
                     </a>
                 </li>
 
                 <li class="nav-item mb-2">
-                    <a href="@Url.Action("Settings", "Dashboard")" class="nav-link @(ViewContext.RouteData.Values["action"].ToString() == "Settings" ? "active" : "")">
+                    <a href="@Url.Action("Settings", "Dashboard")" class="nav-link @(controller == "Dashboard" && action == "Settings" ? "active" : "")">
                         <ion-icon name="settings-outline"></ion-icon> <span>Tetapan</span>
                     </a>
                 </li>
             </ul>
 
             <div class="sidebar-footer p-4 mt-auto">
-                <a href="@Url.Action("Index", "Home")" class="btn btn-logout w-100 d-flex align-items-center justify-content-center gap-2">
-                    <ion-icon name="log-out-outline"></ion-icon> Log Keluar
+                <a href="@Url.Action("Index", "Home")" class="btn btn-logout w-100">
+                    <ion-icon name="log-out-outline"></ion-icon>
+                    <span>Log Keluar</span>
                 </a>
             </div>
         </nav>
@@ -104,29 +181,22 @@
                 </div>
 
                 <div class="user-profile-nav d-flex align-items-center gap-3">
-                    <!-- Notification Icon -->
                     <ion-icon name="notifications-outline" class="fs-4 text-muted" style="cursor: pointer;"></ion-icon>
 
-                    <!-- Combined Profile Link (Name + Avatar) -->
                     <a href="@Url.Action("UserProfile", "Dashboard")" class="d-flex align-items-center text-decoration-none">
-
-                        <!-- User Info (Text) -->
                         <div class="text-end me-3 d-none d-sm-block">
                             <span class="fw-bold d-block text-dark" style="line-height: 1;">@Session["UserName"]</span>
                             <small class="text-muted" style="font-size: 11px;">@category</small>
                         </div>
 
-                        <!-- User Avatar (Image or Icon) -->
                         <div class="avatar-circle d-flex align-items-center justify-content-center bg-white rounded-circle shadow-sm"
                              style="width: 42px; height: 42px; overflow: hidden; border: 2px solid #fff;">
-
                             @if (Session["UserProfilePic"] != null)
                             {
                                 <img src="~/Uploads/Profiles/@Session["UserProfilePic"]" style="width: 100%; height: 100%; object-fit: cover;" />
                             }
                             else
                             {
-                                <!-- If no image, show the default IonIcon -->
                                 <ion-icon name="person-circle" class="fs-1 text-secondary"></ion-icon>
                             }
                         </div>
@@ -140,7 +210,6 @@
         </div>
     </div>
 
-    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     @RenderSection("Scripts", required: false)
 </body>

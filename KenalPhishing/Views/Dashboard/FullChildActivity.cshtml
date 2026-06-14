@@ -1,0 +1,63 @@
+﻿@{
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+    ViewBag.Title = "Laporan Lengkap Aktiviti Anak";
+}
+
+<div class="container-fluid py-4">
+    <div class="mb-4">
+        <a href="@Url.Action("ChildReport", "Dashboard")" class="btn btn-link text-decoration-none p-0 mb-2">
+            <ion-icon name="arrow-back-outline"></ion-icon> Kembali ke Ringkasan
+        </a>
+        <h2 class="fw-bold">Laporan Lengkap: @ViewBag.ChildName</h2>
+        <p class="text-muted">Sejarah penuh pembelajaran dan aktiviti sistem.</p>
+    </div>
+
+    <div class="row g-4">
+        <!-- SEJARAH MODUL PENUH -->
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm rounded-4 p-4">
+                <h5 class="fw-bold mb-4">Sejarah Skor Modul</h5>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Modul</th>
+                                <th>Skor</th>
+                                <th>Tarikh</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var p in ViewBag.FullProgress as List<KenalPhishing.Models.UserProgress>)
+                            {
+                                <tr>
+                                    <td class="fw-bold small">@p.Module.Title</td>
+                                    <td><span class="badge @(p.QuizScore == p.QuizTotal ? "bg-success" : "bg-primary")">@p.QuizScore / @p.QuizTotal</span></td>
+                                    <td class="small text-muted">@p.CompletedAt.Value.ToString("dd/MM/yyyy")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- SEJARAH LOG PENUH -->
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm rounded-4 p-4">
+                <h5 class="fw-bold mb-4">Log Aktiviti Sistem</h5>
+                <div class="timeline-full">
+                    @foreach (var act in ViewBag.FullActivities as List<KenalPhishing.Models.UserActivity>)
+                    {
+                        <div class="border-bottom pb-3 mb-3">
+                            <div class="d-flex justify-content-between">
+                                <span class="fw-bold small">@act.Title</span>
+                                <small class="text-muted">@act.CreatedAt.ToString("dd MMM, HH:mm")</small>
+                            </div>
+                            <p class="small text-muted mb-0">@act.Description</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

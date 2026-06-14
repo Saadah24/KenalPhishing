@@ -8,8 +8,29 @@
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <link href="~/Content/Site.css" rel="stylesheet" type="text/css" />
     <link href="~/Content/Admin.css" rel="stylesheet" type="text/css" />
+
+    <style>
+        /* Ensures the highlighted page always has a consistent blue background */
+        .admin-sidebar .nav-link.active {
+            background-color: #0d6efd !important;
+            color: white !important;
+        }
+
+        /* Updates logout button to a consistent red color */
+        .btn-logout {
+            background-color: #dc3545 !important;
+            color: white !important;
+            border: none;
+        }
+
+            .btn-logout:hover {
+                background-color: #bb2d3b !important;
+                color: white !important;
+            }
+    </style>
+
     @RenderSection("Styles", required: false)
-    
+
 </head>
 <body class="dashboard-body">
     <div class="d-flex">
@@ -46,12 +67,12 @@
                     </a>
                 </li>
                 <li class="nav-item mb-2">
-                    <!-- Points to the SystemConfig action in the Admin controller -->
-                    <a href="@Url.Action("SystemConfig", "Admin")" class="nav-link @(ViewBag.Title == "Konfigurasi Sistem" ? "active" : "")">
+                    <!-- FIXED LOGIC: Changed from ViewBag.Title to RouteData for consistency -->
+                    <a href="@Url.Action("SystemConfig", "Admin")" class="nav-link @(ViewContext.RouteData.Values["action"].ToString() == "SystemConfig" ? "active" : "")">
                         <ion-icon name="settings-outline"></ion-icon>
                         <span>Konfigurasi Sistem</span>
                     </a>
-                </li>3
+                </li>
             </ul>
             <div class="sidebar-footer p-4 mt-auto">
                 <!-- Log keluar kembali ke Landing Page -->

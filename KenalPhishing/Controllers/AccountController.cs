@@ -1,12 +1,15 @@
-﻿using KenalPhihsing.Data;
-using KenalPhihsing.Models;
+﻿using KenalPhishing.Data;
+using KenalPhishing.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Configuration; // Added for reading connection string
+using System.Data.Entity;
+using System.Data.SqlClient;
 
-namespace KenalPhihsing.Controllers
+namespace KenalPhishing.Controllers
 {
     public class AccountController : Controller
     {
@@ -57,6 +60,17 @@ namespace KenalPhihsing.Controllers
 
                 // 3. Save
                 model.Role = "Member";
+
+                // ✅ ADD THIS: If parent, resolve ChildEmail to LinkedChildId before saving
+                if (model.IsParent && !string.IsNullOrEmpty(model.ChildEmail))
+                {
+                    var child = db.Users.FirstOrDefault(u => u.Email == model.ChildEmail && u.Category == "Child");
+                    if (child != null)
+                    {
+                        model.LinkedChildId = child.Id; // ✅ Save the FK
+                    }
+                }
+
                 db.Users.Add(model);
                 db.SaveChanges();
 
@@ -79,35 +93,25 @@ namespace KenalPhihsing.Controllers
         [HttpPost]
         public ActionResult Login(string email, string password)
         {
-            // 1. Cari user dalam database yang sepadan emel & password
             var user = db.Users.FirstOrDefault(u => u.Email == email && u.Password == password);
 
             if (user != null)
             {
-                // 2. Simpan data dalam Session
-                Session["UserID"] = user.Id.ToString();
+                // Use "UserID" (Capital ID) consistently across the whole app
+                Session["UserID"] = user.Id;
                 Session["UserName"] = user.FullName;
                 Session["UserEmail"] = user.Email;
                 Session["UserCategory"] = user.Category;
                 Session["UserRole"] = user.Role;
-
-                // --- TAMBAH DUA BARIS INI (WAJIB) ---
                 Session["IsParent"] = user.IsParent;
                 Session["ChildEmail"] = user.ChildEmail;
-                // ------------------------------------
 
-                // 3. Redirect ikut Role
                 if (user.Role == "Admin")
-                {
                     return RedirectToAction("Index", "Admin");
-                }
                 else
-                {
                     return RedirectToAction("Index", "Dashboard");
-                }
             }
 
-            // Jika gagal
             ViewBag.Error = "Emel atau Kata Laluan salah.";
             return View();
         }
