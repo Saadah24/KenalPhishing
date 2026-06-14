@@ -16,6 +16,9 @@
 - **Frontend:** HTML5, CSS3, JavaScript
 - **Logic Framework:** NIST Phish Scale
 
+## Website Link (Hosting using MS Azure)
+https://kenalphishingwebsite-fchsf6gyhkc4d0fh.koreacentral-01.azurewebsites.net/
+
 ## 📸 Screenshots
 <img width="1890" height="1072" alt="image" src="https://github.com/user-attachments/assets/569e0c20-388b-434e-94a7-81b45355e734" />
 <img width="1886" height="1053" alt="image" src="https://github.com/user-attachments/assets/0feb82e1-fc06-48f9-9f1f-a2a24b7f658d" />
